@@ -38,8 +38,8 @@ class LandingPage extends React.Component {
         <Header
           color="transparent"
           routes={dashboardRoutes}
-          brand="yo-manejo.com"
           rightLinks={<HeaderLinks />}
+          brand="yo-manejo.com"
           fixed
           changeColorOnScroll={{
             height: 400,
@@ -54,7 +54,7 @@ class LandingPage extends React.Component {
                 <Card plain>
                   <CardBody>
                     <img
-                      src={require("assets/img/logos/YoManejo_Logo_v1.png")}
+                      src={require("assets/img/logos/YoManejo_Logo.png")}
                       alt="..."
                       className={imageClasses}
                     />
