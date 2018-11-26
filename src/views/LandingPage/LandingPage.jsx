@@ -54,7 +54,7 @@ class LandingPage extends React.Component {
                 <Card plain>
                   <CardBody>
                     <img
-                      src={require("assets/img/logos/YoManejo_Logo.png")}
+                      src={require("assets/img/logos/YoManejo_Logo_new.png")}
                       alt="..."
                       className={imageClasses}
                     />
