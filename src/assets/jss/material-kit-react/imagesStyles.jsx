@@ -38,6 +38,16 @@ const imagesStyles = {
     bottom: "0",
     left: "0",
     padding: "1.25rem"
+  },
+  imgCenter: {
+    display: "block",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: "15px",
+    maxWidth: "100%",
+    maxHeight: "100%",
+    height: "auto",
+    width: "auto"
   }
 };
 
