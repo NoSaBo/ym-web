@@ -7,15 +7,25 @@ import indexRoutes from "routes/index.jsx";
 
 import "assets/scss/material-kit-react.css?v=1.3.0";
 
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql'
+});
+
+
 var hist = createBrowserHistory();
 
 ReactDOM.render(
-  <Router history={hist}>
-    <Switch>
-      {indexRoutes.map((prop, key) => {
-        return <Route path={prop.path} key={key} component={prop.component} />;
-      })}
-    </Switch>
-  </Router>,
+  <ApolloProvider client={client}>
+    <Router history={hist}>
+      <Switch>
+        {indexRoutes.map((prop, key) => {
+          return <Route exact path={prop.path} key={key} component={prop.component} />;
+        })}
+      </Switch>
+    </Router>
+  </ApolloProvider>,
   document.getElementById("root")
 );
