@@ -5,24 +5,34 @@ import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import employeePageStyle from "assets/jss/material-kit-react/views/employeePage.jsx";
 // core components
-import Badge from "../../../components/Badge/Badge.jsx";
-import Modal from "../../../components/Modal/Modal.jsx";
+import Badge from "../../../../components/Badge/Badge.jsx";
+import Modal from "../../../../components/Modal/Modal.jsx";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
-import { GET_EMPLOYEES } from "../../../queries/employee";
-import { DELETE_EMPLOYEE } from "../../../mutations/employee";
+import { GET_EMPLOYEES } from "../../../../queries/employee";
+import { DELETE_EMPLOYEE } from "../../../../mutations/employee";
 
 const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
-  const { Employees } = cache.readQuery({ query: GET_EMPLOYEES });
+  const { employees } = cache.readQuery({ query: GET_EMPLOYEES });
   cache.writeQuery({
     query: GET_EMPLOYEES,
     data: {
-      Employees: Employees.filter(n => n.user !== deleteEmployee.user)
+      employees: employees.filter(n => n.user !== deleteEmployee.user)
     }
   });
 };
 
 class EmployeeRow extends Component {
+  constructor(props) {
+    super(props);
+    this.deleteOnClick = this.deleteOnClick.bind(this);
+  }
+
+  deleteOnClick(deleteEmployee, employee) {
+    deleteEmployee({ variables: { user: employee.user } });
+    alert("Datos de empleado eliminados");
+  }
+
   render() {
     const employee = this.props.employee;
     const index = parseInt(this.props.index, 10) + 1;
@@ -52,10 +62,11 @@ class EmployeeRow extends Component {
               {deleteEmployee => (
                 <Badge
                   color="danger"
-                  onClick={() => {
-                    deleteEmployee({ variables: { user: employee.user } });
-                    alert("Datos de empleado eliminados");
-                  }}
+                  onClick={() => this.deleteOnClick(deleteEmployee, employee)}
+                  // onClick={() => {
+                  //   deleteEmployee({ variables: { user: employee.user } });
+                  //   alert("Datos de empleado eliminados");
+                  // }}
                 >
                   <i className="material-icons">close</i>
                 </Badge>

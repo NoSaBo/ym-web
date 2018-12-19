@@ -43,8 +43,8 @@ class AdminPage extends Component {
         </Parallax>
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
-            <Link to="admin-page/employees"><Button> EMPLEADOS </Button></Link>
-            <Button> SEDES </Button>
+            <Link to="/admin-page/employees"><Button> EMPLEADOS </Button></Link>
+            <Link to="/admin-page/branches"><Button>SEDES </Button></Link>
             <Button> HORARIOS </Button>
           </div>
         </div>

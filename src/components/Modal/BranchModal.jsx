@@ -18,8 +18,8 @@ import Badge from "../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
-import { NEW_EMPLOYEE } from "../../mutations/employee.js";
-import { GET_EMPLOYEES } from "../../queries/employee";
+import { NEW_BRANCH } from "../../mutations/branch";
+import { GET_BRANCHES } from "../../queries/branch";
 //react-router
 import { withRouter } from "react-router-dom";
 
@@ -27,23 +27,23 @@ function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
-class Modal extends React.Component {
+class BranchModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classicModal: false,
-      employee: this.props.employee? this.props.employee : {
-        firstname: "",
-        lastname: "",
-        dni: "",
-        user: "",
-        phone: "",
-        password: "",
-        active: ""
-      }
+      branch: this.props.branch? this.props.branch : ({
+          branch: "",
+          address: "",
+          latitude: "",
+          longitude: "",
+          contact: "",
+          phone: "",
+          active: ""
+        })
     };
-    this.updateEmployeeState = this.updateEmployeeState.bind(this);
-    this.saveEmployee = this.saveEmployee.bind(this);
+    this.updateBranchState = this.updateBranchState.bind(this);
+    this.saveBranch = this.saveBranch.bind(this);
     this.resetForm = this.resetForm.bind(this);
   }
   handleClickOpen(modal) {
@@ -60,56 +60,56 @@ class Modal extends React.Component {
 
   resetForm() {
     this.setState({
-      employee: {
-        firstname: "",
-        lastname: "",
-        dni: "",
-        user: "",
+      branch: {
+        branch: "",
+        address: "",
+        latitude: "",
+        longitude: "",
+        contact: "",
         phone: "",
-        password: "",
         active: ""
       }
     });
   }
 
-  updateEmployeeState(event) {
-    if (this.props.employee === undefined) {
+  updateBranchState(event) {
+    if (this.props.branch === undefined) {
       const field = event.target.name;
-      const employee = this.state.employee;
-      employee[field] = event.target.value;
-      return this.setState({ employee });
+      const branch = this.state.branch;
+      branch[field] = event.target.value;
+      return this.setState({ branch });
     }
   }
 
-  saveEmployee(event) {
+  saveBranch(event) {
     this.handleClose("classicModal");
     this.resetForm();
-    this.props.history.push("/admin-page/employees");
+    this.props.history.push("/admin-page/branches");
   }
 
   componentDidMount() {
-    if (this.props.employee) {
-      this.setState({ employee: this.props.employee });
+    if (this.props.branch) {
+      this.setState({ branch: this.props.branch });
     }
   }
 
   render() {
     let title = "";
     let modalLayout = "";
-    let employee = "";
+    let branch = "";
     if (this.props.modalType === "new") {
-      title = "Nuevo Empleado";
+      title = "Nueva Sede";
       modalLayout = <Button color="info">+ Crear</Button>;
     } else if (this.props.modalType === "display") {
-      title = "Mostrar Empleado";
+      title = "Mostrar Sede";
       modalLayout = (
         <Badge color="info">
           <i className="material-icons">person</i>
         </Badge>
       );
-      employee = this.props.employee;
+      branch = this.props.branch;
     } else if (this.props.modalType === "edit") {
-      title = "Editar Empleado";
+      title = "Editar Sede";
       modalLayout = (
         <Badge color="success">
           <i className="material-icons">edit</i>
@@ -118,7 +118,6 @@ class Modal extends React.Component {
     }
 
     const { classes } = this.props;
-
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -164,109 +163,93 @@ class Modal extends React.Component {
                   >
                     <form>
                       <CustomInput
-                        labelText="Nombre"
-                        name="firstname"
-                        value={employee? employee.firstname : this.state.employee.firstname}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        onChange={this.updateEmployeeState}
+                        labelText="Sede"
+                        name="branch"
+                        value={branch? branch.branch : this.state.branch.branch}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
                       />
                       <CustomInput
-                        labelText="Apellido"
-                        name="lastname"
-                        value={employee? employee.lastname : this.state.employee.lastname}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        onChange={this.updateEmployeeState}
+                        labelText="Dirección"
+                        name="address"
+                        value={branch? branch.address : this.state.branch.address}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
                       />
                       <CustomInput
-                        labelText="Usuario"
-                        name="user"
-                        value={employee? employee.user : this.state.employee.user}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        onChange={this.updateEmployeeState}
+                        labelText="Latitud"
+                        name="latitude"
+                        value={branch? branch.latitude : this.state.branch.latitude}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
                       />
-                      {!this.props.employee && (
-                        <CustomInput
-                          labelText="Password"
-                          name="password"
-                          value={employee? employee.password : this.state.employee.password}
-                          formControlProps={{
-                            fullWidth: true
-                          }}
-                          onChange={this.updateEmployeeState}
-                        />
-                      )}
+                      <CustomInput
+                        labelText="Longitud"
+                        name="longitude"
+                        value={branch? branch.longitude : this.state.branch.longitude}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
+                      />
+                      <CustomInput
+                        labelText="Contacto"
+                        name="contact"
+                        value={branch? branch.contact : this.state.branch.contact}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
+                      />
                       <CustomInput
                         labelText="Teléfono"
                         name="phone"
-                        value={employee? employee.phone : this.state.employee.phone}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        onChange={this.updateEmployeeState}
-                      />
-                      <CustomInput
-                        labelText="D.N.I"
-                        name="dni"
-                        value={employee? employee.dni : this.state.employee.dni}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        onChange={this.updateEmployeeState}
+                        value={branch? branch.phone : this.state.branch.phone}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Estado"
                         name="active"
-                        value={employee? employee.active : this.state.employee.active}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        onChange={this.updateEmployeeState}
+                        value={branch? branch.active : this.state.branch.active}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.updateBranchState}
                       />
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
                     <Mutation
-                      mutation={NEW_EMPLOYEE}
-                      update={(cache, { data: { addEmployee } }) => {
-                        const { employees } = cache.readQuery({
-                          query: GET_EMPLOYEES
+                      mutation={NEW_BRANCH}
+                      update={(cache, { data: { addBranch } }) => {
+                        const { branches } = cache.readQuery({
+                          query: GET_BRANCHES
                         });
                         cache.writeQuery({
-                          query: GET_EMPLOYEES,
-                          data: { employees: employees.concat([addEmployee]) }
+                          query: GET_BRANCHES,
+                          data: { branches: branches.concat([addBranch]) }
                         });
                       }}
                     >
-                      {(addEmployee, { data, loading, error }) => (
+                      {(addBranch) => (
                         <div>
-                          {!(this.props.modalType === "display") && (
+                          { !(this.props.modalType === "display") && (
                             <Button
                               color="transparent"
                               simple
                               onClick={e => {
                                 e.preventDefault();
-                                addEmployee({
+                                addBranch({
                                   variables: {
-                                    firstname: this.state.employee.firstname,
-                                    lastname: this.state.employee.lastname,
-                                    user: this.state.employee.user,
-                                    password: this.state.employee.password,
-                                    dni: this.state.employee.dni,
-                                    phone: this.state.employee.phone,
-                                    active: this.state.employee.active
+                                    branch: this.state.branch.branch,
+                                    address: this.state.branch.address,
+                                    latitude: this.state.branch.latitude,
+                                    longitude: this.state.branch.longitude,
+                                    contact: this.state.branch.contact,
+                                    phone: this.state.branch.phone,
+                                    active: this.state.branch.active
                                   }
                                 });
                                 alert(
-                                  this.state.employee.firstname +
+                                  this.state.branch.branch +
                                     " have been added!"
                                 );
-                                this.saveEmployee();
+                                this.saveBranch();
                               }}
                             >
                               Guardar
@@ -293,4 +276,4 @@ class Modal extends React.Component {
   }
 }
 
-export default withRouter(withStyles(javascriptStyles)(Modal));
+export default withRouter(withStyles(javascriptStyles)(BranchModal));

@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 export const GET_EMPLOYEES = gql`
   query EmployeesQuery {
-    Employees {
+    employees {
       id
       firstname
       lastname
