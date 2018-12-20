@@ -45,7 +45,7 @@ class AdminPage extends Component {
           <div className={classes.container}>
             <Link to="/admin-page/employees"><Button> EMPLEADOS </Button></Link>
             <Link to="/admin-page/branches"><Button>SEDES </Button></Link>
-            <Button> HORARIOS </Button>
+            <Link to="/admin-page/serviceshifts"><Button> HORARIOS </Button></Link>
           </div>
         </div>
         <Footer />
