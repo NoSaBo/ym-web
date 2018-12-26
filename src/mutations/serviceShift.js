@@ -6,14 +6,12 @@ export const NEW_SERVICESHIFT = gql`
     $workspan: Time!
     $active: Boolean!
     $branchId: ID!
-    $employeeId: ID!
   ) {
     addServiceShift(
       begindate: $begindate
       workspan: $workspan
       active: $active
-      branchId: $branchId
-      employeeId: $employeeId      
+      branchId: $branchId    
     ) {
       id
       begindate
@@ -23,12 +21,28 @@ export const NEW_SERVICESHIFT = gql`
         id
         branch
       }
-      employee{
-        id
+    }
+  },
+`;
+
+export const ADD_EMPLOYEE_TO_SERVICESHIFT = gql`
+  mutation addEmployeeToServiceShift(
+    $id: ID!
+    $employeeId: ID!
+  ) {
+    addEmployeeToServiceShift(
+      id: $id
+      employeeId: $employeeId
+    ){
+      begindate
+      branch {
+        branch
+      }
+      employees{
         firstname
       }
     }
-  },
+  }
 `;
 
 export const DELETE_SERVICESHIFT = gql`

@@ -6,10 +6,13 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import ServiceShiftPageStyle from "assets/jss/material-kit-react/views/serviceShiftPage.jsx";
 // core components
 import Badge from "../../../../components/Badge/Badge.jsx";
-import Modal from "../../../../components/Modal/ServiceShiftModal.jsx";
+import ModalDisplay from "../../../../components/Modal/serviceShift/Display.jsx";
+import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
+// import Modal from "../../../../components/Modal/serviceShift/Add.jsx";
 // queries and mutations with react-apollo
-import { Mutation } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
+import { GET_EMPLOYEES } from "../../../../queries/employee";
 import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
 
 const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
@@ -52,17 +55,34 @@ class ServiceShiftRow extends Component {
           )}
         >
           <div>
-            <Modal modalType="display" serviceShift={serviceShift} />
+            <ModalDisplay serviceShift={serviceShift} />
           </div>
-          <div>
+          <Query query={GET_EMPLOYEES}>
+            {({ loading, error, data }) => {
+              if (loading) return <h4>Loading...</h4>
+              if (error) console.log("Query error: ", error);
+              return (
+                <div>
+                  <ModalAddEmployee
+                    serviceShift={serviceShift}
+                    employees={data.employees}
+                  />
+                </div>
+              );
+            }}
+          </Query>
+
+          {/* <div>
             <Modal modalType="edit" serviceShift={serviceShift} />
-          </div>
+          </div> */}
           <div>
             <Mutation mutation={DELETE_SERVICESHIFT} update={updateCacheDelete}>
               {deleteServiceShift => (
                 <Badge
                   color="danger"
-                  onClick={() => this.deleteOnClick(deleteServiceShift, serviceShift)}
+                  onClick={() =>
+                    this.deleteOnClick(deleteServiceShift, serviceShift)
+                  }
                 >
                   <i className="material-icons">close</i>
                 </Badge>

@@ -10,10 +10,20 @@ export const GET_SERVICESHIFTS = gql`
       branch{
         id
         branch
+        address
+        latitude
+        longitude
+        contact
+        phone
+        active
       }
-      employee{
-        id
+      employees{
         firstname
+        lastname
+        user
+        dni
+        phone
+        active
       }
     }
   }

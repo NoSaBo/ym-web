@@ -2,9 +2,12 @@
 const employeePageStyle = {
     flexContainerNew: {
         display: "flex",
-        flexFlow: "row wrap",
-        justifyContent: "left",
+        // flexFlow: "row wrap",
+        // justifyContent: "left",
         alignItems: "center"
+    },
+    divMargin: {
+        margin: "5px"
     },
     flexContainerActions: {
         display: "flex",
