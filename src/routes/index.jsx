@@ -5,6 +5,7 @@ import LoginPage from "views/LoginPage/LoginPage.jsx";
 import AdminPage from "views/AdminPage/AdminPage.jsx";
 import Employees from "views/AdminPage/Sections/Employees/Employees.jsx";
 import Branches from "views/AdminPage/Sections/Branches/Branches.jsx";
+import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/ServiceShifts.jsx";
 
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
@@ -14,6 +15,7 @@ var indexRoutes = [
   { path: "/admin-page", name:"AdminPage", component: AdminPage },
   { path: "/admin-page/employees", name:"Employees", component: Employees },
   { path: "/admin-page/branches", name:"Branches", component: Branches },
+  { path: "/admin-page/serviceshifts", name:"ServiceShifts", component: ServiceShifts },
 ];
 
 export default indexRoutes;

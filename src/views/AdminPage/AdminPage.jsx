@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-
+import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 // core components
 import Header from "components/Header/Header.jsx";
 import Footer from "components/Footer/Footer.jsx";
@@ -13,8 +13,7 @@ import Button from "components/CustomButtons/Button.jsx";
 import Parallax from "components/Parallax/Parallax.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
-import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
-
+//react-router
 import { Link } from 'react-router-dom';
 
 class AdminPage extends Component {
@@ -45,7 +44,7 @@ class AdminPage extends Component {
           <div className={classes.container}>
             <Link to="/admin-page/employees"><Button> EMPLEADOS </Button></Link>
             <Link to="/admin-page/branches"><Button>SEDES </Button></Link>
-            <Button> HORARIOS </Button>
+            <Link to="/admin-page/serviceshifts"><Button> HORARIOS </Button></Link>
           </div>
         </div>
         <Footer />

@@ -1,13 +1,10 @@
 
-const employeePageStyle = {
+const serviceShiftPage = {
     flexContainerNew: {
         display: "flex",
-        // flexFlow: "row wrap",
-        // justifyContent: "left",
+        flexFlow: "row wrap",
+        justifyContent: "left",
         alignItems: "center"
-    },
-    divMargin: {
-        margin: "5px"
     },
     flexContainerActions: {
         display: "flex",
@@ -19,7 +16,11 @@ const employeePageStyle = {
         display:"flex",
         margin: "0 0 0px 0",
         alignContent: "space-around"
-    }
+    },
+    textCentered: {
+        textAlign: "center",
+        backGroundColor: "black",
+    },
 };
 
-export default employeePageStyle;
+export default serviceShiftPage;
