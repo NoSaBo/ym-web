@@ -8,9 +8,9 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import badgeStyle from "assets/jss/material-kit-react/components/badgeStyle.jsx";
 
 function Badge({ ...props }) {
-  const { classes, color, children } = props;
+  const { classes, color, children, onClick } = props;
   return (
-    <span className={classes.badge + " " + classes[color]}>{children}</span>
+    <span onClick={onClick} className={classes.badge + " " + classes[color]}>{children}</span>
   );
 }
 

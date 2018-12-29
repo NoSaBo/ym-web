@@ -11,14 +11,14 @@ const javascriptStyles = {
   container,
   title: {
     ...title,
-    marginTop: "30px",
+    // marginTop: "30px",
     minHeight: "32px",
     textDecoration: "none"
   },
   icon: {
     width: "17px",
     height: "17px",
-    marginRight: "4px"
+    // marginRight: "4px"
   },
   ...modalStyle,
   label: {
