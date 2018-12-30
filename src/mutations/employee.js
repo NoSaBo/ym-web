@@ -23,12 +23,44 @@ mutation addEmployee(
     firstname
     lastname
     user
+    password
     dni
     phone
     active
   }
 }
 `;
+
+export const UPDATE_EMPLOYEE = gql`
+mutation updateEmployee(
+  $firstname: String
+  $lastname: String
+  $user: String!
+  $password: String
+  $dni: String
+  $phone: String
+  $active: Boolean
+){
+  updateEmployee(
+    firstname: $firstname
+    lastname: $lastname
+    password: $password
+    user: $user
+    dni: $dni
+    phone: $phone
+    active: $active
+  ) {
+    id
+    firstname
+    lastname
+    user
+    dni
+    phone
+    active
+  }
+}
+`;
+
 export const DELETE_EMPLOYEE = gql`
 mutation deleteEmployee($user: String!) {
   deleteEmployee(user: $user) {

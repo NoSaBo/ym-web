@@ -12,6 +12,7 @@ import ServiceShiftRow from "./ServiceShiftRow";
 import ModalAdd from "../../../../components/Modal/serviceShift/Add.jsx";
 
 class ServiceShifts extends Component {
+  
   render() {
     const { classes } = this.props;
     return (

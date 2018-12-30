@@ -6,7 +6,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import employeePageStyle from "assets/jss/material-kit-react/views/employeePage.jsx";
 // core components
 import Badge from "../../../../components/Badge/Badge.jsx";
-import Modal from "../../../../components/Modal/Modal.jsx";
+import Modal from "../../../../components/Modal/employee/EmployeeModal";
+import UpdateModal from "../../../../components/Modal/employee/Update";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
@@ -55,7 +56,7 @@ class EmployeeRow extends Component {
             <Modal modalType="display" employee={employee} />
           </div>
           <div>
-            <Modal modalType="edit" employee={employee} />
+            <UpdateModal employee={employee} />
           </div>
           <div>
             <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
@@ -63,10 +64,6 @@ class EmployeeRow extends Component {
                 <Badge
                   color="danger"
                   onClick={() => this.deleteOnClick(deleteEmployee, employee)}
-                  // onClick={() => {
-                  //   deleteEmployee({ variables: { user: employee.user } });
-                  //   alert("Datos de empleado eliminados");
-                  // }}
                 >
                   <i className="material-icons">close</i>
                 </Badge>

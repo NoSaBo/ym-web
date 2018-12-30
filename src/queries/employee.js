@@ -7,6 +7,7 @@ export const GET_EMPLOYEES = gql`
       firstname
       lastname
       user
+      password
       dni
       phone
       active

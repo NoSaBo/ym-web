@@ -18,6 +18,7 @@ export const GET_SERVICESHIFTS = gql`
         active
       }
       employees{
+        id
         firstname
         lastname
         user

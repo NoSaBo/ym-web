@@ -98,18 +98,12 @@ class Modal extends React.Component {
     });
     this.resetForm();
     alert("Nuevo horario ha sido agregado");
+    window.location.reload();
     this.props.history.push("/admin-page/serviceshifts");
   }
 
-  // componentDidMount() {
-  //   if (this.props.employee) {
-  //     this.setState({ employee: this.props.employee });
-  //   }
-  // }
-
   render() {
     const { classes } = this.props;
-    console.log("this.state.serviceShift", this.state.serviceShift);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>

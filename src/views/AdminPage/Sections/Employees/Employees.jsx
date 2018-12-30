@@ -9,7 +9,7 @@ import { Query } from "react-apollo";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 // core components
 import EmployeeRow from "./EmployeeRow";
-import Modal from "../../../../components/Modal/EmployeeModal.jsx";
+import Modal from "../../../../components/Modal/employee/EmployeeModal.jsx";
 // import Components from "../../../Components/Components.jsx";
 
 class Employees extends Component {
