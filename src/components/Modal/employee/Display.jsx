@@ -17,8 +17,6 @@ import CustomInput from "../../CustomInput/CustomInput.jsx";
 import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // queries and mutations with react-apollo
-import { Mutation } from "react-apollo";
-import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
 //react-router
 import { withRouter } from "react-router-dom";
 
@@ -30,12 +28,8 @@ class EmployeeModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      classicModal: false,
-      togglePassword: "password"
+      classicModal: false
     };
-    this.updateEmployeeState = this.updateEmployeeState.bind(this);
-    this.saveEmployee = this.saveEmployee.bind(this);
-    this.togglePassword = this.togglePassword.bind(this);
   }
 
   handleClickOpen(modal) {
@@ -49,37 +43,13 @@ class EmployeeModal extends React.Component {
     this.setState(x);
   }
 
-  togglePassword() {
-    if (this.state.togglePassword === "password") {
-      this.setState({ togglePassword: "text" });
-    } else {
-      this.setState({ togglePassword: "password" });
-    }
-  }
-
-  updateEmployeeState(event) {
-    const field = event.target.name;
-    let value = event.target.value;
-    // value = (value == "true") ? 1 : 0;
-    this.props.onChange(field, value);
-  }
-
-  saveEmployee(updateEmployee) {
-    this.handleClose("classicModal");
-    let employee = this.props.employee;
-    updateEmployee({ variables: employee });
-    alert(employee.user + " have been updated!");
-    this.props.history.push("/admin-page/employees");
-  }
-
   render() {
     const { classes } = this.props;
-    const employee = this.props.employee;
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="success">
-            <i className="material-icons">edit</i>
+          <Badge color="info">
+            <i className="material-icons">person</i>
           </Badge>
         </div>
         <GridContainer>
@@ -114,9 +84,7 @@ class EmployeeModal extends React.Component {
                     >
                       <Close className={classes.modalClose} />
                     </IconButton>
-                    <h4 className={classes.modalTitle}>
-                      Actualización de datos
-                    </h4>
+                    <h4 className={classes.modalTitle}>Mostrar Empleado</h4>
                   </DialogTitle>
                   <DialogContent
                     id="classic-modal-slide-description"
@@ -126,77 +94,42 @@ class EmployeeModal extends React.Component {
                       <CustomInput
                         labelText="Nombre"
                         name="firstname"
-                        value={employee.firstname}
+                        value={this.props.employee.firstname}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
                       />
                       <CustomInput
                         labelText="Apellido"
                         name="lastname"
-                        value={employee.lastname}
+                        value={this.props.employee.lastname}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
                       />
                       <CustomInput
                         labelText="Usuario"
                         name="user"
-                        value={employee.user}
+                        value={this.props.employee.user}
                         formControlProps={{ fullWidth: true }}
-                        disabled={true}
                       />
-                      <CustomInput
-                        labelText="Password"
-                        name="password"
-                        value={employee.password}
-                        type={this.state.togglePassword}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
-                      />
-                      <input type="checkbox" onClick={this.togglePassword} />
-                      Mostrar password
                       <CustomInput
                         labelText="Teléfono"
                         name="phone"
-                        value={employee.phone}
+                        value={this.props.employee.phone}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
                       />
                       <CustomInput
                         labelText="D.N.I"
                         name="dni"
-                        value={employee.dni}
+                        value={this.props.employee.dni}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
                       />
-                      <div>
-                        <div>Estado</div>
-                        <select
-                          onChange={this.updateEmployeeState}
-                          name="active"
-                          defaultValue={employee.active}
-                        >
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </div>
+                      <CustomInput
+                        labelText="Estado"
+                        name="active"
+                        value={this.props.employee.active ? "Activo" : "Inactivo"}
+                        formControlProps={{ fullWidth: true }}
+                      />
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
-                    <Mutation mutation={UPDATE_EMPLOYEE}>
-                      {updateEmployee => (
-                        <div>
-                          <Button
-                            color="transparent"
-                            simple
-                            onClick={() => {
-                              this.saveEmployee(updateEmployee);
-                            }}
-                          >
-                            Guardar
-                          </Button>
-                        </div>
-                      )}
-                    </Mutation>
                     <Button
                       onClick={() => this.handleClose("classicModal")}
                       color="danger"

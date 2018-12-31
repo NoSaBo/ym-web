@@ -13,13 +13,13 @@ import Close from "@material-ui/icons/Close";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
+import CustomInput from "../CustomInput/CustomInput.jsx";
+import Badge from "../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
-import { NEW_EMPLOYEE } from "../../../mutations/employee.js";
-import { GET_EMPLOYEES } from "../../../queries/employee";
+import { NEW_EMPLOYEE } from "../../mutations/employee.js";
+import { GET_EMPLOYEES } from "../../queries/employee";
 //react-router
 import { withRouter } from "react-router-dom";
 
