@@ -7,13 +7,13 @@ import indexRoutes from "routes/index.jsx";
 
 import "assets/scss/material-kit-react.css?v=1.3.0";
 
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
+  uri: "https://vp-project.herokuapp.com/graphql"
+  // uri: 'http://localhost:4000/graphql'
 });
-
 
 var hist = createBrowserHistory();
 
@@ -22,7 +22,14 @@ ReactDOM.render(
     <Router history={hist}>
       <Switch>
         {indexRoutes.map((prop, key) => {
-          return <Route exact path={prop.path} key={key} component={prop.component} />;
+          return (
+            <Route
+              exact
+              path={prop.path}
+              key={key}
+              component={prop.component}
+            />
+          );
         })}
       </Switch>
     </Router>
