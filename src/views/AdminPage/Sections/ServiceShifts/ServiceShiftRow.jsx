@@ -17,7 +17,6 @@ import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
 
 const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
   const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
-  console.log("deleteServiceShift", deleteServiceShift);
   cache.writeQuery({
     query: GET_SERVICESHIFTS,
     data: {

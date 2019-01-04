@@ -6,7 +6,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import employeePageStyle from "assets/jss/material-kit-react/views/employeePage.jsx";
 // core components
 import Badge from "../../../../components/Badge/Badge.jsx";
-import Modal from "../../../../components/Modal/Modal.jsx";
+import DisplayModal from "../../../../components/Modal/employee/Display";
+import UpdateModal from "../../../../components/Modal/employee/Update";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
@@ -25,16 +26,36 @@ const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
 class EmployeeRow extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      employee: this.props.employee
+    };
     this.deleteOnClick = this.deleteOnClick.bind(this);
+    this.handleChangeEmployee = this.handleChangeEmployee.bind(this);
   }
 
   deleteOnClick(deleteEmployee, employee) {
+    let user = employee.user;
     deleteEmployee({ variables: { user: employee.user } });
-    alert("Datos de empleado eliminados");
+    alert(`Empleado ${user} has sido eliminado`);
+  }
+
+  handleChangeEmployee(field, value) {
+    if (field === "active") {
+      value = (value === "true") ? true : false;
+    }
+    const employee = this.state.employee;
+    employee[field] = value;
+    this.setState({ employee });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.employee.id !== nextProps.employee.id) {
+      this.setState({employee: nextProps.employee})
+    }
   }
 
   render() {
-    const employee = this.props.employee;
+    const employee = this.state.employee;
     const index = parseInt(this.props.index, 10) + 1;
     const { classes } = this.props;
     return (
@@ -52,10 +73,13 @@ class EmployeeRow extends Component {
           )}
         >
           <div>
-            <Modal modalType="display" employee={employee} />
+            <DisplayModal employee={employee} />
           </div>
           <div>
-            <Modal modalType="edit" employee={employee} />
+            <UpdateModal
+              employee={employee}
+              onChange={this.handleChangeEmployee}
+            />
           </div>
           <div>
             <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
@@ -63,10 +87,6 @@ class EmployeeRow extends Component {
                 <Badge
                   color="danger"
                   onClick={() => this.deleteOnClick(deleteEmployee, employee)}
-                  // onClick={() => {
-                  //   deleteEmployee({ variables: { user: employee.user } });
-                  //   alert("Datos de empleado eliminados");
-                  // }}
                 >
                   <i className="material-icons">close</i>
                 </Badge>

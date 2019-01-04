@@ -243,7 +243,7 @@ class EmployeeModal extends React.Component {
                         });
                       }}
                     >
-                      {(addEmployee, { data, loading, error }) => (
+                      {(addEmployee) => (
                         <div>
                           {!(this.props.modalType === "display") && (
                             <Button

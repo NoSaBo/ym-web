@@ -25,7 +25,8 @@ function CustomInput({ ...props }) {
     success,
     value,
     onChange,
-    name
+    name,
+    type
   } = props;
 
   // console.log("props", props);
@@ -78,6 +79,7 @@ function CustomInput({ ...props }) {
         value={value}
         onChange={onChange}
         name={name}
+        type={type}
         {...inputProps}
       />
     </FormControl>
