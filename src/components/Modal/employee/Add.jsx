@@ -36,27 +36,43 @@ const updateCacheAdd = (cache, { data: { addEmployee } }) => {
   });
 };
 
+const newEmployee = {
+  firstname: "",
+  lastname: "",
+  user: "",
+  password: "",
+  dni: "",
+  phone: "",
+  active: ""
+};
+
 class EmployeeModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classicModal: false,
-      togglePassword: "password"
+      togglePassword: "password",
+      employee: null
     };
     this.saveEmployee = this.saveEmployee.bind(this);
     this.togglePassword = this.togglePassword.bind(this);
+    this.resetEmployeeForm = this.resetEmployeeForm.bind(this);
+    this.handleChangeEmployee = this.handleChangeEmployee.bind(this);
   }
+
   handleClickOpen(modal) {
     var x = [];
     x[modal] = true;
     this.setState(x);
   }
+
   handleClose(modal) {
     var x = [];
     x[modal] = false;
     this.setState(x);
-    this.props.resetForm();
+    this.resetEmployeeForm();
   }
+
   togglePassword() {
     if (this.state.togglePassword === "password") {
       this.setState({ togglePassword: "text" });
@@ -64,15 +80,49 @@ class EmployeeModal extends React.Component {
       this.setState({ togglePassword: "password" });
     }
   }
-  saveEmployee(event) {
+
+  handleChangeEmployee(event) {
+    const field = event.target.name;
+    let value = event.target.value;
+    if (field === "active") {
+      value = value === "true" ? true : false;
+    }
+    let employee = this.state.employee;
+    employee[field] = value;
+    this.setState({ employee });
+  }
+
+  saveEmployee(event, addEmployee, employee) {
+    event.preventDefault();
+    addEmployee({
+      variables: {
+        firstname: employee.firstname,
+        lastname: employee.lastname,
+        user: employee.user,
+        password: employee.password,
+        dni: employee.dni,
+        phone: employee.phone,
+        active: employee.active
+      }
+    });
+    alert(`${employee.user} have been added!`);
+
     this.handleClose("classicModal");
-    this.props.resetForm();
-    this.props.history.push("/admin-page/employees");
+    this.resetEmployeeForm();
+  }
+
+  resetEmployeeForm() {
+    let employee = Object.assign({}, newEmployee);
+    this.setState({ employee });
+  }
+
+  componentWillMount() {
+    this.resetEmployeeForm();
   }
 
   render() {
     const { classes } = this.props;
-    const employee = this.props.employee;
+    const employee = this.state.employee;
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -122,21 +172,21 @@ class EmployeeModal extends React.Component {
                         name="firstname"
                         value={employee.firstname}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="Apellido"
                         name="lastname"
                         value={employee.lastname}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="Usuario"
                         name="user"
                         value={employee.user}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="Password"
@@ -144,7 +194,7 @@ class EmployeeModal extends React.Component {
                         type={this.state.togglePassword}
                         value={employee.password}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChangeEmployee}
                       />
                       <input type="checkbox" onClick={this.togglePassword} />
                       Mostrar password
@@ -153,18 +203,22 @@ class EmployeeModal extends React.Component {
                         name="phone"
                         value={employee.phone}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="D.N.I"
                         name="dni"
                         value={employee.dni}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChangeEmployee}
                       />
                       <div>
                         <div>Estado</div>
-                        <select onChange={this.props.onChange} name="active">
+                        <select
+                          onChange={this.handleChangeEmployee}
+                          name="active"
+                          value={employee.active}
+                        >
                           <option>Seleccionar Estado</option>
                           <option value={true}>Activo</option>
                           <option value={false}>Inactivo</option>
@@ -173,30 +227,14 @@ class EmployeeModal extends React.Component {
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
-                    <Mutation
-                      mutation={NEW_EMPLOYEE}
-                      update={updateCacheAdd}
-                    >
+                    <Mutation mutation={NEW_EMPLOYEE} update={updateCacheAdd}>
                       {addEmployee => (
                         <div>
                           <Button
                             color="transparent"
                             simple
-                            onClick={e => {
-                              e.preventDefault();
-                              addEmployee({
-                                variables: {
-                                  firstname: employee.firstname,
-                                  lastname: employee.lastname,
-                                  user: employee.user,
-                                  password: employee.password,
-                                  dni: employee.dni,
-                                  phone: employee.phone,
-                                  active: employee.active
-                                }
-                              });
-                              alert(`${employee.user} have been added!`);
-                              this.saveEmployee();
+                            onClick={(e) => {
+                              this.saveEmployee(e, addEmployee, employee);
                             }}
                           >
                             Guardar
