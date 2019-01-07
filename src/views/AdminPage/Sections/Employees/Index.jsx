@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import EmployeeTable from "./EmployeeTable";
+import EmployeeContainer from './EmployeeContainer';
+// import EmployeeTable from "./EmployeeTable";
 import Add from "../../../../components/Modal/employee/Add";
 // import Components from '../../../Components/Components';
 
@@ -17,8 +18,9 @@ class IndexEmployee extends Component {
             if (error) return `Error ${error.message}`;
             return (
               <div>
+                <EmployeeContainer employees={data.employees}/>
                 <Add data={data}/>
-                <EmployeeTable data={data}/>
+                {/* <EmployeeTable data={data}/> */}
               </div>
             );
           }}

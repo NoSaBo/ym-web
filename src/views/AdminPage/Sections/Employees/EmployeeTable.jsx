@@ -2,7 +2,7 @@ import React from "react";
 import Row from "./Row";
 
 
-const EmployeesTable = ({ data }) => {
+const EmployeesTable = ({ currentEmployees }) => {
   return (
     <div>
       <table>
@@ -17,7 +17,7 @@ const EmployeesTable = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.employees.map((employee, index) => (
+          {currentEmployees.map((employee, index) => (
             <Row
               key={index}
               value={employee}

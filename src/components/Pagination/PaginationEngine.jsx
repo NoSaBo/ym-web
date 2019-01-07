@@ -44,7 +44,6 @@ class Pagination extends Component {
   }
 
   gotoPage = page => {
-      console.log("this.props", this.props);
     const { onPageChanged = f => f } = this.props;
 
     const currentPage = Math.max(0, Math.min(page, this.totalPages));
@@ -53,8 +52,7 @@ class Pagination extends Component {
       currentPage,
       totalPages: this.totalPages,
       pageLimit: this.pageLimit,
-      totalRecords: this.totalRecords,
-      allCountries: this.props.allCountries
+      totalRecords: this.totalRecords
     };
 
     this.setState({ currentPage }, () => onPageChanged(paginationData));
@@ -157,7 +155,7 @@ class Pagination extends Component {
                   <li key={index} className="page-item">
                     <a
                       className="page-link"
-                      href="#"
+                      // href="#"
                       aria-label="Previous"
                       onClick={this.handleMoveLeft}
                     >
@@ -172,7 +170,7 @@ class Pagination extends Component {
                   <li key={index} className="page-item">
                     <a
                       className="page-link"
-                      href="#"
+                      // href="#"
                       aria-label="Next"
                       onClick={this.handleMoveRight}
                     >
@@ -191,7 +189,7 @@ class Pagination extends Component {
                 >
                   <a
                     className="page-link"
-                    href="#"
+                    // href="#"
                     onClick={this.handleClick(page)}
                   >
                     {page}
