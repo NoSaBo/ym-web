@@ -1,6 +1,12 @@
 import React, { Component } from "react";
-import EmployeeTable from './EmployeeTable';
-import Pagination from '../../../../components/Pagination/PaginationEngine'
+// @material-ui/core & style components
+import withStyles from "@material-ui/core/styles/withStyles";
+import employeePageStyle from "assets/jss/material-kit-react/views/employeePage.jsx";
+// nodejs library that concatenates classes
+import classNames from "classnames";
+// components
+import EmployeeTable from "./EmployeeTable";
+import Pagination from "../../../../components/Pagination/PaginationEngine";
 
 class EmployeeContainer extends Component {
   constructor(props) {
@@ -35,47 +41,58 @@ class EmployeeContainer extends Component {
       currentPage,
       totalPages
     } = this.state;
+    const { classes } = this.props;
     const totalEmployees = allEmployees.length;
 
-    console.log("allEmployees", allEmployees);
-    console.log("currentEmployees", currentEmployees);
-    console.log("currentPage", currentPage);
-    console.log("totalPages", totalPages);
     if (totalEmployees === 0) return null;
 
+    const headerClass = [
+      "text-dark py-2 pr-4 m-0",
+      currentPage ? "border-dark border-right" : ""
+    ]
+      .join(" ")
+      .trim();
+
     return (
-      <div className="container mb-5">
-        <div className="row d-flex flex-row py-5">
-          <div className="w-100 px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center">
-              <h2>
-                <strong className="text-secondary">{totalEmployees}</strong>{" "}
-                Empleados
-              </h2>
+      <div>
+        <div className={classes.flexParent}>
+          <div
+            className={classNames(
+              "d-flex",
+              "flex-row",
+              "align-items-center",
+              classes.flexChild
+            )}
+          >
+            <h2 className={headerClass}>
+              <strong className="text-secondary">{totalEmployees}</strong>{" "}
+              Empleados
+            </h2>
 
-              {currentPage && (
-                <span className="current-page d-inline-block h-100 pl-4 text-secondary">
-                  Page <span className="font-weight-bold">{currentPage}</span> /{" "}
-                  <span className="font-weight-bold">{totalPages}</span>
-                </span>
-              )}
-            </div>
-
-            <div className="d-flex flex-row py-4 align-items-center">
-              <Pagination
-                totalRecords={totalEmployees}
-                pageLimit={2}
-                pageNeighbours={1}
-                onPageChanged={this.onPageChanged}
-              />
-            </div>
+            {currentPage && (
+              <span className="current-page d-inline-block h-100 pl-4 text-secondary">
+                Page <span className="font-weight-bold">{currentPage}</span> /{" "}
+                <span className="font-weight-bold">{totalPages}</span>
+              </span>
+            )}
           </div>
 
-            <EmployeeTable currentEmployees={currentEmployees}/>
+          <div className={classes.flexChild}>
+            <Pagination
+              totalRecords={totalEmployees}
+              pageLimit={2}
+              pageNeighbours={1}
+              onPageChanged={this.onPageChanged}
+            />
+          </div>
+        </div>
+
+        <div className={classes.flexTable}>
+          <EmployeeTable currentEmployees={currentEmployees} />
         </div>
       </div>
     );
   }
 }
 
-export default EmployeeContainer;
+export default withStyles(employeePageStyle)(EmployeeContainer);
