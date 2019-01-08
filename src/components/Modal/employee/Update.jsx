@@ -44,6 +44,7 @@ class UpdateModal extends React.Component {
     var x = [];
     x[modal] = true;
     this.setState(x);
+    this.resetEmployee();
   }
   handleClose(modal) {
     var x = [];
@@ -72,6 +73,7 @@ class UpdateModal extends React.Component {
   }
 
   resetEmployee() {
+    console.log("reset");
     let employee = Object.assign({}, this.props.employee);
     this.setState({
       employee
@@ -83,26 +85,15 @@ class UpdateModal extends React.Component {
     let employee = this.state.employee;
     updateEmployee({ variables: employee });
     alert(employee.user + " have been updated!");
-    // this.props.history.push("/admin-page/employees");
   }
 
   componentWillMount() {
     this.resetEmployee();
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log("this.props.employee", this.props.employee);
-    console.log("nextProps.employee", nextProps.employee);
-    if(nextProps.employee !== this.props.employee) {
-      this.resetEmployee();
-    }
-  }
-
   render() {
     const { classes } = this.props;
     const employee = this.state.employee;
-    // console.log("employeeClicked-props", this.props.employee);
-    console.log("employeeClicked-state", this.state.employee);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
