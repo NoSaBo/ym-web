@@ -14,6 +14,11 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
+
+import Datetime from "react-datetime";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // queries and mutations with react-apollo
 import { Query, Mutation } from "react-apollo";
@@ -22,6 +27,32 @@ import { NEW_SERVICESHIFT } from "../../../mutations/serviceShift";
 import { GET_SERVICESHIFTS } from "../../../queries/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
+
+Date.prototype.toIsoString = function() {
+  var tzo = -this.getTimezoneOffset(),
+    dif = tzo >= 0 ? "+" : "-",
+    pad = function(num) {
+      var norm = Math.floor(Math.abs(num));
+      return (norm < 10 ? "0" : "") + norm;
+    };
+  return (
+    this.getFullYear() +
+    "-" +
+    pad(this.getMonth() + 1) +
+    "-" +
+    pad(this.getDate()) +
+    "T" +
+    pad(this.getHours()) +
+    ":" +
+    pad(this.getMinutes()) +
+    ":" +
+    pad(this.getSeconds()) +
+    dif +
+    pad(tzo / 60) +
+    ":" +
+    pad(tzo % 60)
+  );
+};
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -42,7 +73,7 @@ const initialState = {
   workspan: "",
   active: "",
   branchId: ""
-}
+};
 
 class Modal extends React.Component {
   constructor(props) {
@@ -55,6 +86,8 @@ class Modal extends React.Component {
     this.handleBranchSelected = this.handleBranchSelected.bind(this);
     this.saveServiceShift = this.saveServiceShift.bind(this);
     this.resetForm = this.resetForm.bind(this);
+    this.handleStartDateState = this.handleStartDateState.bind(this);
+    this.handleWorkspanDateState = this.handleWorkspanDateState.bind(this);
   }
   handleClickOpen(modal) {
     var x = [];
@@ -69,13 +102,36 @@ class Modal extends React.Component {
   }
 
   resetForm() {
-    this.setState({ serviceShift: initialState });
+    let serviceShift = Object.assign({}, initialState);
+    this.setState({ serviceShift});
   }
 
   handleServiceShiftState(event) {
     const field = event.target.name;
     const serviceShift = this.state.serviceShift;
     serviceShift[field] = event.target.value;
+    this.setState({ serviceShift });
+  }
+
+  handleStartDateState(event) {
+    const field = "begindate";
+    const serviceShift = this.state.serviceShift;
+    let date = new Date(event);
+    serviceShift[field] = date;
+    this.setState({ serviceShift });
+  }
+
+  handleWorkspanDateState(event) {
+    const field = "workspan";
+    const serviceShift = this.state.serviceShift;
+    let hours = new Date(event);
+
+    // let test = this.state.serviceShift.begindate;
+    // console.log("start", test);
+    // console.log("endHour", hours.toString().substring(16,21));
+    // console.log("final", test);
+
+    serviceShift[field] = hours;
     this.setState({ serviceShift });
   }
 
@@ -88,22 +144,36 @@ class Modal extends React.Component {
 
   saveServiceShift(addServiceShift) {
     this.handleClose("classicModal");
-    addServiceShift({
-      variables: {
-        begindate: this.state.serviceShift.begindate,
-        workspan: this.state.serviceShift.workspan,
-        active: this.state.serviceShift.active,
-        branchId: this.state.serviceShift.branchId
-      }
-    });
-    this.resetForm();
-    alert("Nuevo horario ha sido agregado");
-    window.location.reload();
-    this.props.history.push("/admin-page/serviceshifts");
+    console.log("this.state.serviceShift", this.state.serviceShift);
+    let begindate = this.state.serviceShift.begindate.toString();
+    let workspan = this.state.serviceShift.workspan.toString();
+    console.log("begindate", begindate);
+    console.log("workspan", workspan);
+    let str2rmv = begindate.substring(16, 21);
+    let str2put = workspan.substring(16, 21);
+    console.log("str2rmv", str2rmv);
+    console.log("str2put", str2put);
+    workspan = begindate.replace(str2rmv, str2put);
+    console.log("workspan", workspan);
+    console.log("this.state.serviceShift", this.state.serviceShift)
+
+    // addServiceShift({
+    //   variables: {
+    //     begindate: this.state.serviceShift.begindate.toIsoString(),
+    //     workspan: this.state.serviceShift.workspan,
+    //     active: this.state.serviceShift.active,
+    //     branchId: this.state.serviceShift.branchId
+    //   }
+    // });
+    // this.resetForm();
+    // alert("Nuevo horario ha sido agregado");
+    // window.location.reload();
+    // this.props.history.push("/admin-page/serviceshifts");
   }
 
   render() {
     const { classes } = this.props;
+    console.log("serviceShift", this.state.serviceShift);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -148,20 +218,20 @@ class Modal extends React.Component {
                     className={classes.modalBody}
                   >
                     <form>
-                      <CustomInput
+                      {/* <CustomInput
                         labelText="Inicio"
                         name="begindate"
                         value={this.state.serviceShift.begindate}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleServiceShiftState}
-                      />
-                      <CustomInput
+                      /> */}
+                      {/* <CustomInput
                         labelText="Fin"
                         name="workspan"
                         value={this.state.serviceShift.workspan}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleServiceShiftState}
-                      />
+                      /> */}
                       <CustomInput
                         labelText="Estado"
                         name="active"
@@ -169,6 +239,34 @@ class Modal extends React.Component {
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleServiceShiftState}
                       />
+
+                      <InputLabel className={classes.label}>Inicio de turno</InputLabel>
+                      <br />
+                      <FormControl fullWidth>
+                        <Datetime
+                          inputProps={{
+                            placeholder: "Fecha y hora de incio"
+                          }}
+                          value={null || this.state.serviceShift.begindate}
+                          onChange={this.handleStartDateState}
+                          renderInput={false}
+                        />
+                      </FormControl>
+                      <InputLabel className={classes.label}>
+                        Fin de turno
+                      </InputLabel>
+                      <br />
+                      <FormControl fullWidth>
+                        <Datetime
+                          dateFormat={false}
+                          inputProps={{
+                            placeholder: "Tiempo de servicio"
+                          }}
+                          value={this.state.serviceShift.workspan}
+                          onChange={this.handleWorkspanDateState}
+                        />
+                      </FormControl>
+
                       <Query query={GET_BRANCHES}>
                         {({ loading, error, data }) => {
                           if (loading) return <h4>Loading...</h4>;
@@ -193,13 +291,18 @@ class Modal extends React.Component {
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
-                    <Mutation mutation={NEW_SERVICESHIFT} update={updateCacheNew}>
-                      {(addServiceShift) => (
+                    <Mutation
+                      mutation={NEW_SERVICESHIFT}
+                      update={updateCacheNew}
+                    >
+                      {addServiceShift => (
                         <div>
                           <Button
                             color="transparent"
                             simple
-                            onClick={() => {this.saveServiceShift(addServiceShift)}}
+                            onClick={() => {
+                              this.saveServiceShift(addServiceShift);
+                            }}
                           >
                             Guardar
                           </Button>

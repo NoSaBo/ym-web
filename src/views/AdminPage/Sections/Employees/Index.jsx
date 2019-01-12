@@ -1,9 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Component } from "react";
-import EmployeeContainer from './EmployeeContainer';
+import EmployeeContainer from "./EmployeeContainer";
 import Add from "../../../../components/Modal/employee/Add";
-// import Components from '../../../Components/Components';
-
+// import Components from "../../../Components/Components";
 import { Query } from "react-apollo";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 
@@ -18,13 +17,13 @@ class IndexEmployee extends Component {
             if (error) return `Error ${error.message}`;
             return (
               <div>
-                <Add data={data}/>
-                <EmployeeContainer employees={data.employees}/>
+                <Add data={data} />
+                <EmployeeContainer employees={data.employees} />
               </div>
             );
           }}
         </Query>
-        {/* <Components/> */}
+        {/* <Components /> */}
       </div>
     );
   }

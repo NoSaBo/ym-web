@@ -45,7 +45,6 @@ class ServiceShiftModal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("this.props", this.props);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")} title="Detalles de horario">
