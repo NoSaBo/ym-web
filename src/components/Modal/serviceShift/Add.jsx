@@ -28,31 +28,31 @@ import { GET_SERVICESHIFTS } from "../../../queries/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
 
-Date.prototype.toIsoString = function() {
-  var tzo = -this.getTimezoneOffset(),
-    dif = tzo >= 0 ? "+" : "-",
-    pad = function(num) {
-      var norm = Math.floor(Math.abs(num));
-      return (norm < 10 ? "0" : "") + norm;
-    };
-  return (
-    this.getFullYear() +
-    "-" +
-    pad(this.getMonth() + 1) +
-    "-" +
-    pad(this.getDate()) +
-    "T" +
-    pad(this.getHours()) +
-    ":" +
-    pad(this.getMinutes()) +
-    ":" +
-    pad(this.getSeconds()) +
-    dif +
-    pad(tzo / 60) +
-    ":" +
-    pad(tzo % 60)
-  );
-};
+// Date.prototype.toIsoString = function() {
+//   var tzo = -this.getTimezoneOffset(),
+//     dif = tzo >= 0 ? "+" : "-",
+//     pad = function(num) {
+//       var norm = Math.floor(Math.abs(num));
+//       return (norm < 10 ? "0" : "") + norm;
+//     };
+//   return (
+//     this.getFullYear() +
+//     "-" +
+//     pad(this.getMonth() + 1) +
+//     "-" +
+//     pad(this.getDate()) +
+//     "T" +
+//     pad(this.getHours()) +
+//     ":" +
+//     pad(this.getMinutes()) +
+//     ":" +
+//     pad(this.getSeconds()) +
+//     dif +
+//     pad(tzo / 60) +
+//     ":" +
+//     pad(tzo % 60)
+//   );
+// };
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -88,6 +88,7 @@ class Modal extends React.Component {
     this.resetForm = this.resetForm.bind(this);
     this.handleStartDateState = this.handleStartDateState.bind(this);
     this.handleWorkspanDateState = this.handleWorkspanDateState.bind(this);
+    this.setRealTime = this.setRealTime.bind(this);
   }
   handleClickOpen(modal) {
     var x = [];
@@ -103,7 +104,11 @@ class Modal extends React.Component {
 
   resetForm() {
     let serviceShift = Object.assign({}, initialState);
-    this.setState({ serviceShift});
+    this.setState({ serviceShift });
+  }
+
+  setRealTime(time) {
+    return time.getTimezoneOffset();
   }
 
   handleServiceShiftState(event) {
@@ -124,14 +129,8 @@ class Modal extends React.Component {
   handleWorkspanDateState(event) {
     const field = "workspan";
     const serviceShift = this.state.serviceShift;
-    let hours = new Date(event);
-
-    // let test = this.state.serviceShift.begindate;
-    // console.log("start", test);
-    // console.log("endHour", hours.toString().substring(16,21));
-    // console.log("final", test);
-
-    serviceShift[field] = hours;
+    let date = new Date(event);
+    serviceShift[field] = date;
     this.setState({ serviceShift });
   }
 
@@ -144,36 +143,32 @@ class Modal extends React.Component {
 
   saveServiceShift(addServiceShift) {
     this.handleClose("classicModal");
-    console.log("this.state.serviceShift", this.state.serviceShift);
-    let begindate = this.state.serviceShift.begindate.toString();
-    let workspan = this.state.serviceShift.workspan.toString();
-    console.log("begindate", begindate);
+    let begindate = this.state.serviceShift.begindate;
+    begindate.setMinutes(
+      begindate.getMinutes() - begindate.getTimezoneOffset()
+    );
+    begindate = begindate.toISOString();
+    let workspan = this.state.serviceShift.workspan;
+    workspan.setMinutes(workspan.getMinutes() - workspan.getTimezoneOffset());
+    workspan = workspan.toISOString();
     console.log("workspan", workspan);
-    let str2rmv = begindate.substring(16, 21);
-    let str2put = workspan.substring(16, 21);
-    console.log("str2rmv", str2rmv);
-    console.log("str2put", str2put);
-    workspan = begindate.replace(str2rmv, str2put);
-    console.log("workspan", workspan);
-    console.log("this.state.serviceShift", this.state.serviceShift)
-
-    // addServiceShift({
-    //   variables: {
-    //     begindate: this.state.serviceShift.begindate.toIsoString(),
-    //     workspan: this.state.serviceShift.workspan,
-    //     active: this.state.serviceShift.active,
-    //     branchId: this.state.serviceShift.branchId
-    //   }
-    // });
-    // this.resetForm();
-    // alert("Nuevo horario ha sido agregado");
-    // window.location.reload();
-    // this.props.history.push("/admin-page/serviceshifts");
+    addServiceShift({
+      variables: {
+        begindate: begindate,
+        workspan: workspan,
+        active: this.state.serviceShift.active,
+        branchId: this.state.serviceShift.branchId
+      }
+    });
+    this.resetForm();
+    alert("Nuevo horario ha sido agregado");
+    window.location.reload();
+    this.props.history.push("/admin-page/serviceshifts");
   }
 
   render() {
     const { classes } = this.props;
-    console.log("serviceShift", this.state.serviceShift);
+    console.log("serviceShift-state", this.state.serviceShift);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -218,36 +213,16 @@ class Modal extends React.Component {
                     className={classes.modalBody}
                   >
                     <form>
-                      {/* <CustomInput
-                        labelText="Inicio"
-                        name="begindate"
-                        value={this.state.serviceShift.begindate}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleServiceShiftState}
-                      /> */}
-                      {/* <CustomInput
-                        labelText="Fin"
-                        name="workspan"
-                        value={this.state.serviceShift.workspan}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleServiceShiftState}
-                      /> */}
-                      <CustomInput
-                        labelText="Estado"
-                        name="active"
-                        value={this.state.serviceShift.active}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleServiceShiftState}
-                      />
-
-                      <InputLabel className={classes.label}>Inicio de turno</InputLabel>
+                      <InputLabel className={classes.label}>
+                        Inicio de turno
+                      </InputLabel>
                       <br />
                       <FormControl fullWidth>
                         <Datetime
                           inputProps={{
-                            placeholder: "Fecha y hora de incio"
+                            placeholder: "Fecha y hora de inicio"
                           }}
-                          value={null || this.state.serviceShift.begindate}
+                          value={this.state.serviceShift.begindate}
                           onChange={this.handleStartDateState}
                           renderInput={false}
                         />
@@ -258,15 +233,21 @@ class Modal extends React.Component {
                       <br />
                       <FormControl fullWidth>
                         <Datetime
-                          dateFormat={false}
+                          dateFormat={true}
                           inputProps={{
-                            placeholder: "Tiempo de servicio"
+                            placeholder: "Fecha y hora fin"
                           }}
                           value={this.state.serviceShift.workspan}
                           onChange={this.handleWorkspanDateState}
                         />
                       </FormControl>
-
+                      <CustomInput
+                        labelText="Estado"
+                        name="active"
+                        value={this.state.serviceShift.active}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.handleServiceShiftState}
+                      />
                       <Query query={GET_BRANCHES}>
                         {({ loading, error, data }) => {
                           if (loading) return <h4>Loading...</h4>;

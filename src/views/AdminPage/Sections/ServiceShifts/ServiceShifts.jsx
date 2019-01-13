@@ -11,6 +11,7 @@ import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 import ServiceShiftRow from "./ServiceShiftRow";
 import ModalAdd from "../../../../components/Modal/serviceShift/Add.jsx";
 
+
 class ServiceShifts extends Component {
   
   render() {

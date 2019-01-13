@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 export const NEW_SERVICESHIFT = gql`
   mutation addServiceShift(
     $begindate: DateTime!
-    $workspan: Time!
+    $workspan: DateTime!
     $active: Boolean!
     $branchId: ID!
   ) {
