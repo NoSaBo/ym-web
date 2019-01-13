@@ -9,13 +9,6 @@ import EmployeeTable from "./EmployeeTable";
 import Pagination from "../../../../components/Pagination/PaginationEngine";
 
 
-import FormControl from "@material-ui/core/FormControl";
-// import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import Datetime from "react-datetime";
-import InputLabel from "@material-ui/core/InputLabel";
-
-
 class EmployeeContainer extends Component {
   constructor(props) {
     super(props);
@@ -98,26 +91,6 @@ class EmployeeContainer extends Component {
         <div className={classes.flexTable}>
           <EmployeeTable currentEmployees={currentEmployees} />
         </div>
-        {/* <GridItem xs={12} sm={12} md={12}> */}
-          {/* <div className={classes.title}>
-            <h3>Datetime Picker</h3>
-          </div> */}
-          {/* <GridContainer> */}
-            <GridItem xs={12} sm={12} md={6}>
-              <InputLabel className={classes.label}>Inicio</InputLabel>
-              <br />
-              <FormControl fullWidth>
-                <Datetime
-                  inputProps={{ placeholder: "Fecha y hora de incio" }}
-                  value={"Thu Jan 13 2019 17:27:00 GMT-0500 (Peru Standard Time)"}
-                  onChange={(e) => {
-                    console.log("value", e.toDate());
-                  }}
-                />
-              </FormControl>
-            </GridItem>
-          {/* </GridContainer> */}
-         {/* </GridItem> */}
       </div>
     );
   }
