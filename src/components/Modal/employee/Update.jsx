@@ -26,27 +26,31 @@ function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
-class EmployeeModal extends React.Component {
+class UpdateModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classicModal: false,
-      togglePassword: "password"
+      togglePassword: "password",
+      employee: null
     };
-    this.updateEmployeeState = this.updateEmployeeState.bind(this);
+    this.handleChangeEmployee = this.handleChangeEmployee.bind(this);
     this.saveEmployee = this.saveEmployee.bind(this);
     this.togglePassword = this.togglePassword.bind(this);
+    this.resetEmployee = this.resetEmployee.bind(this);
   }
 
   handleClickOpen(modal) {
     var x = [];
     x[modal] = true;
     this.setState(x);
+    this.resetEmployee();
   }
   handleClose(modal) {
     var x = [];
     x[modal] = false;
     this.setState(x);
+    this.resetEmployee();
   }
 
   togglePassword() {
@@ -57,24 +61,39 @@ class EmployeeModal extends React.Component {
     }
   }
 
-  updateEmployeeState(event) {
+  handleChangeEmployee(event) {
     const field = event.target.name;
     let value = event.target.value;
-    // value = (value == "true") ? 1 : 0;
-    this.props.onChange(field, value);
+    if (field === "active") {
+      value = value === "true" ? true : false;
+    }
+    let employee = this.state.employee;
+    employee[field] = value;
+    this.setState({ employee });
+  }
+
+  resetEmployee() {
+    console.log("reset");
+    let employee = Object.assign({}, this.props.employee);
+    this.setState({
+      employee
+    });
   }
 
   saveEmployee(updateEmployee) {
     this.handleClose("classicModal");
-    let employee = this.props.employee;
+    let employee = this.state.employee;
     updateEmployee({ variables: employee });
     alert(employee.user + " have been updated!");
-    this.props.history.push("/admin-page/employees");
+  }
+
+  componentWillMount() {
+    this.resetEmployee();
   }
 
   render() {
     const { classes } = this.props;
-    const employee = this.props.employee;
+    const employee = this.state.employee;
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -128,14 +147,14 @@ class EmployeeModal extends React.Component {
                         name="firstname"
                         value={employee.firstname}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="Apellido"
                         name="lastname"
                         value={employee.lastname}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="Usuario"
@@ -150,7 +169,7 @@ class EmployeeModal extends React.Component {
                         value={employee.password}
                         type={this.state.togglePassword}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
+                        onChange={this.handleChangeEmployee}
                       />
                       <input type="checkbox" onClick={this.togglePassword} />
                       Mostrar password
@@ -159,21 +178,21 @@ class EmployeeModal extends React.Component {
                         name="phone"
                         value={employee.phone}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
+                        onChange={this.handleChangeEmployee}
                       />
                       <CustomInput
                         labelText="D.N.I"
                         name="dni"
                         value={employee.dni}
                         formControlProps={{ fullWidth: true }}
-                        onChange={this.updateEmployeeState}
+                        onChange={this.handleChangeEmployee}
                       />
                       <div>
                         <div>Estado</div>
                         <select
-                          onChange={this.updateEmployeeState}
+                          onChange={this.handleChangeEmployee}
                           name="active"
-                          defaultValue={employee.active}
+                          value={employee.active}
                         >
                           <option value={true}>Activo</option>
                           <option value={false}>Inactivo</option>
@@ -215,4 +234,4 @@ class EmployeeModal extends React.Component {
   }
 }
 
-export default withRouter(withStyles(javascriptStyles)(EmployeeModal));
+export default withRouter(withStyles(javascriptStyles)(UpdateModal));

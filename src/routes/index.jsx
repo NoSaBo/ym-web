@@ -3,7 +3,7 @@ import LandingPage from "views/LandingPage/LandingPage.jsx";
 import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 import AdminPage from "views/AdminPage/AdminPage.jsx";
-import Employees from "views/AdminPage/Sections/Employees/Employees.jsx";
+import Employees from "views/AdminPage/Sections/Employees/Index";
 import Branches from "views/AdminPage/Sections/Branches/Branches.jsx";
 import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/ServiceShifts.jsx";
 
