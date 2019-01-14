@@ -13,7 +13,6 @@ import Close from "@material-ui/icons/Close";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import CustomInput from "../../CustomInput/CustomInput.jsx";
 
 import Datetime from "react-datetime";
 import FormControl from "@material-ui/core/FormControl";
@@ -144,7 +143,7 @@ class Modal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("this.state.serviceshift", this.state.serviceShift);
+    // console.log("serviceShift", this.state.serviceShift);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
