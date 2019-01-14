@@ -185,7 +185,7 @@ class AddEmployee extends React.Component {
                       </select>
                     </form>
                     <form>
-                      <div>Empleados asignados</div>
+                      <div>Eliminar Empleados</div>
                       <select
                         onChange={this.handleEmployeeToDelete}
                         size={this.props.serviceShift.employees.length}

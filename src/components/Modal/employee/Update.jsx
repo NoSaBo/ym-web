@@ -22,6 +22,7 @@ import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
 //react-router
 import { withRouter } from "react-router-dom";
 
+
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
@@ -73,7 +74,6 @@ class UpdateModal extends React.Component {
   }
 
   resetEmployee() {
-    console.log("reset");
     let employee = Object.assign({}, this.props.employee);
     this.setState({
       employee
@@ -91,9 +91,14 @@ class UpdateModal extends React.Component {
     this.resetEmployee();
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log("nextProps.employee", nextProps.employee);
+  }
+
   render() {
     const { classes } = this.props;
     const employee = this.state.employee;
+    console.log("this.props", this.props);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>

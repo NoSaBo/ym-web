@@ -16,6 +16,9 @@ import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
 import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
+import Moment from "react-moment";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
 //react-router
 import { withRouter } from "react-router-dom";
 
@@ -45,10 +48,12 @@ class ServiceShiftModal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("this.props", this.props);
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")} title="Detalles de horario">
+        <div
+          onClick={() => this.handleClickOpen("classicModal")}
+          title="Detalles de horario"
+        >
           <Badge color="info">
             <i className="material-icons">zoom_in</i>
           </Badge>
@@ -92,29 +97,44 @@ class ServiceShiftModal extends React.Component {
                     className={classes.modalBody}
                   >
                     <form>
-                      <CustomInput
-                        labelText="Inicio"
-                        name="begindate"
-                        value={this.state.serviceShift.begindate}
-                        formControlProps={{ fullWidth: true }}
-                      />
-                      <CustomInput
-                        labelText="Fin"
-                        name="workspan"
-                        value={this.state.serviceShift.workspan}
-                        formControlProps={{ fullWidth: true }}
-                      />
+                      <InputLabel className={classes.label}>
+                        Inicio de turno
+                      </InputLabel>
+                      <br />
+                      <FormControl fullWidth>
+                        <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
+                          {this.state.serviceShift.begindate}
+                        </Moment>
+                      </FormControl>
+                      <br />
+                      <br />
+                      <InputLabel className={classes.label}>
+                        Fin de turno
+                      </InputLabel>
+                      <br />
+                      <FormControl fullWidth>
+                        <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
+                          {this.state.serviceShift.workspan}
+                        </Moment>
+                      </FormControl>
+                      <br />
+                      <br />
                       <div>
                         <div>Empleado asignado</div>
                         <ul>
-                        { (this.state.serviceShift.employees === undefined)
-                          ? null
-                          :(this.state.serviceShift.employees.map(employee => {
-                          return (
-                            <li key={employee.user}>{employee.firstname + " " + employee.lastname}</li>
-                          );
-                        }))
-                        }
+                          {this.state.serviceShift.employees === undefined
+                            ? null
+                            : this.state.serviceShift.employees.map(
+                                employee => {
+                                  return (
+                                    <li key={employee.user}>
+                                      {employee.firstname +
+                                        " " +
+                                        employee.lastname}
+                                    </li>
+                                  );
+                                }
+                              )}
                         </ul>
                       </div>
                       <CustomInput
@@ -126,7 +146,7 @@ class ServiceShiftModal extends React.Component {
                       <CustomInput
                         labelText="Estado"
                         name="active"
-                        value={this.state.serviceShift.active}
+                        value={this.state.serviceShift.active ? "Activo" : "Inactivo"}
                         formControlProps={{ fullWidth: true }}
                       />
                     </form>
