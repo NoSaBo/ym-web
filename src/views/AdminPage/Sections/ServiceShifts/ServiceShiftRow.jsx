@@ -8,6 +8,7 @@ import ServiceShiftPageStyle from "assets/jss/material-kit-react/views/serviceSh
 import Badge from "../../../../components/Badge/Badge.jsx";
 import ModalDisplay from "../../../../components/Modal/serviceShift/Display.jsx";
 import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
+import UpdateModal from "../../../../components/Modal/serviceShift/Update.jsx";
 import Moment from "react-moment";
 // import Modal from "../../../../components/Modal/serviceShift/Add.jsx";
 // queries and mutations with react-apollo
@@ -44,8 +45,18 @@ class ServiceShiftRow extends Component {
     return (
       <tr>
         <td> {index} </td>
-        <td> <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>{serviceShift.begindate}</Moment></td>
-        <td> <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>{serviceShift.workspan}</Moment></td>
+        <td>
+          {" "}
+          <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
+            {serviceShift.begindate}
+          </Moment>
+        </td>
+        <td>
+          {" "}
+          <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
+            {serviceShift.workspan}
+          </Moment>
+        </td>
         <td> {serviceShift.active ? "Activo" : "Inactivo"} </td>
         <td
           className={classNames(
@@ -59,7 +70,7 @@ class ServiceShiftRow extends Component {
           </div>
           <Query query={GET_EMPLOYEES}>
             {({ loading, error, data }) => {
-              if (loading) return <h4>Loading...</h4>
+              if (loading) return <h4>Loading...</h4>;
               if (error) console.log("Query error: ", error);
               return (
                 <div>
@@ -71,9 +82,8 @@ class ServiceShiftRow extends Component {
               );
             }}
           </Query>
-
           {/* <div>
-            <Modal modalType="edit" serviceShift={serviceShift} />
+            <UpdateModal serviceShift={serviceShift} />
           </div> */}
           <div>
             <Mutation mutation={DELETE_SERVICESHIFT} update={updateCacheDelete}>
