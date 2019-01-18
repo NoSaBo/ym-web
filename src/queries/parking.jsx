@@ -12,6 +12,12 @@ export const GET_PARKINGS = gql`
       sign
       token
       returned
+      serviceshift{
+        begindate
+        branch{
+          branch
+        }
+      }
     }
   }
 `;

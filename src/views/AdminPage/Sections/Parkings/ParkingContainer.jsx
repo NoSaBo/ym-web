@@ -8,7 +8,6 @@ import classNames from "classnames";
 import ParkingTable from "./ParkingTable";
 import Pagination from "../../../../components/Pagination/PaginationEngine";
 
-
 class ParkingContainer extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +34,10 @@ class ParkingContainer extends Component {
     this.setState({ currentPage, currentParkings, totalPages });
   };
 
+  // onSearchStart() {
+  //   this.setState({allParkings});
+  // }
+
   render() {
     const {
       allParkings,
@@ -53,9 +56,12 @@ class ParkingContainer extends Component {
     ]
       .join(" ")
       .trim();
-
+    console.log("currentParkings", currentParkings);
     return (
-      <div>
+      <div className={classes.ParkingContainer}>
+
+          <ParkingTable currentParkings={currentParkings}/>
+
         <div className={classes.flexParent}>
           <div
             className={classNames(
@@ -66,7 +72,7 @@ class ParkingContainer extends Component {
             )}
           >
             <h2 className={headerClass}>
-              <strong className="text-secondary">{totalEmployees}</strong>{" "}
+              <strong className="text-secondary">{totalParkings}</strong>{" "}
               Parqueos
             </h2>
 
@@ -86,10 +92,6 @@ class ParkingContainer extends Component {
               onPageChanged={this.onPageChanged}
             />
           </div>
-        </div>
-
-        <div className={classes.flexTable}>
-          <ParkingTable currentParkings={currentParkings} />
         </div>
       </div>
     );

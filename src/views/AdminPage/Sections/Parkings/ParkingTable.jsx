@@ -1,17 +1,25 @@
 import React from "react";
-import Row from "../Employees/Row";
+// nodejs library that concatenates classes
+import classNames from "classnames";
+// @material-ui/core & style components
+import withStyles from "@material-ui/core/styles/withStyles";
+import ParkingsPageStyle from "assets/jss/material-kit-react/views/parkingPage";
+// core components
+import Row from "./Row";
 
 
-const ParkingsTable = ({ currentParkings }) => {
+const ParkingsTable = ({ currentParkings }, classes) => {
+  console.log("classes", classes);
   return (
-    <div>
-      <table>
-        <thead>
+      <table width="100%">
+        <thead align="center">
           <tr>
-            <th>#</th>
-            <th>OWNER</th>
-            <th>TOKEN</th>
-            <th>RETURNED</th>
+            <th style={{padding:"1%"}}>#</th>
+            <th>HORARIO</th>
+            <th>SEDE</th>
+            <th>PROPIETARIO</th>
+            <th>RETORNADO</th>
+            <th>DETALLES</th>
           </tr>
         </thead>
         <tbody>
@@ -25,8 +33,7 @@ const ParkingsTable = ({ currentParkings }) => {
           ))}
         </tbody>
       </table>
-    </div>
   );
 };
 
-export default ParkingsTable;
+export default withStyles(ParkingsPageStyle)(ParkingsTable);

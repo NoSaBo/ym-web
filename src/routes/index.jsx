@@ -20,7 +20,8 @@ var indexRoutes = [
     path: "/admin-page/serviceshifts",
     name: "ServiceShifts",
     component: ServiceShifts
-  }
+  },
+  { path: "/admin-page/parkings", name:"Parkings", component: Parkings }
 ];
 
 export default indexRoutes;
