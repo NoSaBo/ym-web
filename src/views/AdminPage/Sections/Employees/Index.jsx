@@ -2,7 +2,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Component } from "react";
 import EmployeeContainer from "./EmployeeContainer";
 import Add from "../../../../components/Modal/employee/Add";
-// import Components from "../../../Components/Components";
 import { Query } from "react-apollo";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 
@@ -23,7 +22,6 @@ class IndexEmployee extends Component {
             );
           }}
         </Query>
-        {/* <Components /> */}
       </div>
     );
   }

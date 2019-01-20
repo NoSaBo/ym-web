@@ -8,7 +8,6 @@ import DisplayModal from "../../../../components/Modal/parking/Display";
 var moment = require("moment");
 
 const Row = ({ index, parking, classes }) => {
-  console.log("classes", classes);
   return (
     <tr className={classes.tr}>
       <td className={classes.td}> {index + 1} </td>

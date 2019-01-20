@@ -34,9 +34,6 @@ class ParkingContainer extends Component {
     this.setState({ currentPage, currentParkings, totalPages });
   };
 
-  // onSearchStart() {
-  //   this.setState({allParkings});
-  // }
 
   render() {
     const {
@@ -56,7 +53,9 @@ class ParkingContainer extends Component {
     ]
       .join(" ")
       .trim();
-    console.log("currentParkings", currentParkings);
+    // console.log("currentParkings", currentParkings);
+    // console.log("this.props.branches", this.props.branches);
+    // console.log("this.props.serviceShifts", this.props.serviceShifts);
     return (
       <div className={classes.ParkingContainer}>
 

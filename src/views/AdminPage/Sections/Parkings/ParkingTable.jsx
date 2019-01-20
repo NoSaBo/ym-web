@@ -1,6 +1,6 @@
 import React from "react";
 // nodejs library that concatenates classes
-import classNames from "classnames";
+// import classNames from "classnames";
 // @material-ui/core & style components
 import withStyles from "@material-ui/core/styles/withStyles";
 import ParkingsPageStyle from "assets/jss/material-kit-react/views/parkingPage";
@@ -9,7 +9,6 @@ import Row from "./Row";
 
 
 const ParkingsTable = ({ currentParkings }, classes) => {
-  console.log("classes", classes);
   return (
       <table width="100%">
         <thead align="center">
