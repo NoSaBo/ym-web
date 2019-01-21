@@ -15,6 +15,7 @@ export const GET_PARKINGS = gql`
       serviceshift{
         begindate
         branch{
+          id
           branch
         }
       }
