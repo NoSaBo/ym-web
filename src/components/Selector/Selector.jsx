@@ -28,6 +28,10 @@ class SimpleSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      selection: {
+        branch: "",
+        serviceShift: ""
+      },
       branches: null,
       branch: null,
       serviceShifts: null
@@ -40,20 +44,27 @@ class SimpleSelect extends React.Component {
   }
 
   handleChange = event => {
-      event.preventDefault();
-    const idSelected = event.target.value;
-    const branch = this.state.branches.find(branch => {
-      if (branch.id === idSelected) return branch;
-    });
-    this.setState({ branch });
-    this.props.onFilterChanged(idSelected);
+    event.preventDefault();
+    let selection = this.state.selection;
+    selection[event.target.name] = event.target.value;
+    this.setState({ selection });
+    const branchId = this.state.selection.branch;
+    const serviceshiftId = this.state.selection.serviceShift;
+    // let result = null;
+    // const branch = this.state.branches.find(branch => {
+    //   if (branch.id === idSelected) {
+    //     result = branch;
+    //   }
+    //   return result;
+    // });
+    // this.setState({ branch });
+    this.props.onFilterChanged(branchId, serviceshiftId);
   };
 
   render() {
     const { classes } = this.props;
     const { branches, serviceShifts } = this.state;
-    // console.log("this.state.branch", this.state.branch);
-    // console.log("this.state.serviceshifts", this.state.serviceShifts);
+    console.log("selection", this.state.selection);
     return (
       <form className={classes.root} autoComplete="off">
         <FormControl className={classes.formControl}>
@@ -75,9 +86,9 @@ class SimpleSelect extends React.Component {
           </Select>
           <FormHelperText>Filtrar por Sede</FormHelperText>
         </FormControl>
-        {/* <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl}>
           <Select
-            value={this.state.age}
+            value="to be defined"
             onChange={this.handleChange}
             displayEmpty
             name="serviceShift"
@@ -86,12 +97,14 @@ class SimpleSelect extends React.Component {
             <MenuItem value="">
               <em>Todos</em>
             </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
+            {serviceShifts.map((serviceshift, index) => (
+              <MenuItem key={index} value={serviceshift.id}>
+                {serviceshift.begindate}
+              </MenuItem>
+            ))}
           </Select>
           <FormHelperText>Filtrar por Horario</FormHelperText>
-        </FormControl> */}
+        </FormControl>
       </form>
     );
   }
