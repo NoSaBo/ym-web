@@ -27,17 +27,17 @@ class ParkingContainer extends Component {
   onFilterChanged = (branchId, serviceshiftId) => {
     const allParkings = this.props.parkings;
     let newAllParkings = "";
-    if (serviceshiftId === "" && branchId === "") {
+    if (serviceshiftId === "x" && branchId === "x") {
       newAllParkings = allParkings;
-    } else if (branchId === "" && serviceshiftId !== "") {
+    } else if (branchId === "x" && serviceshiftId !== "x") {
       newAllParkings = allParkings.filter(
         parking => parking.serviceshift.id === serviceshiftId
       );
-    } else if (serviceshiftId === "" && branchId !== "") {
+    } else if (serviceshiftId === "x" && branchId !== "x") {
       newAllParkings = allParkings.filter(
         parking => parking.serviceshift.branch.id === branchId
       );
-    } else if (serviceshiftId !== "" && branchId !== "") {
+    } else if (serviceshiftId !== "x" && branchId !== "x") {
       newAllParkings = allParkings
         .filter(parking => parking.serviceshift.id === serviceshiftId)
         .filter(parking => parking.serviceshift.branch.id === branchId);

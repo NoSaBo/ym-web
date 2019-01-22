@@ -1,14 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-// import Input from "@material-ui/core/Input";
-// import OutlinedInput from "@material-ui/core/OutlinedInput";
-// import FilledInput from "@material-ui/core/FilledInput";
-// import InputLabel from "@material-ui/core/InputLabel";
+import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+
+var moment = require("moment");
 
 const styles = theme => ({
   root: {
@@ -29,8 +28,8 @@ class SimpleSelect extends React.Component {
     super(props);
     this.state = {
       selection: {
-        branch: "",
-        serviceShift: ""
+        branch: "x",
+        serviceShift: "x"
       },
       branches: null,
       branch: null,
@@ -50,33 +49,26 @@ class SimpleSelect extends React.Component {
     this.setState({ selection });
     const branchId = this.state.selection.branch;
     const serviceshiftId = this.state.selection.serviceShift;
-    // let result = null;
-    // const branch = this.state.branches.find(branch => {
-    //   if (branch.id === idSelected) {
-    //     result = branch;
-    //   }
-    //   return result;
-    // });
-    // this.setState({ branch });
     this.props.onFilterChanged(branchId, serviceshiftId);
   };
 
   render() {
     const { classes } = this.props;
     const { branches, serviceShifts } = this.state;
-    console.log("selection", this.state.selection);
     return (
       <form className={classes.root} autoComplete="off">
         <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="branch-simple">Sede</InputLabel>
           <Select
-            value="to be defined"
+            value={this.state.selection.branch}
             onChange={this.handleChange}
-            displayEmpty
-            name="branch"
-            className={classes.selectEmpty}
+            inputProps={{
+              name: "branch",
+              id: "branch-simple"
+            }}
           >
-            <MenuItem value="">
-              <em>Todos</em>
+            <MenuItem value="x">
+              <em>Todas</em>
             </MenuItem>
             {branches.map((branch, index) => (
               <MenuItem key={index} value={branch.id}>
@@ -87,19 +79,23 @@ class SimpleSelect extends React.Component {
           <FormHelperText>Filtrar por Sede</FormHelperText>
         </FormControl>
         <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="serviceShift-simple">Horario</InputLabel>
           <Select
-            value="to be defined"
+            value={this.state.selection.serviceShift}
             onChange={this.handleChange}
-            displayEmpty
-            name="serviceShift"
-            className={classes.selectEmpty}
+            inputProps={{
+              name: "serviceShift",
+              id: "serviceShift-simple"
+            }}
           >
-            <MenuItem value="">
+            <MenuItem value="x">
               <em>Todos</em>
             </MenuItem>
             {serviceShifts.map((serviceshift, index) => (
               <MenuItem key={index} value={serviceshift.id}>
-                {serviceshift.begindate}
+                {moment(serviceshift.begindate)
+                  .add(5, "hours")
+                  .format("YYYY-MM-DD HH:mm")}
               </MenuItem>
             ))}
           </Select>
