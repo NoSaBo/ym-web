@@ -11,19 +11,25 @@ const Row = ({ index, empxsrv, classes }) => {
   return (
     <tr className={classes.tr}>
       <td className={classes.td}> {index + 1} </td>
-      <td> {empxsrv.employeeId} </td>
-      <td> {empxsrv.serviceshiftId} </td>
+      <td> {empxsrv.employeeName} </td>
+      <td> {empxsrv.branchName} </td>
       <td>
-        {" "}
-        {moment(empxsrv.start)
+        {moment(empxsrv.begindate)
           .add(5, "hours")
-          .format("YYYY-MM-DD HH:mm")}{" "}
+          .format("YYYY-MM-DD HH:mm")}
+      </td>
+      <td>
+        { empxsrv.start !== null
+          ? moment(empxsrv.start)
+          .add(5, "hours")
+          .format("YYYY-MM-DD HH:mm")
+          : "SIN INICIO"}
       </td>
       <td> {empxsrv.comment} </td>
       <td>
-        {/* <div>
+        <div>
           <DisplayModal empxsrv={empxsrv} />
-        </div> */}
+        </div>
       </td>
     </tr>
   );

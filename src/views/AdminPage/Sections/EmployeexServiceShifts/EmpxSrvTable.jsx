@@ -15,6 +15,7 @@ const EmpxSrvTable = ({ currentEmpxSrvs }, classes) => {
           <tr>
             <th style={{padding:"1%"}}>#</th>
             <th>EMPLEADO</th>
+            <th>SEDE</th>
             <th>HORARIO</th>
             <th>INICIO</th>
             <th>COMENTARIO</th>
@@ -24,7 +25,6 @@ const EmpxSrvTable = ({ currentEmpxSrvs }, classes) => {
           {currentEmpxSrvs.map((empxsrv, index) => (
             <Row
               key={index}
-              value={empxsrv}
               index={index}
               empxsrv={empxsrv}
             />

@@ -25,29 +25,93 @@ class EmpxSrvContainer extends Component {
   }
 
   onFilterChanged = (branchId, serviceshiftId) => {
-    const allParkings = this.props.parkings;
-    let newAllParkings = "";
+    let allEmpxSrv = this.props.empxsrvs;
+    this.buildNewAllEmpxSrv(allEmpxSrv);
+    let newAllEmpxsrvs = "";
     if (serviceshiftId === "x" && branchId === "x") {
-      newAllParkings = allParkings;
+      newAllEmpxsrvs = allEmpxSrv;
     } else if (branchId === "x" && serviceshiftId !== "x") {
-      newAllParkings = allParkings.filter(
-        parking => parking.serviceshift.id === serviceshiftId
+      newAllEmpxsrvs = allEmpxSrv.filter(
+        empxsrvs => empxsrvs.serviceshiftId === serviceshiftId
       );
     } else if (serviceshiftId === "x" && branchId !== "x") {
-      newAllParkings = allParkings.filter(
-        parking => parking.serviceshift.branch.id === branchId
+      newAllEmpxsrvs = allEmpxSrv.filter(
+        empxsrvs => empxsrvs.branchId === branchId
       );
     } else if (serviceshiftId !== "x" && branchId !== "x") {
-      newAllParkings = allParkings
-        .filter(parking => parking.serviceshift.id === serviceshiftId)
-        .filter(parking => parking.serviceshift.branch.id === branchId);
+      newAllEmpxsrvs = allEmpxSrv
+        .filter(empxsrvs => empxsrvs.serviceshiftId === serviceshiftId)
+        .filter(empxsrvs => empxsrvs.branchId === branchId);
     }
-    this.setState({ allParkings: newAllParkings });
+    this.setState({ allEmpxSrv: newAllEmpxsrvs });
   };
+
+  getBranchName(serviceshiftId) {
+    let serviceshift = "";
+    serviceshift = this.state.serviceShifts.filter(
+      serviceshift => serviceshift.id === serviceshiftId
+    );
+    let branchName = serviceshift[0].branch.branch;
+    let branchId = serviceshift[0].branch.id;
+    serviceshift = {};
+    serviceshift["branchName"] = branchName;
+    serviceshift["branchId"] = branchId;
+    return serviceshift;
+  }
+
+  getBegindate(serviceshiftId) {
+    let serviceshift = "";
+    serviceshift = this.state.serviceShifts.filter(
+      serviceshift => serviceshift.id === serviceshiftId
+    );
+    let begindate = serviceshift[0].begindate;
+    return begindate;
+  }
+
+  getEmployeeName(employeeId) {
+    let arrEmployees = [];
+    let employeeName = [];
+    this.state.serviceShifts.map(serviceshift => {
+      serviceshift.employees.map(employee =>
+        arrEmployees.push({ ...employee })
+      );
+      return null;
+    });
+    arrEmployees = this.removeDuplicates(arrEmployees, "id");
+    employeeName = arrEmployees.filter(employee => employee.id === employeeId);
+    employeeName = `${employeeName[0].firstname} ${employeeName[0].lastname}`
+    return employeeName;
+  }
+
+  removeDuplicates(originalArray, prop) {
+    var newArray = [];
+    var lookupObject = {};
+    for (var i in originalArray) {
+      lookupObject[originalArray[i][prop]] = originalArray[i];
+    }
+    for (i in lookupObject) {
+      newArray.push(lookupObject[i]);
+    }
+    return newArray;
+  }
+
+  buildNewAllEmpxSrv(allEmpxSrv) {
+    allEmpxSrv.map(empxsrv => {
+      let branch = this.getBranchName(empxsrv.serviceshiftId);
+      let begindate = this.getBegindate(empxsrv.serviceshiftId);
+      let employeeName = this.getEmployeeName(empxsrv.employeeId);
+      empxsrv["branchName"] = branch.branchName;
+      empxsrv["branchId"] = branch.branchId;
+      empxsrv["begindate"] = begindate;
+      empxsrv["employeeName"] = employeeName;
+      return null;
+    });
+  }
 
   render() {
     const { allEmpxSrv } = this.state;
     const { classes } = this.props;
+    this.buildNewAllEmpxSrv(allEmpxSrv);
     return (
       <div className={classes.EmpxSrvContainer}>
         <Selector

@@ -29,7 +29,6 @@ class IndexEmployeexServiceShifts extends Component {
                           {({ loading, error, data }) => {
                             if (loading) return "Loading";
                             if (error) return `Error ${error.message}`;
-                            console.log(data);
                             return (
                               <EmpxSrvContainer
                                 empxsrvs={data.employeesxserviceshifts}
