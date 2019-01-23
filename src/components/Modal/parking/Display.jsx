@@ -51,6 +51,9 @@ class ParkingModal extends React.Component {
     begindate = moment(begindate)
       .add(5, "hours")
       .format("YYYY-MM-DD HH:mm");
+    let values = this.props.parking.values === null
+      ? "Ninguna"
+      : this.props.parking.values.join(', ');
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -126,11 +129,7 @@ class ParkingModal extends React.Component {
                       <CustomInput
                         labelText="Cosas de Valor"
                         name="values"
-                        value={
-                          this.props.parking.values
-                            ? this.props.parking.values
-                            : "ninguna"
-                        }
+                        value={values}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
