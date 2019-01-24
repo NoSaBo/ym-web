@@ -9,7 +9,7 @@ import Badge from "../../../../components/Badge/Badge.jsx";
 import ModalDisplay from "../../../../components/Modal/serviceShift/Display.jsx";
 import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
 import Moment from "react-moment";
-// import Modal from "../../../../components/Modal/serviceShift/Add.jsx";
+import ModalUpdate from "../../../../components/Modal/serviceShift/Update.jsx";
 // queries and mutations with react-apollo
 import { Query, Mutation } from "react-apollo";
 import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
@@ -72,9 +72,9 @@ class ServiceShiftRow extends Component {
             }}
           </Query>
 
-          {/* <div>
-            <Modal modalType="edit" serviceShift={serviceShift} />
-          </div> */}
+          <div>
+            <ModalUpdate serviceshift={serviceShift} />
+          </div>
           <div>
             <Mutation mutation={DELETE_SERVICESHIFT} update={updateCacheDelete}>
               {deleteServiceShift => (

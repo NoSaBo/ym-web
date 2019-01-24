@@ -93,3 +93,31 @@ export const DELETE_EMPLOYEE_FROM_SERVICESHIFT = gql`
     }
   }
 `;
+
+
+export const UPDATE_SERVICESHIFT = gql`
+mutation updateServiceShift(
+  $id: ID!
+  $begindate: DateTime!
+  $workspan: DateTime!
+  $active: Boolean!
+  $branchId: ID!
+){
+  updateServiceShift(
+    id: $id
+    begindate: $begindate
+    workspan: $workspan
+    active: $active
+    branchId: $branchId
+  ) {
+    id
+    begindate
+    workspan
+    active
+    branch{
+      id
+      branch
+    }
+  }
+}
+`;
