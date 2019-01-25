@@ -38,27 +38,19 @@ class BranchRow extends Component {
     const index = parseInt(this.props.index, 10) + 1;
     const { classes } = this.props;
     return (
-      <tr>
-        <td> {index} </td>
+      <tr className={classes.tr}>
+        <td className={classes.td}> {index} </td>
         <td> {branch.branch} </td>
         <td> {branch.address} </td>
         <td> {branch.contact} </td>
         <td> {branch.phone} </td>
         <td> {branch.active ? "Activo" : "Inactivo"} </td>
-        <td
-          className={classNames(
-            "td-actions",
-            "text-right",
-            classes.flexContainerActions
-          )}
-        >
-          <div>
+        <td className={classNames(classes.flexContainerActions, classes.td)}>
+
             <Modal modalType="display" branch={branch} />
-          </div>
-          <div>
+
             <Modal modalType="edit" branch={branch} />
-          </div>
-          <div>
+
             <Mutation mutation={DELETE_BRANCH} update={updateCacheDelete}>
               {deleteBranch => (
                 <Badge
@@ -69,7 +61,7 @@ class BranchRow extends Component {
                 </Badge>
               )}
             </Mutation>
-          </div>
+
         </td>
       </tr>
     );

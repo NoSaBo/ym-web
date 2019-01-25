@@ -1,4 +1,7 @@
+import GeneralViewStyle from "assets/jss/material-kit-react/views/GeneralViewStyle.jsx";
+
 const employeePageStyle = {
+  ...GeneralViewStyle,
   flexParent: {
     marginTop: "5%",
     display: "flex",
@@ -15,21 +18,6 @@ const employeePageStyle = {
     marginTop: "5%",
     display: "flex",
     justifyContent: "space-around"
-  },
-  flexContainerNew: {
-    display: "flex",
-    // flexFlow: "row wrap",
-    // justifyContent: "left",
-    alignItems: "center"
-  },
-  divMargin: {
-    margin: "5px"
-  },
-  flexContainerActions: {
-    display: "flex",
-    flexFlow: "row wrap",
-    justifyContent: "left",
-    alignItems: "center"
   },
   alignNewDiv: {
     display: "flex",

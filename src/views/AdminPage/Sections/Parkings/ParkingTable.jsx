@@ -8,7 +8,7 @@ import ParkingsPageStyle from "assets/jss/material-kit-react/views/parkingPage";
 import Row from "./Row";
 
 
-const ParkingsTable = ({ currentParkings }, classes) => {
+const ParkingsTable = ({ currentParkings }) => {
   return (
       <table width="100%">
         <thead align="center">

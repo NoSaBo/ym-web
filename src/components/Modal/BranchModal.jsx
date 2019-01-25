@@ -32,15 +32,17 @@ class BranchModal extends React.Component {
     super(props);
     this.state = {
       classicModal: false,
-      branch: this.props.branch? this.props.branch : ({
-          branch: "",
-          address: "",
-          latitude: "",
-          longitude: "",
-          contact: "",
-          phone: "",
-          active: ""
-        })
+      branch: this.props.branch
+        ? this.props.branch
+        : {
+            branch: "",
+            address: "",
+            latitude: "",
+            longitude: "",
+            contact: "",
+            phone: "",
+            active: ""
+          }
     };
     this.updateBranchState = this.updateBranchState.bind(this);
     this.saveBranch = this.saveBranch.bind(this);
@@ -99,7 +101,14 @@ class BranchModal extends React.Component {
     let branch = "";
     if (this.props.modalType === "new") {
       title = "Nueva Sede";
-      modalLayout = <Button color="info">+ Crear</Button>;
+      modalLayout = (
+        <Button
+          color="info"
+          onClick={() => this.handleClickOpen("classicModal")}
+        >
+          + Crear
+        </Button>
+      );
     } else if (this.props.modalType === "display") {
       title = "Mostrar Sede";
       modalLayout = (
@@ -120,9 +129,7 @@ class BranchModal extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          {modalLayout}
-        </div>
+        {modalLayout}
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -165,49 +172,63 @@ class BranchModal extends React.Component {
                       <CustomInput
                         labelText="Sede"
                         name="branch"
-                        value={branch? branch.branch : this.state.branch.branch}
+                        value={
+                          branch ? branch.branch : this.state.branch.branch
+                        }
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Dirección"
                         name="address"
-                        value={branch? branch.address : this.state.branch.address}
+                        value={
+                          branch ? branch.address : this.state.branch.address
+                        }
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Latitud"
                         name="latitude"
-                        value={branch? branch.latitude : this.state.branch.latitude}
+                        value={
+                          branch ? branch.latitude : this.state.branch.latitude
+                        }
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Longitud"
                         name="longitude"
-                        value={branch? branch.longitude : this.state.branch.longitude}
+                        value={
+                          branch
+                            ? branch.longitude
+                            : this.state.branch.longitude
+                        }
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Contacto"
                         name="contact"
-                        value={branch? branch.contact : this.state.branch.contact}
+                        value={
+                          branch ? branch.contact : this.state.branch.contact
+                        }
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Teléfono"
                         name="phone"
-                        value={branch? branch.phone : this.state.branch.phone}
+                        value={branch ? branch.phone : this.state.branch.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
                       <CustomInput
                         labelText="Estado"
                         name="active"
-                        value={branch? branch.active : this.state.branch.active}
+                        value={
+                          branch ? branch.active : this.state.branch.active
+                        }
                         formControlProps={{ fullWidth: true }}
                         onChange={this.updateBranchState}
                       />
@@ -226,9 +247,9 @@ class BranchModal extends React.Component {
                         });
                       }}
                     >
-                      {(addBranch) => (
+                      {addBranch => (
                         <div>
-                          { !(this.props.modalType === "display") && (
+                          {!(this.props.modalType === "display") && (
                             <Button
                               color="transparent"
                               simple
@@ -246,8 +267,7 @@ class BranchModal extends React.Component {
                                   }
                                 });
                                 alert(
-                                  this.state.branch.branch +
-                                    " have been added!"
+                                  this.state.branch.branch + " have been added!"
                                 );
                                 this.saveBranch();
                               }}

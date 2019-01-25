@@ -85,20 +85,17 @@ class UpdateModal extends React.Component {
     let employee = this.state.employee;
     updateEmployee({ variables: employee });
     alert(employee.user + " have been updated!");
+    window.location.reload();
+    this.props.history.push("/admin-page/employees");
   }
 
   componentWillMount() {
     this.resetEmployee();
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log("nextProps.employee", nextProps.employee);
-  }
-
   render() {
     const { classes } = this.props;
     const employee = this.state.employee;
-    console.log("this.props", this.props);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
