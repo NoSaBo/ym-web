@@ -106,9 +106,10 @@ class EmployeeModal extends React.Component {
       }
     });
     alert(`${employee.user} have been added!`);
-
     this.handleClose("classicModal");
     this.resetEmployeeForm();
+    window.location.reload();
+    this.props.history.push("/admin-page/employees");
   }
 
   resetEmployeeForm() {

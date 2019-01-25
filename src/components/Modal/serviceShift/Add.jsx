@@ -143,6 +143,8 @@ class Modal extends React.Component {
 
   render() {
     const { classes } = this.props;
+    let widthTmpFix = "lorem";
+    widthTmpFix = widthTmpFix.repeat(8);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -186,6 +188,7 @@ class Modal extends React.Component {
                     id="classic-modal-slide-description"
                     className={classes.modalBody}
                   >
+                    <span style={{ opacity: "0" }}>{widthTmpFix}</span>
                     <form>
                       <InputLabel className={classes.label}>
                         Inicio de turno

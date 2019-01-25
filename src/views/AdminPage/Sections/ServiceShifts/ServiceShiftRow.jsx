@@ -42,24 +42,28 @@ class ServiceShiftRow extends Component {
     const index = parseInt(this.props.index, 10) + 1;
     const { classes } = this.props;
     return (
-      <tr>
-        <td> {index} </td>
-        <td> <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>{serviceShift.begindate}</Moment></td>
-        <td> <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>{serviceShift.workspan}</Moment></td>
+      <tr className={classes.tr}>
+        <td className={classes.td}> {index + 1} </td>
+        <td>
+          {" "}
+          <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
+            {serviceShift.begindate}
+          </Moment>
+        </td>
+        <td>
+          {" "}
+          <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
+            {serviceShift.workspan}
+          </Moment>
+        </td>
         <td> {serviceShift.active ? "Activo" : "Inactivo"} </td>
-        <td
-          className={classNames(
-            "td-actions",
-            "text-right",
-            classes.flexContainerActions
-          )}
-        >
+        <td className={classNames(classes.flexContainerActions, classes.td)}>
           <div>
             <ModalDisplay serviceShift={serviceShift} />
           </div>
           <Query query={GET_EMPLOYEES}>
             {({ loading, error, data }) => {
-              if (loading) return <h4>Loading...</h4>
+              if (loading) return <h4>Loading...</h4>;
               if (error) console.log("Query error: ", error);
               return (
                 <div>

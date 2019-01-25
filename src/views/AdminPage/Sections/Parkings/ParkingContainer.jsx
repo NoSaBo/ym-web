@@ -49,7 +49,7 @@ class ParkingContainer extends Component {
     const { allParkings } = this.state;
     const { classes } = this.props;
     return (
-      <div className={classes.ParkingContainer}>
+      <div className={classes.MarginContainer}>
         <Selector
           branches={this.state.branches}
           serviceShifts={this.state.serviceShifts}

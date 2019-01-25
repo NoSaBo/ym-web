@@ -11,9 +11,7 @@ import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 import ServiceShiftRow from "./ServiceShiftRow";
 import ModalAdd from "../../../../components/Modal/serviceShift/Add.jsx";
 
-
 class ServiceShifts extends Component {
-  
   render() {
     const { classes } = this.props;
     return (
@@ -21,25 +19,22 @@ class ServiceShifts extends Component {
         <div className={classNames(classes.flexContainerNew)}>
           <h1>Horarios</h1>
           <p style={{ marginLeft: "2em" }} />
-          <ModalAdd className={classNames(classes.alignNewDiv)} />
+          <ModalAdd />
         </div>
-        <div>
-          <Query query={GET_SERVICESHIFTS}>
-            {({ loading, error, data }) => {
-              if (loading) return <h4>Loading...</h4>;
-              if (error) console.log("error: ", error);
-              return (
-                <table
-                  className={classNames("table", classes.textCentered)}
-                  align="center"
-                >
-                  <thead>
+        <Query query={GET_SERVICESHIFTS}>
+          {({ loading, error, data }) => {
+            if (loading) return <h4>Loading...</h4>;
+            if (error) console.log("error: ", error);
+            return (
+              <div className={classes.MarginContainer}>
+                <table width="100%">
+                  <thead align="center">
                     <tr>
-                      <th className="text-center">#</th>
+                      <th style={{ padding: "1%" }}>#</th>
                       <th>INICIO</th>
                       <th>FIN</th>
                       <th>ACTIVO</th>
-                      <th className="text-right">ACCIONES</th>
+                      <th>ACCIONES</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -52,10 +47,10 @@ class ServiceShifts extends Component {
                     ))}
                   </tbody>
                 </table>
-              );
-            }}
-          </Query>
-        </div>
+              </div>
+            );
+          }}
+        </Query>
       </div>
     );
   }
