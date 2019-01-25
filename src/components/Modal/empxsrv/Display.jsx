@@ -47,13 +47,14 @@ class ParkingModal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    let begindate = this.props.parking.serviceshift.begindate;
+    let begindate = this.props.empxsrv.begindate;
     begindate = moment(begindate)
       .add(5, "hours")
       .format("YYYY-MM-DD HH:mm");
-    let values = this.props.parking.values === null
-      ? "Ninguna"
-      : this.props.parking.values.join(', ');
+    let start = this.props.empxsrv.start;
+    start = moment(start)
+      .add(5, "hours")
+      .format("YYYY-MM-DD HH:mm");
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -103,63 +104,51 @@ class ParkingModal extends React.Component {
                   >
                     <form>
                       <CustomInput
-                        labelText="Horario"
-                        name="serviceshift"
-                        value={begindate}
+                        labelText="Empleado"
+                        name="employee"
+                        value={this.props.empxsrv.employeeName}
+                        formControlProps={{ fullWidth: true }}
+                      />
+                      <CustomInput
+                        labelText="Foto"
+                        name="photo"
+                        value={this.props.empxsrv.photo ? this.props.empxsrv.photo : ""}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Sede"
                         name="branch"
-                        value={this.props.parking.serviceshift.branch.branch}
+                        value={this.props.empxsrv.branchName}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
-                        labelText="Placa"
-                        name="plate"
-                        value={this.props.parking.plate}
+                        labelText="Horario"
+                        name="begindate"
+                        value={begindate}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
-                        labelText="Propietario"
-                        name="owner"
-                        value={this.props.parking.owner}
+                        labelText="Inicio"
+                        name="start"
+                        value={start}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
-                        labelText="Cosas de Valor"
-                        name="values"
-                        value={values}
+                        labelText="Longitud"
+                        name="longitude"
+                        value={this.props.empxsrv.longitude ? this.props.empxsrv.longitude : ""}
+                        formControlProps={{ fullWidth: true }}
+                      />
+                      <CustomInput
+                        labelText="Latitud"
+                        name="latitude"
+                        value={this.props.empxsrv.longitude ? this.props.empxsrv.longitude : ""}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Comentario"
                         name="comment"
-                        value={this.props.parking.comment}
-                        formControlProps={{ fullWidth: true }}
-                      />
-                      <CustomInput
-                        labelText="Daños"
-                        name="damage"
-                        value={this.props.parking.damage}
-                        formControlProps={{ fullWidth: true }}
-                      />
-                      <CustomInput
-                        labelText="Señales"
-                        name="signs"
-                        value={this.props.parking.sign}
-                        formControlProps={{ fullWidth: true }}
-                      />
-                      <CustomInput
-                        labelText="Token"
-                        name="token"
-                        value={this.props.parking.token}
-                        formControlProps={{ fullWidth: true }}
-                      />
-                      <CustomInput
-                        labelText="Devuelto"
-                        name="returned"
-                        value={this.props.parking.returned}
+                        value={this.props.empxsrv.comment ? this.props.empxsrv.comment : ""}
                         formControlProps={{ fullWidth: true }}
                       />
                     </form>
