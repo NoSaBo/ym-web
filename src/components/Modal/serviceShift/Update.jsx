@@ -25,7 +25,6 @@ import { UPDATE_SERVICESHIFT } from "../../../mutations/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
 
-
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
@@ -128,13 +127,15 @@ class UpdateModal extends React.Component {
     workspan.setMinutes(workspan.getMinutes() - workspan.getTimezoneOffset());
     workspan = workspan.toISOString();
 
-    updateServiceshift({ variables: {
-      id: serviceshift.id,
-      begindate: begindate,
-      workspan: workspan,
-      active: serviceshift.active,
-      branchId: serviceshift.branch.id
-    }});
+    updateServiceshift({
+      variables: {
+        id: serviceshift.id,
+        begindate: begindate,
+        workspan: workspan,
+        active: serviceshift.active,
+        branchId: serviceshift.branch.id
+      }
+    });
     window.location.reload();
     this.props.history.push("/admin-page/serviceshifts");
     alert(" Tu horario ha sido actualizado");
@@ -152,18 +153,20 @@ class UpdateModal extends React.Component {
     begindateFormatted.setMinutes(
       begindateFormatted.getMinutes() + begindateFormatted.getTimezoneOffset()
     );
-    serviceshift["begindate"]=begindateFormatted;
+    serviceshift["begindate"] = begindateFormatted;
     let workspanFormatted = new Date(serviceshift.workspan);
     workspanFormatted.setMinutes(
       workspanFormatted.getMinutes() + workspanFormatted.getTimezoneOffset()
     );
-    serviceshift["workspan"]=workspanFormatted;
+    serviceshift["workspan"] = workspanFormatted;
     this.setState({ serviceshift });
   }
 
   render() {
     const { classes } = this.props;
     const serviceshift = this.state.serviceshift;
+    let widthTmpFix = "lorem";
+    widthTmpFix = widthTmpFix.repeat(8);
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
@@ -211,6 +214,7 @@ class UpdateModal extends React.Component {
                     id="classic-modal-slide-description"
                     className={classes.modalBody}
                   >
+                    <span style={{ opacity: "0" }}>{widthTmpFix}</span>
                     <form>
                       <InputLabel className={classes.label}>
                         Inicio de turno
@@ -226,7 +230,7 @@ class UpdateModal extends React.Component {
                           renderInput={false}
                         />
                       </FormControl>
-                      <br />
+                      <br style={{ width: "250px" }} />
                       <br />
                       <InputLabel className={classes.label}>
                         Fin de turno

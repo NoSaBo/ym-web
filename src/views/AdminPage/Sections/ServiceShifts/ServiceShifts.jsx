@@ -20,7 +20,6 @@ class ServiceShifts extends Component {
           <h1>Horarios</h1>
           <p style={{ marginLeft: "2em" }} />
           <ModalAdd />
-          {/* <ModalAdd className={classNames(classes.alignNewDiv)} /> */}
         </div>
         <Query query={GET_SERVICESHIFTS}>
           {({ loading, error, data }) => {
