@@ -4,7 +4,7 @@ import LandingPage from "views/LandingPage/LandingPage.jsx";
 // import LoginPage from "views/LoginPage/LoginPage.jsx";
 import AdminPage from "views/AdminPage/AdminPage.jsx";
 import Employees from "views/AdminPage/Sections/Employees/Index.jsx";
-import Branches from "views/AdminPage/Sections/Branches/Branches.jsx";
+import Branches from "views/AdminPage/Sections/Branches/Index.jsx";
 import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/ServiceShifts.jsx";
 import Parkings from "views/AdminPage/Sections/Parkings/Index.jsx";
 import EmployeexServiceShifts from "views/AdminPage/Sections/EmployeexServiceShifts/Index.jsx";
