@@ -12,7 +12,7 @@ import { ApolloProvider } from "react-apollo";
 
 const client = new ApolloClient({
   // uri: "https://vp-project.herokuapp.com/graphql"
-  uri: 'http://localhost:4000/graphql'
+  uri: "http://localhost:4000/graphql"
 });
 
 var hist = createBrowserHistory();

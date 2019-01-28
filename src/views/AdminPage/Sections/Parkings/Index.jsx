@@ -9,7 +9,10 @@ import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 class IndexParking extends Component {
   render() {
     return (
-      <div className="container-fluid">
+      <div
+        className="container-fluid"
+        style={{ paddingBottom: "20px", color: "black" }}
+      >
         <h1>Parqueos</h1>
         <Query query={GET_BRANCHES}>
           {({ loading, error, data }) => {
@@ -22,7 +25,7 @@ class IndexParking extends Component {
                   {({ loading, error, data }) => {
                     if (loading) return "Loading";
                     if (error) return `Error ${error.message}`;
-                    let serviceShifts= data.serviceShifts;
+                    let serviceShifts = data.serviceShifts;
                     return (
                       <div>
                         <Query query={GET_PARKINGS}>

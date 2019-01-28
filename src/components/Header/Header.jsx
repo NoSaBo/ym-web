@@ -16,7 +16,7 @@ import Menu from "@material-ui/icons/Menu";
 // core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
 
-// import logoYoManejo from "assets/img/logos/YoManejo_Logo_v2.png";
+import logoYoManejo from "assets/img/logos/YoManejo_Logo_v2.png";
 
 class Header extends React.Component {
   constructor(props) {
@@ -75,7 +75,11 @@ class Header extends React.Component {
       [classes.absolute]: absolute,
       [classes.fixed]: fixed
     });
-    const brandComponent = <Button className={classes.title}>{brand}</Button>;
+    const brandComponent = (
+      <Button href="#" className={classes.title}>
+        {brand}
+      </Button>
+    );
     // const imageClasses = classNames(classes.imgFluid);
     // const brandComponent = (
     //   <Button className={classes.title}>

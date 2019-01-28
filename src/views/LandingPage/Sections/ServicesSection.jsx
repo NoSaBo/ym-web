@@ -9,10 +9,12 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
-// import Button from "components/CustomButtons/Button.jsx";
+import Button from "components/CustomButtons/Button.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
-// import CardFooter from "components/Card/CardFooter.jsx";
+import CardFooter from "components/Card/CardFooter.jsx";
+
+import { HashLink as Link } from "react-router-hash-link";
 
 import teamStyle from "assets/jss/material-kit-react/views/landingPageSections/teamStyle.jsx";
 
@@ -38,7 +40,9 @@ class ServicesSection extends React.Component {
             <GridItem xs={12} sm={12} md={4} id="Parkeo">
               <Card plain>
                 <GridItem xs={12} sm={12} md={6} className={classes.itemGrid}>
-                  <img src={logoParKeo} alt="..." className={imageClasses} />
+                  <Link to="/parkeo#">
+                    <img src={logoParKeo} alt="..." className={imageClasses} />
+                  </Link>
                 </GridItem>
                 <CardBody>
                   <p className={classes.description}>
