@@ -8,13 +8,14 @@ import Branches from "views/AdminPage/Sections/Branches/Index.jsx";
 import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/ServiceShifts.jsx";
 import Parkings from "views/AdminPage/Sections/Parkings/Index.jsx";
 import EmployeexServiceShifts from "views/AdminPage/Sections/EmployeexServiceShifts/Index.jsx";
+import Login from "views/AdminPage/Sections/Login/Login.jsx";
 
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
   // { path: "/profile-page", name: "ProfilePage", component: ProfilePage },
   // { path: "/login-page", name: "LoginPage", component: LoginPage },
   // { path: "/components", name: "Components", component: Components },
-  { path: "/admin-page", name: "AdminPage", component: AdminPage },
+  { path: "/admin-page/main", name: "AdminPage", component: AdminPage },
   { path: "/admin-page/employees", name: "Employees", component: Employees },
   { path: "/admin-page/branches", name: "Branches", component: Branches },
   {
@@ -27,7 +28,8 @@ var indexRoutes = [
     path: "/admin-page/employeexserviceshifts",
     name: "EmployeexServiceShifts",
     component: EmployeexServiceShifts
-  }
+  },
+  { path: "/admin-page", name: "Login", component: Login }
 ];
 
 export default indexRoutes;
