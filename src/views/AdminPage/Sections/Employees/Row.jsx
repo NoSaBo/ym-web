@@ -46,12 +46,12 @@ const Row = ({ index, employee, classes }) => {
         <div>
           <UpdateModal employee={employee} />
         </div>
-        <div>
+        <div className={classes.isDisabled}>
           <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
             {deleteEmployee => (
               <Badge
                 color="danger"
-                onClick={() => deleteOnClick(deleteEmployee, employee)}
+                // onClick={() => deleteOnClick(deleteEmployee, employee)}
               >
                 <i className="material-icons">close</i>
               </Badge>

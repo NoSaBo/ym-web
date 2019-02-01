@@ -26,6 +26,13 @@ const GeneralViewStyle = {
       flexFlow: "row wrap",
       justifyContent: "center",
       alignItems: "center"
+    },
+    isDisabled: {
+      color: "currentColor",
+      cursor: "not-allowed",
+      opacity: "0.5",
+      textDecoration: "none",
+      pointerEvents: "none"
     }
   };
   

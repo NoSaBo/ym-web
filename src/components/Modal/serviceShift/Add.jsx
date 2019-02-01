@@ -138,7 +138,7 @@ class Modal extends React.Component {
     this.resetForm();
     alert("Nuevo horario ha sido agregado");
     window.location.reload();
-    this.props.history.push("/admin-page/serviceshifts");
+    this.props.history.push("/parkeo/admin-page");
   }
 
   render() {
