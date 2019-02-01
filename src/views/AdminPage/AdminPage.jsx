@@ -48,7 +48,7 @@ class AdminPage extends Component {
     if (this.state.currentTab == "serviceshifts")
       pageElement = <ServiceShifts />;
     if (this.state.currentTab == "attendance") pageElement = <Attendance />;
-    if (this.state.currentTab == "parkings") pageElement = <Parkings />;
+    if (this.state.currentTab == "parkings") pageElement = <Parkings/>;
     return (
       <div>
         <Header

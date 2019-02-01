@@ -86,7 +86,7 @@ class UpdateModal extends React.Component {
     updateEmployee({ variables: employee });
     alert(employee.user + " have been updated!");
     window.location.reload();
-    this.props.history.push("/admin-page/employees");
+    this.props.history.push("/parkeo/admin-page");
   }
 
   componentWillMount() {
