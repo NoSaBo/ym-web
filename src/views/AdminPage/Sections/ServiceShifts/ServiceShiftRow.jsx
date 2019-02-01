@@ -80,8 +80,8 @@ class ServiceShiftRow extends Component {
           <div>
             <ModalUpdate serviceshift={serviceShift} />
           </div>
-          {/* <div className={classes.isDisabled}> */}
-          <div>
+          <div className={classes.isDisabled}>
+          {/* <div> */}
             <Mutation mutation={DELETE_SERVICESHIFT} update={updateCacheDelete}>
               {deleteServiceShift => (
                 <Badge
