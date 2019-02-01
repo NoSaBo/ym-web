@@ -34,6 +34,7 @@ class ServiceShifts extends Component {
                   <thead align="center">
                     <tr>
                       <th style={{ padding: "1%" }}>#</th>
+                      <th>SEDE</th>
                       <th>INICIO</th>
                       <th>FIN</th>
                       <th>ACTIVO</th>

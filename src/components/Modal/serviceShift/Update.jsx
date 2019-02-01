@@ -137,7 +137,7 @@ class UpdateModal extends React.Component {
       }
     });
     window.location.reload();
-    this.props.history.push("/admin-page/serviceshifts");
+    this.props.history.push("/parkeo/admin-page");
     alert(" Tu horario ha sido actualizado");
   }
 

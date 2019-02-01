@@ -96,7 +96,7 @@ class AddEmployee extends React.Component {
     alert(`Empleado ${this.state.employee.user} agregado`);
     window.location.reload();
     this.handleClose("classicModal");
-    this.props.history.push("/admin-page/serviceshifts");
+    this.props.history.push("/parkeo/admin-page");
   }
   updateEmployeeInServiceShift(deleteEmployeeFromServiceShift, id) {
     deleteEmployeeFromServiceShift({

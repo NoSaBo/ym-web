@@ -73,7 +73,7 @@ class UpdateModal extends React.Component {
     updateBranch({ variables: branch });
     alert(branch.branch + " have been updated!");
     window.location.reload();
-    this.props.history.push("/admin-page/branches");
+    this.props.history.push("/parkeo/admin-page");
   }
 
   componentWillMount() {

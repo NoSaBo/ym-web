@@ -109,7 +109,7 @@ class EmployeeModal extends React.Component {
     this.handleClose("classicModal");
     this.resetEmployeeForm();
     window.location.reload();
-    this.props.history.push("/admin-page/employees");
+    this.props.history.push("/parkeo/admin-page");
   }
 
   resetEmployeeForm() {

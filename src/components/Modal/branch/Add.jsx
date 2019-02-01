@@ -99,7 +99,7 @@ class BranchModal extends React.Component {
     this.handleClose("classicModal");
     this.resetBranchForm();
     window.location.reload();
-    this.props.history.push("/admin-page/branches");
+    this.props.history.push("/parkeo/admin-page");
   }
 
   resetBranchForm() {
