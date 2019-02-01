@@ -8,12 +8,12 @@ import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.js
 import Header from "components/Header/Header.jsx";
 import HeaderLinksParkeoAdmin from "components/Header/HeaderLinksParkeoAdmin.jsx";
 import Footer from "components/Footer/Footer.jsx";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import Button from "components/CustomButtons/Button.jsx";
+// import GridContainer from "components/Grid/GridContainer.jsx";
+// import GridItem from "components/Grid/GridItem.jsx";
+// import Button from "components/CustomButtons/Button.jsx";
 import Parallax from "components/Parallax/Parallax.jsx";
-import Card from "components/Card/Card.jsx";
-import CardBody from "components/Card/CardBody.jsx";
+// import Card from "components/Card/Card.jsx";
+// import CardBody from "components/Card/CardBody.jsx";
 //react-router
 import { Link } from "react-router-dom";
 
@@ -43,12 +43,12 @@ class AdminPage extends Component {
     const { classes, ...rest } = this.props;
     const imageClasses = classNames(classes.imgCenter);
     let pageElement;
-    if (this.state.currentTab == "employees") pageElement = <Employees />;
-    if (this.state.currentTab == "branches") pageElement = <Branch />;
-    if (this.state.currentTab == "serviceshifts")
+    if (this.state.currentTab === "employees") pageElement = <Employees />;
+    if (this.state.currentTab === "branches") pageElement = <Branch />;
+    if (this.state.currentTab === "serviceshifts")
       pageElement = <ServiceShifts />;
-    if (this.state.currentTab == "attendance") pageElement = <Attendance />;
-    if (this.state.currentTab == "parkings") pageElement = <Parkings/>;
+    if (this.state.currentTab === "attendance") pageElement = <Attendance />;
+    if (this.state.currentTab === "parkings") pageElement = <Parkings />;
     return (
       <div>
         <Header

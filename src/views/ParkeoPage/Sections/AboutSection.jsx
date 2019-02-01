@@ -7,15 +7,15 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // import { NavHashLink as NavLink } from "react-router-hash-link";
 
 // @material-ui/icons
-// import Chat from "@material-ui/icons/Chat";
-// import VerifiedUser from "@material-ui/icons/VerifiedUser";
-// import Fingerprint from "@material-ui/icons/Fingerprint";
-// import Grade from "@material-ui/icons/Grade";
-// import Person from "@material-ui/icons/Person";
+import Chat from "@material-ui/icons/Chat";
+import VerifiedUser from "@material-ui/icons/VerifiedUser";
+import Fingerprint from "@material-ui/icons/Fingerprint";
+import Star from "@material-ui/icons/Star";
+import Person from "@material-ui/icons/Person";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
-// import InfoArea from "components/InfoArea/InfoArea.jsx";
+import InfoArea from "components/InfoArea/InfoArea.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 
@@ -32,50 +32,51 @@ class AboutSection extends React.Component {
     const { classes } = this.props;
     const imageClasses = classNames(classes.imgFluid);
     return (
-      <div className={classes.section} id="About">
+      <div className={classes.section}>
         <GridContainer justify="center">
-          <GridItem xs={16} sm={16} md={8}>
-            <h2 className={classes.title}>Pasión por los detalles</h2>
+          <GridItem xs={12} sm={12} md={8}>
+            <h2 className={classes.title}>
+              ParKeo es un servicio profesional de valet parking.
+            </h2>
             <h5 className={classes.description}>
-              Dejamos huella que transmite confianza y fidelización.
+              El compromiso de ParKeo es brindarle el mejor servicio a sus
+              clientes o invitados durante la recepción, custodia, resguardo y
+              entrega de sus autos. Para garantizarlo nos regimos bajo las
+              siguientes políticas de calidad y procesos de mejora continua:
             </h5>
           </GridItem>
         </GridContainer>
         <div>
           <GridContainer>
-            <GridItem xs={16} sm={16} md={6}>
-              <Card plain>
-                <CardBody>
-                  <img src={somosTitle} alt="..." className={imageClasses} />
-                  <p> </p>
-                  <p className={classes.description}>
-                    Jóvenes emprendedores que valoramos y disfrutamos de lo que
-                    hacemos, brindando servicios de calidad que tu negocio y
-                    clientes necesitan, trabajando con pasión, innovación y
-                    tecnología.
-                  </p>
-                  <img src={somosImg} alt="..." className={imageClasses} />
-                </CardBody>
-              </Card>
+            <GridItem xs={12} sm={12} md={4}>
+              <InfoArea
+                title="Personal"
+                description="Personal capacitado y preparado para brindarle una atención eficaz, rápida y de
+                calidad"
+                icon={Person}
+                iconColor="info"
+                vertical
+              />
             </GridItem>
-            <GridItem xs={16} sm={16} md={6}>
-              <Card plain>
-                <CardBody>
-                  <img src={valoramosImg} alt="..." className={imageClasses} />
-                  <p> </p>
-                  <img
-                    src={valoramosTitle}
-                    alt="..."
-                    className={imageClasses}
-                  />
-                  <p> </p>
-                  <p className={classes.description}>
-                    La buena atención, por ello nuestra propuesta es resaltar la
-                    imagen de tu marca, trabajando en fortalecer tu prestigio
-                    con detalles que maximizan la experiencia de los clientes.
-                  </p>
-                </CardBody>
-              </Card>
+            <GridItem xs={12} sm={12} md={4}>
+              <InfoArea
+                title="Seguridad"
+                description="Se entregará al usuario del auto un pin autorizado que lo identifica como propietario,
+                para la guarda, custodia y entrega respectiva"
+                icon={VerifiedUser}
+                iconColor="success"
+                vertical
+              />
+            </GridItem>
+            <GridItem xs={12} sm={12} md={4}>
+              <InfoArea
+                title="Excelencia"
+                description="Nuestro personal esta debidamente uniformado y con fotocheck que lo identifica como
+                personal de ParKeo"
+                icon={Star}
+                iconColor="warning"
+                vertical
+              />
             </GridItem>
           </GridContainer>
         </div>

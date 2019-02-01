@@ -41,25 +41,28 @@ class ParkeoPage extends React.Component {
           color="transparent"
           routes={dashboardRoutes}
           rightLinks={<HeaderLinksParkeo />}
-          brand="Parkeo"
+          brand="Parkeo.com"
           fixed
           changeColorOnScroll={{
-            height: 400,
+            height: 300,
             color: "white"
           }}
           {...rest}
         />
-        <Parallax filter image={require("assets/img/bg/people.png")}>
+        <Parallax filter image={require("assets/img/profile-bg.jpg")}>
           <div className={classes.container}>
             <GridContainer>
               <GridItem xs={12} sm={12} md={6} className={classes.itemGrid}>
                 <Card plain>
                   <CardBody>
                     <img
-                      src={require("assets/img/logos/YoManejo_Logo_new.png")}
+                      src={require("assets/img/logos/Parkeo2.png")}
                       alt="..."
                       className={imageClasses}
                     />
+                    <h3 className={classes.title}>
+                      Cuidamos tu auto tanto como tu
+                    </h3>
                   </CardBody>
                 </Card>
               </GridItem>
