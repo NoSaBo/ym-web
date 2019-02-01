@@ -15,37 +15,27 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
+import Notification from "components/Notifications/Notifications.jsx";
 // style
 import loginStyle from "assets/jss/material-kit-react/views/componentsSections/loginStyle.jsx";
 // queries and mutations
+import { Mutation } from "react-apollo";
+import { REGISTER } from "../../../../mutations/login";
 
-import { observer } from "mobx-react";
-import { extendObservable } from "mobx";
-
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-
-    extendObservable(this, {
-      email: "",
-      password: ""
-    });
-  }
-
-  onSubmit = () => {
-    const { email, password } = this;
-    console.log(email);
-    console.log(password);
-  };
-
-  onChange = e => {
-    const { name, value } = e.target;
-    this[name] = value;
-  };
-
+class SectionLogin extends React.Component {
   render() {
     const { classes } = this.props;
-    const { email, password } = this;
+    const { usernameError, emailError, passwordError, success } = this.props.data;
+    const errorList = [];
+    if (usernameError) {
+      errorList.push(usernameError);
+    }
+    if (emailError) {
+      errorList.push(emailError);
+    }
+    if (passwordError) {
+      errorList.push(passwordError);
+    }
     return (
       <div className={classes.section}>
         <div className={classes.container}>
@@ -54,10 +44,29 @@ class Login extends React.Component {
               <Card>
                 <form className={classes.form}>
                   <CardHeader color="primary" className={classes.cardHeader}>
-                    <h4>Acceso</h4>
+                    <h4>Registro</h4>
                   </CardHeader>
                   <CardBody>
                     <CustomInput
+                      error={!!usernameError}
+                      labelText="First Name..."
+                      id="first"
+                      formControlProps={{
+                        fullWidth: true
+                      }}
+                      inputProps={{
+                        type: "text",
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <People className={classes.inputIconsColor} />
+                          </InputAdornment>
+                        )
+                      }}
+                      onChange={this.props.onChange}
+                      name="username"
+                    />
+                    <CustomInput
+                      error={!!emailError}
                       labelText="Email..."
                       id="email"
                       formControlProps={{
@@ -71,10 +80,11 @@ class Login extends React.Component {
                           </InputAdornment>
                         )
                       }}
-                      onChange={this.onChange}
+                      onChange={this.props.onChange}
                       name="email"
                     />
                     <CustomInput
+                      error={!!passwordError}
                       labelText="Password"
                       id="pass"
                       formControlProps={{
@@ -90,20 +100,35 @@ class Login extends React.Component {
                           </InputAdornment>
                         )
                       }}
-                      onChange={this.onChange}
+                      onChange={this.props.onChange}
                       name="password"
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button
-                      simple
-                      color="primary"
-                      size="lg"
-                      onClick={this.onSubmit}
-                    >
-                      > Iniciar Sesión
+                    <Button simple color="primary" size="lg">
+                      Iniciar Sesión
                     </Button>
+                    <Mutation mutation={REGISTER}>
+                      {(addRegistry, { data }) => (
+                        <Button
+                          simple
+                          color="primary"
+                          size="lg"
+                          onClick={e =>
+                            this.props.onSubmit(e, addRegistry, data)
+                          }
+                        >
+                          Registrarse
+                        </Button>
+                      )}
+                    </Mutation>
                   </CardFooter>
+                  {usernameError || emailError || passwordError ? (
+                    <Notification errorList={errorList}/>
+                  ) : null}
+                  {success ? (
+                    <Notification success={success}/>
+                  ) : null}
                 </form>
               </Card>
             </GridItem>
@@ -114,4 +139,4 @@ class Login extends React.Component {
   }
 }
 
-export default withStyles(loginStyle)(observer(Login));
+export default withStyles(loginStyle)(SectionLogin);
