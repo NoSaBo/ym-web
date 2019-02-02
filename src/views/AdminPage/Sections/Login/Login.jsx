@@ -4,7 +4,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import People from "@material-ui/icons/People";
 import Email from "@material-ui/icons/Email";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -15,37 +14,63 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
+import Notification from "components/Notifications/Notifications.jsx";
 // style
 import loginStyle from "assets/jss/material-kit-react/views/componentsSections/loginStyle.jsx";
 // queries and mutations
-
-import { observer } from "mobx-react";
-import { extendObservable } from "mobx";
+import { Mutation } from "react-apollo";
+import { LOGIN } from "../../../../mutations/login";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-
-    extendObservable(this, {
+    this.state = {
       email: "",
-      password: ""
-    });
+      password: "",
+      errors: {}
+    };
   }
 
-  onSubmit = () => {
-    const { email, password } = this;
-    console.log(email);
-    console.log(password);
+  onSubmit = async (e, login, data) => {
+    const { email, password } = this.state;
+    const response = await login({
+      variables: {
+        email,
+        password
+      }
+    });
+    const { ok, token, refreshToken, errors } = response.data.login;
+    if (ok) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
+      this.props.history.push("/admin-page/main");
+    } else {
+      const err = {};
+      errors.forEach(({ path, message }) => {
+        err[`${path}Error`] = message;
+      });
+      this.setState({ ["errors"] : err });
+      this.state["errors"] = err;
+    }
   };
 
   onChange = e => {
     const { name, value } = e.target;
-    this[name] = value;
+    this.setState({ [name]: value });
   };
 
   render() {
     const { classes } = this.props;
-    const { email, password } = this;
+    const {
+      errors: { emailError, passwordError }
+    } = this.state;
+    const errorList = [];
+    if (emailError) {
+      errorList.push(emailError);
+    }
+    if (passwordError) {
+      errorList.push(passwordError);
+    }
     return (
       <div className={classes.section}>
         <div className={classes.container}>
@@ -58,6 +83,7 @@ class Login extends React.Component {
                   </CardHeader>
                   <CardBody>
                     <CustomInput
+                      error={!!emailError}
                       labelText="Email..."
                       id="email"
                       formControlProps={{
@@ -75,6 +101,7 @@ class Login extends React.Component {
                       name="email"
                     />
                     <CustomInput
+                      error={!!passwordError}
                       labelText="Password"
                       id="pass"
                       formControlProps={{
@@ -95,15 +122,22 @@ class Login extends React.Component {
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button
-                      simple
-                      color="primary"
-                      size="lg"
-                      onClick={this.onSubmit}
-                    >
-                      > Iniciar Sesión
-                    </Button>
+                    <Mutation mutation={LOGIN}>
+                      {(login, { data }) => (
+                        <Button
+                          simple
+                          color="primary"
+                          size="lg"
+                          onClick={e => this.onSubmit(e, login, data)}
+                        >
+                          > Iniciar Sesión
+                        </Button>
+                      )}
+                    </Mutation>
                   </CardFooter>
+                  {!!emailError || !!passwordError ? (
+                    <Notification errorList={errorList} />
+                  ) : null}
                 </form>
               </Card>
             </GridItem>
@@ -114,4 +148,4 @@ class Login extends React.Component {
   }
 }
 
-export default withStyles(loginStyle)(observer(Login));
+export default withStyles(loginStyle)(Login);

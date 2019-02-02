@@ -4,7 +4,6 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 // @material-ui/icons
 import Check from "@material-ui/icons/Check";
-import Warning from "@material-ui/icons/Warning";
 // core components
 import SnackbarContent from "components/Snackbar/SnackbarContent.jsx";
 import Clearfix from "components/Clearfix/Clearfix.jsx";
@@ -30,7 +29,8 @@ class SectionNotifications extends React.Component {
           />
         ) : null}
         {errorList
-          ? errorList.map((error, index) => (
+          ? errorList.map((error, index) => {
+            return(
               <SnackbarContent
                 key={index}
                 message={
@@ -42,7 +42,7 @@ class SectionNotifications extends React.Component {
                 color="danger"
                 icon="info_outline"
               />
-            ))
+            )})
           : null}
         <Clearfix />
       </div>
