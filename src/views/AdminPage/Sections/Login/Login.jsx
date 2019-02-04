@@ -43,7 +43,7 @@ class Login extends React.Component {
     if (ok) {
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
-      this.props.history.push("/admin-page/main");
+      this.props.history.push("/parkeo/admin-page");
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {

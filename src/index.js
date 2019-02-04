@@ -14,8 +14,8 @@ import decode from "jwt-decode";
 import Login from "views/AdminPage/Sections/Login/Login.jsx";
 
 const client = new ApolloClient({
-  uri: "https://vp-project.herokuapp.com/graphql"
-  // uri: "http://localhost:4000/graphql"
+  // uri: "https://vp-project.herokuapp.com/graphql"
+  uri: "http://localhost:4000/graphql"
 });
 
 var hist = createBrowserHistory();

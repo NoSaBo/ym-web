@@ -12,21 +12,6 @@ import Register from "views/AdminPage/Sections/Login/Index.jsx";
 
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
-<<<<<<< HEAD
-  // { path: "/profile-page", name: "ProfilePage", component: ProfilePage },
-  // { path: "/login-page", name: "LoginPage", component: LoginPage },
-  // { path: "/components", name: "Components", component: Components },
-  { path: "/admin-page/main", name: "AdminPage", component: AdminPage },
-  { path: "/admin-page/employees", name: "Employees", component: Employees },
-  { path: "/admin-page/branches", name: "Branches", component: Branches },
-||||||| merged common ancestors
-  // { path: "/profile-page", name: "ProfilePage", component: ProfilePage },
-  // { path: "/login-page", name: "LoginPage", component: LoginPage },
-  // { path: "/components", name: "Components", component: Components },
-  { path: "/admin-page", name: "AdminPage", component: AdminPage },
-  { path: "/admin-page/employees", name: "Employees", component: Employees },
-  { path: "/admin-page/branches", name: "Branches", component: Branches },
-=======
   { path: "/parkeo", name: "ParkeoPage", component: ParkeoPage },
 
   { path: "/parkeo/admin-page", name: "AdminPage", component: AdminPage },
@@ -35,7 +20,6 @@ var indexRoutes = [
     name: "Employees",
     component: Employees
   },
->>>>>>> master
   {
     path: "/parkeo/admin-page/branches",
     name: "Branches",
