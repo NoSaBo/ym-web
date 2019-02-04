@@ -43,7 +43,8 @@ class ServiceShiftRow extends Component {
     const { classes } = this.props;
     return (
       <tr className={classes.tr}>
-        <td className={classes.td}> {index + 1} </td>
+        <td className={classes.td}> {index} </td>
+        <td>{ serviceShift.branch.branch }</td>
         <td>
           {" "}
           <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
@@ -79,7 +80,8 @@ class ServiceShiftRow extends Component {
           <div>
             <ModalUpdate serviceshift={serviceShift} />
           </div>
-          <div>
+          <div className={classes.isDisabled}>
+          {/* <div> */}
             <Mutation mutation={DELETE_SERVICESHIFT} update={updateCacheDelete}>
               {deleteServiceShift => (
                 <Badge

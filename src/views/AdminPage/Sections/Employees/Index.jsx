@@ -12,9 +12,12 @@ class IndexEmployee extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="container-fluid">
+      <div
+        className="container-fluid"
+        style={{ paddingBottom: "20px", color: "black" }}
+      >
         <div className={classes.flexContainerNew}>
-          <h1>Empleados</h1>
+          <h1 className={classes.text}>Empleados</h1>
           <p style={{ marginLeft: "2em" }} /> <Add />
         </div>
         <Query query={GET_EMPLOYEES}>

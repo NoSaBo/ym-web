@@ -12,7 +12,10 @@ class IndexBranch extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="container-fluid">
+      <div
+        className="container-fluid"
+        style={{ paddingBottom: "20px", color: "black" }}
+      >
         <div className={classes.flexContainerNew}>
           <h1>Sedes</h1>
           <p style={{ marginLeft: "2em" }} />

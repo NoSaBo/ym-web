@@ -56,7 +56,7 @@ class ParkingContainer extends Component {
           onFilterChanged={this.onFilterChanged}
         />
         <br />
-        <ParkingTable currentParkings={allParkings} />
+        <ParkingTable currentParkings={allParkings}/>
       </div>
     );
   }

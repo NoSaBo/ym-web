@@ -8,8 +8,8 @@ import branchPageStyle from "assets/jss/material-kit-react/views/branchPage.jsx"
 import Badge from "../../../../components/Badge/Badge";
 import DisplayModal from "../../../../components/Modal/branch/Display";
 import UpdateModal from "../../../../components/Modal/branch/Update";
+//GraphQL & Apollo
 import { Mutation } from "react-apollo";
-//GraphQL
 import { DELETE_BRANCH } from "../../../../mutations/branch";
 import { GET_BRANCHES } from "../../../../queries/branch";
 
@@ -47,12 +47,12 @@ const Row = ({ index, branch, classes }) => {
         <div>
           <UpdateModal branch={branch} />
         </div>
-        <div>
+        <div className={classes.isDisabled}>
           <Mutation mutation={DELETE_BRANCH} update={updateCacheDelete}>
             {deleteBranch => (
               <Badge
                 color="danger"
-                onClick={() => deleteOnClick(deleteBranch, branch)}
+                // onClick={() => deleteOnClick(deleteBranch, branch)}
               >
                 <i className="material-icons">close</i>
               </Badge>
