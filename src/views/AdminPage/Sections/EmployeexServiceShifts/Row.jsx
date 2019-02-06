@@ -20,7 +20,7 @@ const deleteOnClick = (deleteEmployeexserviceshift, empxsrv) => {
     variables: { id: empxsrv.serviceshiftId, employeeId: empxsrv.employeeId }
   });
   alert(`Horario asignado ha sido eliminado`);
-  // window.location.reload();
+  window.location.reload();
   // this.props.history.push("/admin-page/");
 };
 
