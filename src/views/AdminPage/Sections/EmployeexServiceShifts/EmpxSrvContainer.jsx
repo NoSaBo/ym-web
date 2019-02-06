@@ -96,7 +96,6 @@ class EmpxSrvContainer extends Component {
   }
 
   buildNewAllEmpxSrv(allEmpxSrv) {
-    console.log("allEmpxSrv", allEmpxSrv);
     allEmpxSrv.map(empxsrv => {
       let branch = this.getBranchName(empxsrv.serviceshiftId);
       let begindate = this.getBegindate(empxsrv.serviceshiftId);
