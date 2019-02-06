@@ -11,17 +11,21 @@ import DisplayModal from "../../../../components/Modal/empxsrv/Display";
 import { Mutation } from "react-apollo";
 import { DELETE_EMPLOYEEXSERVICESHIFT } from "../../../../mutations/employeexserviceshifts";
 
-
 var moment = require("moment");
 
 const deleteOnClick = (deleteEmployeexserviceshift, empxsrv) => {
-  deleteEmployeexserviceshift({ variables: { id: empxsrv.id } });
+  console.log("empxsrv.id", empxsrv.serviceshiftId);
+  console.log("empxsrv.employeeId", empxsrv.employeeId);
+  deleteEmployeexserviceshift({
+    variables: { id: empxsrv.serviceshiftId, employeeId: empxsrv.employeeId }
+  });
   alert(`Horario asignado ha sido eliminado`);
   window.location.reload();
   // this.props.history.push("/admin-page/");
 };
 
 const Row = ({ index, empxsrv, classes }) => {
+  console.log("empxsrv", empxsrv);
   return (
     <tr className={classes.tr}>
       <td className={classes.td}> {index + 1} </td>
@@ -33,10 +37,10 @@ const Row = ({ index, empxsrv, classes }) => {
           .format("YYYY-MM-DD HH:mm")}
       </td>
       <td>
-        { empxsrv.start !== null
+        {empxsrv.start !== null
           ? moment(empxsrv.start)
-          .add(5, "hours")
-          .format("YYYY-MM-DD HH:mm")
+              .add(5, "hours")
+              .format("YYYY-MM-DD HH:mm")
           : "SIN INICIO"}
       </td>
       <td> {empxsrv.comment} </td>
@@ -49,7 +53,9 @@ const Row = ({ index, empxsrv, classes }) => {
             {deleteEmployeexserviceshift => (
               <Badge
                 color="danger"
-                onClick={() => deleteOnClick(deleteEmployeexserviceshift, empxsrv)}
+                onClick={() =>
+                  deleteOnClick(deleteEmployeexserviceshift, empxsrv)
+                }
               >
                 <i className="material-icons">close</i>
               </Badge>
