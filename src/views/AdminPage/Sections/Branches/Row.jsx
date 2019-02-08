@@ -23,13 +23,13 @@ const updateCacheDelete = (cache, { data: { deleteBranch } }) => {
   });
 };
 
-const deleteOnClick = (deleteBranch, branch) => {
-  let branchName = branch.branch;
-  deleteBranch({ variables: { id: branch.id } });
-  alert(`Sede ${branchName} has sido eliminada`);
-  window.location.reload();
-  this.props.history.push("/admin-page/branches");
-};
+// const deleteOnClick = (deleteBranch, branch) => {
+//   let branchName = branch.branch;
+//   deleteBranch({ variables: { id: branch.id } });
+//   alert(`Sede ${branchName} has sido eliminada`);
+//   window.location.reload();
+//   this.props.history.push("/admin-page/branches");
+// };
 
 const Row = ({ index, branch, classes }) => {
   return (

@@ -23,13 +23,13 @@ const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
   });
 };
 
-const deleteOnClick = (deleteEmployee, employee) => {
-  let user = employee.user;
-  deleteEmployee({ variables: { user: employee.user } });
-  alert(`Empleado ${user} has sido eliminado`);
-  window.location.reload();
-  this.props.history.push("/admin-page/employees");
-};
+// const deleteOnClick = (deleteEmployee, employee) => {
+//   let user = employee.user;
+//   deleteEmployee({ variables: { user: employee.user } });
+//   alert(`Empleado ${user} has sido eliminado`);
+//   window.location.reload();
+//   this.props.history.push("/admin-page/employees");
+// };
 
 const Row = ({ index, employee, classes }) => {
   return (

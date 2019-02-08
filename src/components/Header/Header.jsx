@@ -16,7 +16,7 @@ import Menu from "@material-ui/icons/Menu";
 // core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
 
-import logoYoManejo from "assets/img/logos/YoManejo_Logo_v2.png";
+// import logoYoManejo from "assets/img/logos/YoManejo_Logo_v2.png";
 
 class Header extends React.Component {
   constructor(props) {
