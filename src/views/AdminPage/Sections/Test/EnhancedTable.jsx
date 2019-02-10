@@ -19,6 +19,11 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 
+//GraphQL
+import { Mutation } from "react-apollo";
+import { DELETE_EMPLOYEE } from "../../../../mutations/employee";
+import { GET_EMPLOYEES } from "../../../../queries/employee";
+
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -146,64 +151,171 @@ const toolbarStyles = theme => ({
   }
 });
 
-let EnhancedTableToolbar = props => {
-  const { numSelected, classes } = props;
+const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
+  const { employees } = cache.readQuery({ query: GET_EMPLOYEES });
+  cache.writeQuery({
+    query: GET_EMPLOYEES,
+    data: {
+      employees: employees.filter(n => n.user !== deleteEmployee.user)
+    }
+  });
+};
 
-  return (
-    <Toolbar
-      className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0
-      })}
-    >
-      <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subheading">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography
-            variant="subheading"
-            id="tableTitle"
-            className={classes.i}
-          >
-            <Tooltip title="Agregar empleado">
-              <IconButton aria-label="Agregar empleado">
-                <i
-                  className={"material-icons"}
-                  onClick={(event, rowData) => {
-                    alert("You clicked add ");
-                  }}
-                >
-                  add
-                </i>
+class EnhancedTableToolbar extends React.Component {
+  deleteOnClick(deleteEmployee, selected, history) {
+    selected.map(user =>
+      deleteEmployee({
+        variables: { user }
+      })
+    );
+    this.props.resetValues();
+  }
+  render() {
+    const { numSelected, classes, selected, history } = this.props;
+
+    return (
+      <Toolbar
+        className={classNames(classes.root, {
+          [classes.highlight]: numSelected > 0
+        })}
+      >
+        <div className={classes.title}>
+          {numSelected > 0 ? (
+            <Typography color="inherit" variant="subheading">
+              {numSelected} selected
+            </Typography>
+          ) : (
+            <Typography
+              variant="subheading"
+              id="tableTitle"
+              className={classes.i}
+            >
+              <Tooltip title="Agregar empleado">
+                <IconButton aria-label="Agregar empleado">
+                  <i
+                    className={"material-icons"}
+                    onClick={(event, rowData) => {
+                      alert("You clicked add ");
+                    }}
+                  >
+                    add
+                  </i>
+                </IconButton>
+              </Tooltip>
+            </Typography>
+          )}
+        </div>
+        <div className={classes.spacer} />
+        <div className={classes.actions}>
+          {numSelected > 0 ? (
+            <Tooltip title="Delete">
+              <IconButton aria-label="Delete">
+                <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
+                  {deleteEmployee => (
+                    <DeleteIcon
+                      onClick={() => {
+                        this.deleteOnClick(deleteEmployee, selected, history);
+                        alert(`Empleado(s) eliminado(s)`);
+                        return null;
+                      }}
+                    />
+                  )}
+                </Mutation>
               </IconButton>
             </Tooltip>
-          </Typography>
-        )}
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon
-                onClick={(event, rowData) => {
-                  alert("You clicked delete ");
-                }}
-              />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filtrar lista">
-            <IconButton aria-label="Filtrar lista">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </div>
-    </Toolbar>
-  );
-};
+          ) : (
+            <Tooltip title="Filtrar lista">
+              <IconButton aria-label="Filtrar lista">
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </div>
+      </Toolbar>
+    );
+  }
+}
+
+// let EnhancedTableToolbar = props => {
+//   const { numSelected, classes, selected, history } = props;
+
+//   function deleteOnClick(deleteEmployee) {
+//     selected.map(user =>
+//       deleteEmployee({
+//         variables: { user }
+//       })
+//     );
+//     alert(`Empleado(s) eliminado(s)`);
+//     history.push("/parkeo/admin-page/test");
+//   }
+
+//   return (
+//     <Toolbar
+//       className={classNames(classes.root, {
+//         [classes.highlight]: numSelected > 0
+//       })}
+//     >
+//       <div className={classes.title}>
+//         {numSelected > 0 ? (
+//           <Typography color="inherit" variant="subheading">
+//             {numSelected} selected
+//           </Typography>
+//         ) : (
+//           <Typography
+//             variant="subheading"
+//             id="tableTitle"
+//             className={classes.i}
+//           >
+//             <Tooltip title="Agregar empleado">
+//               <IconButton aria-label="Agregar empleado">
+//                 <i
+//                   className={"material-icons"}
+//                   onClick={(event, rowData) => {
+//                     alert("You clicked add ");
+//                   }}
+//                 >
+//                   add
+//                 </i>
+//               </IconButton>
+//             </Tooltip>
+//           </Typography>
+//         )}
+//       </div>
+//       <div className={classes.spacer} />
+//       <div className={classes.actions}>
+//         {numSelected > 0 ? (
+//           <Tooltip title="Delete">
+//             <IconButton aria-label="Delete">
+//               <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
+//                 {deleteEmployee => (
+//                   <DeleteIcon
+//                     onClick={(e) => deleteOnClick(deleteEmployee)}
+//                     // onClick={event => {
+//                     //   event.preventDefault();
+//                     //   selected.map(user =>
+//                     //     (deleteEmployee({
+//                     //       variables: { user }
+//                     //     }))
+//                     //   );
+//                     //   alert(`Empleado(s) eliminado(s)`);
+//                     //   history.push("/parkeo/admin-page/test");
+//                     // }}
+//                   />
+//                 )}
+//               </Mutation>
+//             </IconButton>
+//           </Tooltip>
+//         ) : (
+//           <Tooltip title="Filtrar lista">
+//             <IconButton aria-label="Filtrar lista">
+//               <FilterListIcon />
+//             </IconButton>
+//           </Tooltip>
+//         )}
+//       </div>
+//     </Toolbar>
+//   );
+// };
 
 EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
@@ -237,6 +349,7 @@ class EnhancedTable extends React.Component {
       page: 0,
       rowsPerPage: 5
     };
+    this.resetValues = this.resetValues.bind(this);
   }
 
   handleRequestSort = (event, property) => {
@@ -275,7 +388,6 @@ class EnhancedTable extends React.Component {
         selected.slice(selectedIndex + 1)
       );
     }
-
     this.setState({ selected: newSelected });
   };
 
@@ -294,15 +406,29 @@ class EnhancedTable extends React.Component {
     this.setState({ data });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.state.data) {
+      this.setState({ data: nextProps.data });
+    }
+  }
+
+  resetValues() {
+    this.setState({ selected: [] });
+  }
+
   render() {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
     return (
       <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          selected={selected}
+          history={this.props.history}
+          resetValues={this.resetValues}
+        />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -317,7 +443,7 @@ class EnhancedTable extends React.Component {
               {stableSort(data, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(n => {
-                  const isSelected = this.isSelected(n.id);
+                  const isSelected = this.isSelected(n.user);
                   return (
                     <TableRow
                       // hover
@@ -329,7 +455,7 @@ class EnhancedTable extends React.Component {
                     >
                       <TableCell
                         padding="checkbox"
-                        onClick={event => this.handleClick(event, n.id)}
+                        onClick={event => this.handleClick(event, n.user)}
                       >
                         <Checkbox checked={isSelected} />
                       </TableCell>
@@ -346,7 +472,7 @@ class EnhancedTable extends React.Component {
                           <IconButton aria-label="Detalles">
                             <i
                               className={"material-icons"}
-                              onClick={(event, rowData) => {
+                              onClick={(event, selected) => {
                                 alert("You clicked display ");
                               }}
                             >

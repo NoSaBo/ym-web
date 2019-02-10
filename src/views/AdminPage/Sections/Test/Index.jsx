@@ -26,7 +26,7 @@ class IndexEmployee extends Component {
           {({ loading, error, data }) => {
             if (loading) return "Loading";
             if (error) return `Error ${error.message}`;
-            return <Table data={data.employees}/>;
+            return <Table data={data.employees} history={this.props.history}/>;
           }}
         </Query>
       </div>
