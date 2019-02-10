@@ -18,11 +18,12 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
-
 //GraphQL
 import { Mutation } from "react-apollo";
 import { DELETE_EMPLOYEE } from "../../../../mutations/employee";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
+//Customized components
+import Add from "../../../../components/Modal/employee/Add";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -190,7 +191,8 @@ class EnhancedTableToolbar extends React.Component {
               id="tableTitle"
               className={classes.i}
             >
-              <Tooltip title="Agregar empleado">
+            <Add/>
+              {/* <Tooltip title="Agregar empleado">
                 <IconButton aria-label="Agregar empleado">
                   <i
                     className={"material-icons"}
@@ -201,7 +203,7 @@ class EnhancedTableToolbar extends React.Component {
                     add
                   </i>
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
             </Typography>
           )}
         </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Slide from "@material-ui/core/Slide";
@@ -7,6 +8,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,8 +16,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-// queries and mutations with react-apollo
+//GraphQL
 import { Mutation } from "react-apollo";
 import { NEW_EMPLOYEE } from "../../../mutations/employee.js";
 import { GET_EMPLOYEES } from "../../../queries/employee";
@@ -105,11 +106,9 @@ class EmployeeModal extends React.Component {
         active: employee.active
       }
     });
-    alert(`${employee.user} have been added!`);
+    alert(`${employee.user} ha sido agregado`);
     this.handleClose("classicModal");
     this.resetEmployeeForm();
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
   }
 
   resetEmployeeForm() {
@@ -127,7 +126,16 @@ class EmployeeModal extends React.Component {
     return (
       <div>
         <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Button color="info">+ Crear</Button>
+          <Tooltip title="Agregar empleado">
+            <IconButton aria-label="Agregar empleado">
+              <i
+                className={"material-icons"}
+                onClick={() => this.handleClickOpen("classicModal")}
+              >
+                add
+              </i>
+            </IconButton>
+          </Tooltip>
         </div>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -234,7 +242,7 @@ class EmployeeModal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={(e) => {
+                            onClick={e => {
                               this.saveEmployee(e, addEmployee, employee);
                             }}
                           >
