@@ -24,6 +24,9 @@ import { DELETE_EMPLOYEE } from "../../../../mutations/employee";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 //Customized components
 import Add from "../../../../components/Modal/employee/Add";
+import Update from "../../../../components/Modal/employee/Update";
+import Display from "../../../../components/Modal/employee/Display";
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -56,7 +59,7 @@ const rows = [
   { id: "lastname", numeric: false, disablePadding: true, label: "APELLIDO" },
   { id: "user", numeric: false, disablePadding: true, label: "USUARIO" },
   { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
-  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
+  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES"}
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -191,19 +194,7 @@ class EnhancedTableToolbar extends React.Component {
               id="tableTitle"
               className={classes.i}
             >
-            <Add/>
-              {/* <Tooltip title="Agregar empleado">
-                <IconButton aria-label="Agregar empleado">
-                  <i
-                    className={"material-icons"}
-                    onClick={(event, rowData) => {
-                      alert("You clicked add ");
-                    }}
-                  >
-                    add
-                  </i>
-                </IconButton>
-              </Tooltip> */}
+              <Add />
             </Typography>
           )}
         </div>
@@ -238,87 +229,6 @@ class EnhancedTableToolbar extends React.Component {
   }
 }
 
-// let EnhancedTableToolbar = props => {
-//   const { numSelected, classes, selected, history } = props;
-
-//   function deleteOnClick(deleteEmployee) {
-//     selected.map(user =>
-//       deleteEmployee({
-//         variables: { user }
-//       })
-//     );
-//     alert(`Empleado(s) eliminado(s)`);
-//     history.push("/parkeo/admin-page/test");
-//   }
-
-//   return (
-//     <Toolbar
-//       className={classNames(classes.root, {
-//         [classes.highlight]: numSelected > 0
-//       })}
-//     >
-//       <div className={classes.title}>
-//         {numSelected > 0 ? (
-//           <Typography color="inherit" variant="subheading">
-//             {numSelected} selected
-//           </Typography>
-//         ) : (
-//           <Typography
-//             variant="subheading"
-//             id="tableTitle"
-//             className={classes.i}
-//           >
-//             <Tooltip title="Agregar empleado">
-//               <IconButton aria-label="Agregar empleado">
-//                 <i
-//                   className={"material-icons"}
-//                   onClick={(event, rowData) => {
-//                     alert("You clicked add ");
-//                   }}
-//                 >
-//                   add
-//                 </i>
-//               </IconButton>
-//             </Tooltip>
-//           </Typography>
-//         )}
-//       </div>
-//       <div className={classes.spacer} />
-//       <div className={classes.actions}>
-//         {numSelected > 0 ? (
-//           <Tooltip title="Delete">
-//             <IconButton aria-label="Delete">
-//               <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
-//                 {deleteEmployee => (
-//                   <DeleteIcon
-//                     onClick={(e) => deleteOnClick(deleteEmployee)}
-//                     // onClick={event => {
-//                     //   event.preventDefault();
-//                     //   selected.map(user =>
-//                     //     (deleteEmployee({
-//                     //       variables: { user }
-//                     //     }))
-//                     //   );
-//                     //   alert(`Empleado(s) eliminado(s)`);
-//                     //   history.push("/parkeo/admin-page/test");
-//                     // }}
-//                   />
-//                 )}
-//               </Mutation>
-//             </IconButton>
-//           </Tooltip>
-//         ) : (
-//           <Tooltip title="Filtrar lista">
-//             <IconButton aria-label="Filtrar lista">
-//               <FilterListIcon />
-//             </IconButton>
-//           </Tooltip>
-//         )}
-//       </div>
-//     </Toolbar>
-//   );
-// };
-
 EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired
@@ -337,7 +247,16 @@ const styles = theme => ({
   },
   tableWrapper: {
     overflowX: "auto"
-  }
+  },
+  td: {
+    padding: "1%"
+  },
+  flexContainerActions: {
+    display: "flex",
+    flexFlow: "row wrap",
+    justifyContent: "flex-start",
+    alignItems: "center"
+  },
 });
 
 class EnhancedTable extends React.Component {
@@ -464,36 +383,14 @@ class EnhancedTable extends React.Component {
                       <TableCell component="th" scope="row" padding="none">
                         {n.firstname}
                       </TableCell>
-                      <TableCell align="right">{n.lastname}</TableCell>
-                      <TableCell align="right">{n.user}</TableCell>
-                      <TableCell align="right">
+                      <TableCell component="th" scope="row" padding="none">{n.lastname}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">{n.user}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">
                         {n.active ? "ACTIVO" : "INACTIVO"}
                       </TableCell>
-                      <TableCell>
-                        <Tooltip title="Detalles">
-                          <IconButton aria-label="Detalles">
-                            <i
-                              className={"material-icons"}
-                              onClick={(event, selected) => {
-                                alert("You clicked display ");
-                              }}
-                            >
-                              account_circle
-                            </i>
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Editar">
-                          <IconButton aria-label="Editar">
-                            <i
-                              className={"material-icons"}
-                              onClick={(event, rowData) => {
-                                alert("You clicked edit ");
-                              }}
-                            >
-                              edit
-                            </i>
-                          </IconButton>
-                        </Tooltip>
+                      <TableCell className={classNames(classes.flexContainerActions, classes.td)}>
+                          <Display employee={n} />
+                          <Update employee={n} />
                       </TableCell>
                     </TableRow>
                   );

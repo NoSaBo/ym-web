@@ -16,12 +16,14 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-//GraphQL
+// GraphQL
 import { Mutation } from "react-apollo";
 import { NEW_EMPLOYEE } from "../../../mutations/employee.js";
 import { GET_EMPLOYEES } from "../../../queries/employee";
-//react-router
+// react-router
 import { withRouter } from "react-router-dom";
+// Helper function
+import { capitalize } from "assets/helperFunctions/index.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -97,8 +99,8 @@ class EmployeeModal extends React.Component {
     event.preventDefault();
     addEmployee({
       variables: {
-        firstname: employee.firstname,
-        lastname: employee.lastname,
+        firstname: capitalize(employee.firstname),
+        lastname: capitalize(employee.lastname),
         user: employee.user,
         password: employee.password,
         dni: employee.dni,
@@ -125,18 +127,14 @@ class EmployeeModal extends React.Component {
     const employee = this.state.employee;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Tooltip title="Agregar empleado">
-            <IconButton aria-label="Agregar empleado">
-              <i
-                className={"material-icons"}
-                onClick={() => this.handleClickOpen("classicModal")}
-              >
-                add
-              </i>
-            </IconButton>
-          </Tooltip>
-        </div>
+        <Tooltip title="Agregar empleado">
+          <IconButton
+            aria-label="Agregar empleado"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>add</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>

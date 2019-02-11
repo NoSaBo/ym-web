@@ -1,4 +1,5 @@
 import React from "react";
+import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Slide from "@material-ui/core/Slide";
@@ -7,6 +8,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,13 +16,13 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
-import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-// queries and mutations with react-apollo
+//GraphQL
 import { Mutation } from "react-apollo";
 import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper function
+import { capitalize } from "assets/helperFunctions/index.js";
 
 
 function Transition(props) {
@@ -83,10 +85,10 @@ class UpdateModal extends React.Component {
   saveEmployee(updateEmployee) {
     this.handleClose("classicModal");
     let employee = this.state.employee;
+    employee["firstname"] = capitalize(employee.firstname);
+    employee["lastname"] = capitalize(employee.lastname);
     updateEmployee({ variables: employee });
-    alert(employee.user + " have been updated!");
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
+    alert(employee.user + " ha sido actualizado!");
   }
 
   componentWillMount() {
@@ -97,12 +99,15 @@ class UpdateModal extends React.Component {
     const { classes } = this.props;
     const employee = this.state.employee;
     return (
-      <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="success">
-            <i className="material-icons">edit</i>
-          </Badge>
-        </div>
+      <div align="left">
+        <Tooltip title="Editar">
+          <IconButton
+            aria-label="Editar"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>edit</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>

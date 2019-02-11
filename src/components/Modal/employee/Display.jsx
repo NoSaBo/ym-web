@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,9 +15,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-// queries and mutations with react-apollo
 //react-router
 import { withRouter } from "react-router-dom";
 
@@ -46,12 +45,15 @@ class EmployeeModal extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="info">
-            <i className="material-icons">person</i>
-          </Badge>
-        </div>
+      <div align="left">
+        <Tooltip title="Detalles">
+          <IconButton
+            aria-label="Detalles"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>account_circle</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -124,7 +126,9 @@ class EmployeeModal extends React.Component {
                       <CustomInput
                         labelText="Estado"
                         name="active"
-                        value={this.props.employee.active ? "Activo" : "Inactivo"}
+                        value={
+                          this.props.employee.active ? "Activo" : "Inactivo"
+                        }
                         formControlProps={{ fullWidth: true }}
                       />
                     </form>
