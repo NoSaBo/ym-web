@@ -28,7 +28,6 @@ import { UPDATE_SERVICESHIFT } from "../../../mutations/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
 // Helper functions
-// import { modalDateTimeToLocalTime } from "assets/helperFunctions/index.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -55,10 +54,10 @@ class UpdateModal extends React.Component {
     this.setState(x);
   }
   handleClose(modal) {
+    this.resetServiceshift();
     var x = [];
     x[modal] = false;
     this.setState(x);
-    this.resetServiceshift();
   }
 
   handleStartDateState(event) {
@@ -77,12 +76,12 @@ class UpdateModal extends React.Component {
     this.setState({ serviceshift });
   }
 
-  // handleBranchSelected(event, dataBranches) {
-  handleBranchSelected(event) {
+  handleBranchSelected(event, dataBranches) {
     const serviceshift = this.state.serviceshift;
     const branchId = event.target.value;
-    // const branch = dataBranches.filter(e => e.id === branchId)[0];
-    serviceshift["branchId"] = branchId;
+    const branch = dataBranches.filter(e => e.id === branchId)[0];
+    serviceshift.branch["id"] = branch.id;
+    serviceshift.branch["branch"] = branch.branch;
     this.setState({ serviceshift });
   }
 
@@ -94,53 +93,40 @@ class UpdateModal extends React.Component {
   }
 
   resetServiceshift() {
-    let serviceshift = Object.assign({}, this.props.serviceshift);
-    delete serviceshift.employees;
-    ["active", "address", "contact", "latitude", "longitude", "phone"].forEach(
-      key => {
-        delete serviceshift.branch[key];
-      }
-    );
+    let serviceshift = JSON.parse(JSON.stringify(this.props.serviceshift));
     this.setState({ serviceshift });
   }
 
   saveServiceshift(updateServiceshift) {
-    this.handleClose("classicModal");
     let serviceshift = this.state.serviceshift;
-
     updateServiceshift({
       variables: {
         id: serviceshift.id,
         begindate: serviceshift.begindate,
         workspan: serviceshift.workspan,
         active: serviceshift.active,
-        branchId: serviceshift.branchId
+        branchId: serviceshift.branch.id
       }
-    });
-    alert(" Tu horario ha sido actualizado");
+    })
+    .then(() => alert(" Tu horario ha sido actualizado"))
+    .then(() => this.resetServiceshift())
+    .then(() => this.handleClose("classicModal"));
   }
 
   componentWillMount() {
-    console.log("this.props.serviceshift", this.props.serviceshift);
-    const serviceshift = Object.assign({}, this.props.serviceshift);
-    delete serviceshift.employees;
-    ["active", "address", "contact", "latitude", "longitude", "phone"].forEach(
-      key => {
-        delete serviceshift.branch[key];
-      }
-    );
-    serviceshift["branchId"] = serviceshift.branch.id;
-    delete serviceshift.branch;
-    this.setState({ serviceshift });
+    this.resetServiceshift();
   }
 
   render() {
+    if (this.props.serviceshift.id === "01db05d0-3195-11e9-b39b-fb6d53a20f97") {
+      console.log("this.props.serviceshift", this.props.serviceshift);
+      console.log("this.state.serviceshift", this.state.serviceshift);
+    }
     const { classes } = this.props;
-    const serviceshift = this.state.serviceshift;
-    const begindate = new Date(serviceshift.begindate);
-    const workspan = new Date(serviceshift.workspan);
-    const active = serviceshift.active;
-    const branchId = serviceshift.branchId;
+    let { begindate, workspan, active, branch } = this.state.serviceshift;
+    begindate = new Date(begindate);
+    workspan = new Date(workspan);
+    let branchId = branch.id;
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
     return (
@@ -237,23 +223,11 @@ class UpdateModal extends React.Component {
                             return (
                               <BranchSelector
                                 branches={data.branches}
-                                onChange={this.handleBranchSelected}
-                                branchId={branchId}
-                              />
-                              /* <select
                                 onChange={e =>
                                   this.handleBranchSelected(e, data.branches)
                                 }
-                                value={serviceshift.branch.id}
-                              >
-                                {data.branches.map((branch, index) => {
-                                  return (
-                                    <option key={index} value={branch.id}>
-                                      {branch.branch}
-                                    </option>
-                                  );
-                                })}
-                              </select> */
+                                branchId={branchId}
+                              />
                             );
                           }}
                         </Query>

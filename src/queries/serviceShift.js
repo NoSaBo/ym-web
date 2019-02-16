@@ -29,3 +29,18 @@ export const GET_SERVICESHIFTS = gql`
     }
   }
 `;
+
+export const GET_SERVICESHIFTS_BASIC = gql`
+  query ServiceShiftsBasicQuery {
+    serviceShifts {
+      id
+      begindate
+      workspan
+      active
+      branch{
+        id
+        branch
+      }
+    }
+  }
+`;

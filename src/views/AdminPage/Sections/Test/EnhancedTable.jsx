@@ -20,7 +20,8 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
-import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
+import { GET_SERVICESHIFTS_BASIC } from "../../../../queries/serviceShift";
+// import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
 //Customized components
 import Add from "../../../../components/Modal/serviceShift/Add";
@@ -157,9 +158,9 @@ const toolbarStyles = theme => ({
 });
 
 const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
-  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
+  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS_BASIC });
   cache.writeQuery({
-    query: GET_SERVICESHIFTS,
+    query: GET_SERVICESHIFTS_BASIC,
     data: {
       serviceShifts: serviceShifts.filter(n => n.id !== deleteServiceShift.id)
     }
