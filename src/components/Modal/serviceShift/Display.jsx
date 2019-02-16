@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,13 +15,13 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-import Moment from "react-moment";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -31,7 +32,7 @@ class ServiceShiftModal extends React.Component {
     super(props);
     this.state = {
       classicModal: false,
-      serviceShift: this.props.serviceShift
+      serviceshift: this.props.serviceshift
     };
   }
 
@@ -46,17 +47,34 @@ class ServiceShiftModal extends React.Component {
     this.setState(x);
   }
 
+  componentWillMount() {
+    const serviceshift = this.props.serviceshift;
+    this.setState({serviceshift});
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.serviceshift !== this.state.serviceshift) {
+      this.setState({ serviceshift: nextProps.serviceshift });
+    }
+  }
+
   render() {
     const { classes } = this.props;
+    let { begindate, workspan } = this.state.serviceshift;
+    begindate = dbDateTimeToView(begindate).dateTime;
+    workspan = dbDateTimeToView(workspan).time;
+    // console.log("display", begindate, workspan);
     return (
       <div>
-        <div
-          onClick={() => this.handleClickOpen("classicModal")}
-          title="Detalles de horario"
-        >
-          <Badge color="info">
-            <i className="material-icons">zoom_in</i>
-          </Badge>
+        <div>
+          <Tooltip title="Detalles">
+            <IconButton
+              aria-label="Detalles"
+              onClick={() => this.handleClickOpen("classicModal")}
+            >
+              <i className={"material-icons"}>account_circle</i>
+            </IconButton>
+          </Tooltip>
         </div>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -102,9 +120,7 @@ class ServiceShiftModal extends React.Component {
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
-                        <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
-                          {this.state.serviceShift.begindate}
-                        </Moment>
+                        {begindate}
                       </FormControl>
                       <br />
                       <br />
@@ -113,18 +129,16 @@ class ServiceShiftModal extends React.Component {
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
-                        <Moment add={{ hours: 5 }} format={"YYYY-MM-DD HH:mm"}>
-                          {this.state.serviceShift.workspan}
-                        </Moment>
+                        {workspan}
                       </FormControl>
                       <br />
                       <br />
                       <div>
                         <div>Empleado asignado</div>
                         <ul>
-                          {this.state.serviceShift.employees === undefined
+                          {this.state.serviceshift.employees === undefined
                             ? null
-                            : this.state.serviceShift.employees.map(
+                            : this.state.serviceshift.employees.map(
                                 employee => {
                                   return (
                                     <li key={employee.user}>
@@ -140,13 +154,15 @@ class ServiceShiftModal extends React.Component {
                       <CustomInput
                         labelText="Sede"
                         name="branch"
-                        value={this.state.serviceShift.branch.branch}
+                        value={this.state.serviceshift.branch.branch}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Estado"
                         name="active"
-                        value={this.state.serviceShift.active ? "Activo" : "Inactivo"}
+                        value={
+                          this.state.serviceshift.active ? "Activo" : "Inactivo"
+                        }
                         formControlProps={{ fullWidth: true }}
                       />
                     </form>

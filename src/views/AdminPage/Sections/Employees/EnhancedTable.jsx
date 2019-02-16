@@ -20,14 +20,13 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
-import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
-import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
+import { DELETE_EMPLOYEE } from "../../../../mutations/employee";
+import { GET_EMPLOYEES } from "../../../../queries/employee";
 //Customized components
-import Add from "../../../../components/Modal/serviceShift/Add";
-import Update from "../../../../components/Modal/serviceShift/Update";
-import Display from "../../../../components/Modal/serviceShift/Display";
-// Helper functions
-import { dbDateTimeToView } from "assets/helperFunctions/index.js";
+import Add from "../../../../components/Modal/employee/Add";
+import Update from "../../../../components/Modal/employee/Update";
+import Display from "../../../../components/Modal/employee/Display";
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -56,11 +55,11 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
-  { id: "begindate", numeric: false, disablePadding: true, label: "INICIO" },
-  { id: "workspan", numeric: false, disablePadding: true, label: "FIN" },
-  { id: "active", numeric: false, disablePadding: true, label: "ACTIVO" },
-  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
+  { id: "firstname", numeric: false, disablePadding: true, label: "NOMBRE" },
+  { id: "lastname", numeric: false, disablePadding: true, label: "APELLIDO" },
+  { id: "user", numeric: false, disablePadding: true, label: "USUARIO" },
+  { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
+  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES"}
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -156,24 +155,23 @@ const toolbarStyles = theme => ({
   }
 });
 
-const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
-  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
+const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
+  const { employees } = cache.readQuery({ query: GET_EMPLOYEES });
   cache.writeQuery({
-    query: GET_SERVICESHIFTS,
+    query: GET_EMPLOYEES,
     data: {
-      serviceShifts: serviceShifts.filter(n => n.id !== deleteServiceShift.id)
+      employees: employees.filter(n => n.user !== deleteEmployee.user)
     }
   });
 };
 
 class EnhancedTableToolbar extends React.Component {
-  deleteOnClick(deleteServiceShift, selected, history) {
-    selected.map(id => {
-      deleteServiceShift({
-        variables: { id }
-      });
-      return null;
-    });
+  deleteOnClick(deleteEmployee, selected, history) {
+    selected.map(user =>
+      deleteEmployee({
+        variables: { user }
+      })
+    );
     this.props.resetValues();
   }
   render() {
@@ -204,19 +202,12 @@ class EnhancedTableToolbar extends React.Component {
           {numSelected > 0 ? (
             <Tooltip title="Delete">
               <IconButton aria-label="Delete">
-                <Mutation
-                  mutation={DELETE_SERVICESHIFT}
-                  update={updateCacheDelete}
-                >
-                  {deleteServiceShift => (
+                <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
+                  {deleteEmployee => (
                     <DeleteIcon
                       onClick={() => {
-                        this.deleteOnClick(
-                          deleteServiceShift,
-                          selected,
-                          history
-                        );
-                        alert(`Horario(s) eliminado(s)`);
+                        this.deleteOnClick(deleteEmployee, selected, history);
+                        alert(`Empleado(s) eliminado(s)`);
                         return null;
                       }}
                     />
@@ -264,7 +255,7 @@ const styles = theme => ({
     flexFlow: "row wrap",
     justifyContent: "flex-start",
     alignItems: "center"
-  }
+  },
 });
 
 class EnhancedTable extends React.Component {
@@ -372,9 +363,7 @@ class EnhancedTable extends React.Component {
               {stableSort(data, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(n => {
-                  const isSelected = this.isSelected(n.id);
-                  let begindate = dbDateTimeToView(n.begindate).dateTime;
-                  let workspan = dbDateTimeToView(n.workspan).time;
+                  const isSelected = this.isSelected(n.user);
                   return (
                     <TableRow
                       // hover
@@ -386,30 +375,21 @@ class EnhancedTable extends React.Component {
                     >
                       <TableCell
                         padding="checkbox"
-                        onClick={event => this.handleClick(event, n.id)}
+                        onClick={event => this.handleClick(event, n.user)}
                       >
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.branch.branch}
+                        {n.firstname}
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {begindate}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {workspan}
-                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">{n.lastname}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">{n.user}</TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.active ? "ACTIVO" : "INACTIVO"}
                       </TableCell>
-                      <TableCell
-                        className={classNames(
-                          classes.flexContainerActions,
-                          classes.td
-                        )}
-                      >
-                        <Display serviceshift={n} />
-                        <Update serviceshift={n} />
+                      <TableCell className={classNames(classes.flexContainerActions, classes.td)}>
+                          <Display employee={n} />
+                          <Update employee={n} />
                       </TableCell>
                     </TableRow>
                   );

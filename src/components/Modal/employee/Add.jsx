@@ -22,7 +22,7 @@ import { NEW_EMPLOYEE } from "../../../mutations/employee.js";
 import { GET_EMPLOYEES } from "../../../queries/employee";
 // react-router
 import { withRouter } from "react-router-dom";
-// Helper function
+// Helper functions
 import { capitalize } from "assets/helperFunctions/index.js";
 
 function Transition(props) {

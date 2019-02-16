@@ -21,7 +21,7 @@ import { Mutation } from "react-apollo";
 import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
 //react-router
 import { withRouter } from "react-router-dom";
-// Helper function
+// Helper functions
 import { capitalize } from "assets/helperFunctions/index.js";
 
 

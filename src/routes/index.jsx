@@ -6,7 +6,8 @@ import Branches from "views/AdminPage/Sections/Branches/Index.jsx";
 import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/Index.jsx";
 import Parkings from "views/AdminPage/Sections/Parkings/Index.jsx";
 import EmployeexServiceShifts from "views/AdminPage/Sections/EmployeexServiceShifts/Index.jsx";
-import Test from "views/AdminPage/Sections/Test/Index.jsx"
+import Test from "views/AdminPage/Sections/Test/Index.jsx";
+
 
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
