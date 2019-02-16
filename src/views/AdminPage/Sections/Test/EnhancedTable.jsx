@@ -19,14 +19,16 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
-import { Mutation } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import { GET_SERVICESHIFTS_BASIC } from "../../../../queries/serviceShift";
-// import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
+import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
+import { GET_EMPLOYEES } from "../../../../queries/employee";
 //Customized components
 import Add from "../../../../components/Modal/serviceShift/Add";
 import Update from "../../../../components/Modal/serviceShift/Update";
 import Display from "../../../../components/Modal/serviceShift/Display";
+import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
 // Helper functions
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 
@@ -158,9 +160,9 @@ const toolbarStyles = theme => ({
 });
 
 const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
-  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS_BASIC });
+  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
   cache.writeQuery({
-    query: GET_SERVICESHIFTS_BASIC,
+    query: GET_SERVICESHIFTS,
     data: {
       serviceShifts: serviceShifts.filter(n => n.id !== deleteServiceShift.id)
     }
@@ -410,7 +412,31 @@ class EnhancedTable extends React.Component {
                         )}
                       >
                         <Display serviceshift={n} />
-                        <Update serviceshift={n} />
+                        <Query query={GET_SERVICESHIFTS_BASIC}>
+                          {({ loading, error, data }) => {
+                            if (loading) return <h4>Loading...</h4>;
+                            if (error) console.log("Query error: ", error);
+                            data = data.serviceShifts.filter(e => e.id === n.id)[0];
+                            console.log("data.basic", data)
+                            return (
+                              <Update serviceshift={n} />
+                            );
+                          }}
+                        </Query>
+                        <Query query={GET_EMPLOYEES}>
+                          {({ loading, error, data }) => {
+                            if (loading) return <h4>Loading...</h4>;
+                            if (error) console.log("Query error: ", error);
+                            return (
+                              <div>
+                                <ModalAddEmployee
+                                  serviceShift={n}
+                                  employees={data.employees}
+                                />
+                              </div>
+                            );
+                          }}
+                        </Query>
                       </TableCell>
                     </TableRow>
                   );

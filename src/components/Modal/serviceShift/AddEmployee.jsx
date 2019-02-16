@@ -7,13 +7,13 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
@@ -37,7 +37,10 @@ const updateCacheAdd = (cache, { data: { addEmployeeToServiceShift } }) => {
   });
 };
 
-const updateCacheDeleteEmployee = (cache, { data: { deleteEmployeeFromServiceShift } }) => {
+const updateCacheDeleteEmployee = (
+  cache,
+  { data: { deleteEmployeeFromServiceShift } }
+) => {
   const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
   const index = deleteEmployeeFromServiceShift.id;
   serviceShifts[index] = deleteEmployeeFromServiceShift;
@@ -79,7 +82,6 @@ class AddEmployee extends React.Component {
     var x = [];
     x[modal] = false;
     this.setState(x);
-    window.location.reload();
   }
   handleEmployeeSelected(e) {
     e.preventDefault();
@@ -94,13 +96,11 @@ class AddEmployee extends React.Component {
       variables: { id: this.state.serviceShift.id, employeeId: id }
     });
     alert(`Empleado ${this.state.employee.user} agregado`);
-    window.location.reload();
     this.handleClose("classicModal");
-    this.props.history.push("/parkeo/admin-page");
   }
   updateEmployeeInServiceShift(deleteEmployeeFromServiceShift, id) {
     deleteEmployeeFromServiceShift({
-      variables: { id: this.state.serviceShift.id, employeeId: id}
+      variables: { id: this.state.serviceShift.id, employeeId: id }
     });
     alert(`Empleado ${this.state.employeeToDelete.user} eliminado`);
   }
@@ -116,14 +116,14 @@ class AddEmployee extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <div
-          onClick={() => this.handleClickOpen("classicModal")}
-          title="Selección de empleado"
-        >
-          <Badge color="info">
-            <i className="material-icons">person_add</i>
-          </Badge>
-        </div>
+        <Tooltip title="Agregar Empleado">
+          <IconButton
+            aria-label="Agregar Empleado"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>group_add</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -186,30 +186,37 @@ class AddEmployee extends React.Component {
                     </form>
                     <form>
                       <div>Eliminar Empleados</div>
-                      <select
-                        onChange={this.handleEmployeeToDelete}
-                        size={this.props.serviceShift.employees.length}
-                      >
-                        {this.props.serviceShift.employees.map(
-                          (employee, index) => {
-                            return (
-                              <option key={index} value={employee.id}>
-                                {employee.firstname + " " + employee.lastname}
-                              </option>
-                            );
-                          }
-                        )}
-                      </select>
+                      {this.props.serviceShift.employees === undefined ? (
+                        <div />
+                      ) : (
+                        <select
+                          onChange={this.handleEmployeeToDelete}
+                          size={this.props.serviceShift.employees.length}
+                        >
+                          {this.props.serviceShift.employees.map(
+                            (employee, index) => {
+                              return (
+                                <option key={index} value={employee.id}>
+                                  {employee.firstname + " " + employee.lastname}
+                                </option>
+                              );
+                            }
+                          )}
+                        </select>
+                      )}
                     </form>
-                    <Mutation 
+                    <Mutation
                       mutation={DELETE_EMPLOYEE_FROM_SERVICESHIFT}
                       update={updateCacheDeleteEmployee}
                     >
                       {deleteEmployeeFromServiceShift => (
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
-                            this.updateEmployeeInServiceShift(deleteEmployeeFromServiceShift, this.state.employeeToDelete.id);
+                            this.updateEmployeeInServiceShift(
+                              deleteEmployeeFromServiceShift,
+                              this.state.employeeToDelete.id
+                            );
                           }}
                         >
                           Eliminar

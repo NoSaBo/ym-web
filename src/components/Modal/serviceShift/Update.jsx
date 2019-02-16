@@ -118,10 +118,6 @@ class UpdateModal extends React.Component {
   }
 
   render() {
-    if (this.props.serviceshift.id === "01db05d0-3195-11e9-b39b-fb6d53a20f97") {
-      console.log("this.props.serviceshift", this.props.serviceshift);
-      console.log("this.state.serviceshift", this.state.serviceshift);
-    }
     const { classes } = this.props;
     let { begindate, workspan, active, branch } = this.state.serviceshift;
     begindate = new Date(begindate);

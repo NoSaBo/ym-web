@@ -34,12 +34,10 @@ class UpdateModal extends React.Component {
     super(props);
     this.state = {
       classicModal: false,
-      togglePassword: "password",
       employee: null
     };
     this.handleChangeEmployee = this.handleChangeEmployee.bind(this);
     this.saveEmployee = this.saveEmployee.bind(this);
-    this.togglePassword = this.togglePassword.bind(this);
     this.resetEmployee = this.resetEmployee.bind(this);
   }
 
@@ -54,14 +52,6 @@ class UpdateModal extends React.Component {
     x[modal] = false;
     this.setState(x);
     this.resetEmployee();
-  }
-
-  togglePassword() {
-    if (this.state.togglePassword === "password") {
-      this.setState({ togglePassword: "text" });
-    } else {
-      this.setState({ togglePassword: "password" });
-    }
   }
 
   handleChangeEmployee(event) {
@@ -174,12 +164,10 @@ class UpdateModal extends React.Component {
                         labelText="Password"
                         name="password"
                         value={employee.password}
-                        type={this.state.togglePassword}
+                        type="password"
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
                       />
-                      <input type="checkbox" onClick={this.togglePassword} />
-                      Mostrar password
                       <CustomInput
                         labelText="Teléfono"
                         name="phone"

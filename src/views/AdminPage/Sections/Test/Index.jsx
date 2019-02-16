@@ -5,8 +5,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import ServiceShiftPageStyle from "assets/jss/material-kit-react/views/serviceShiftPage.jsx";
 //GraphQL
 import { Query } from "react-apollo";
-// import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
-import { GET_SERVICESHIFTS_BASIC } from "../../../../queries/serviceShift";
+import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 //Customized components
 import Table from "./EnhancedTable";
 
@@ -21,7 +20,7 @@ class IndexServiceshifts extends Component {
         <div className={classes.flexContainerNew}>
           <h1 className={classes.text}>Horarios</h1>
         </div>
-        <Query query={GET_SERVICESHIFTS_BASIC}>
+        <Query query={GET_SERVICESHIFTS}>
           {({ loading, error, data }) => {
             if (loading) return "Loading";
             if (error) return `Error ${error.message}`;

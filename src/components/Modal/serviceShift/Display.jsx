@@ -72,7 +72,7 @@ class ServiceShiftModal extends React.Component {
               aria-label="Detalles"
               onClick={() => this.handleClickOpen("classicModal")}
             >
-              <i className={"material-icons"}>account_circle</i>
+              <i className={"material-icons"}>alarm</i>
             </IconButton>
           </Tooltip>
         </div>
