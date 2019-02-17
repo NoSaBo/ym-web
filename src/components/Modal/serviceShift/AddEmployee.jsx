@@ -15,12 +15,12 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
+// customized components
+import AddRmvEmployees from "components/CustomBox/AddRmvEmployees.jsx";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
-import {
-  ADD_EMPLOYEE_TO_SERVICESHIFT,
-  DELETE_EMPLOYEE_FROM_SERVICESHIFT
-} from "../../../mutations/serviceShift";
+import { ADD_EMPLOYEE_TO_SERVICESHIFT } from "../../../mutations/serviceShift";
+import { DELETE_EMPLOYEE_FROM_SERVICESHIFT } from "../../../mutations/serviceShift";
 import { GET_SERVICESHIFTS } from "../../../queries/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
@@ -71,6 +71,7 @@ class AddEmployee extends React.Component {
       this
     );
     this.handleEmployeeToDelete = this.handleEmployeeToDelete.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
   handleClickOpen(modal) {
@@ -95,14 +96,14 @@ class AddEmployee extends React.Component {
     addEmployeeToServiceShift({
       variables: { id: this.state.serviceShift.id, employeeId: id }
     });
-    alert(`Empleado ${this.state.employee.user} agregado`);
-    this.handleClose("classicModal");
+    // alert(`Empleado ${this.state.employee.user} agregado`);
+    // this.handleClose("classicModal");
   }
   updateEmployeeInServiceShift(deleteEmployeeFromServiceShift, id) {
     deleteEmployeeFromServiceShift({
       variables: { id: this.state.serviceShift.id, employeeId: id }
     });
-    alert(`Empleado ${this.state.employeeToDelete.user} eliminado`);
+    // alert(`Empleado ${this.state.employeeToDelete.user} eliminado`);
   }
   handleEmployeeToDelete(e) {
     e.preventDefault();
@@ -164,26 +165,24 @@ class AddEmployee extends React.Component {
                     id="classic-modal-slide-description"
                     className={classes.modalBody}
                   >
-                    <div>
-                      El horario seleccionado pertenece a la sede{" "}
-                      {this.state.serviceShift.branch.branch.toUpperCase()},
-                      tiene como inicio el {this.state.serviceShift.begindate} y
-                      finaliza el {this.state.serviceShift.workspan}. Por favor
-                      seleccione un empleado para el horario mencionado:
-                    </div>
-                    <form>
-                      <div>Asignar empleados</div>
-                      <select onChange={this.handleEmployeeSelected}>
-                        <option>Seleccione un empleado</option>
-                        {this.props.employees.map((employee, index) => {
-                          return (
-                            <option key={index} value={employee.id}>
-                              {employee.firstname + " " + employee.lastname}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </form>
+                    <form />
+                    <AddRmvEmployees
+                      employees={this.props.employees}
+                      handleSave={this.handleSave}
+                      handleDelete={this.updateEmployeeInServiceShift}
+                      serviceShift={this.state.serviceShift}
+                    />
+                    {/* <div>Asignar empleados:</div>
+                    <select onChange={this.handleEmployeeSelected}>
+                      <option>Seleccione un empleado</option>
+                      {this.props.employees.map((employee, index) => {
+                        return (
+                          <option key={index} value={employee.id}>
+                            {employee.firstname + " " + employee.lastname}
+                          </option>
+                        );
+                      })}
+                    </select> */}
                     <form>
                       <div>Eliminar Empleados</div>
                       {this.props.serviceShift.employees === undefined ? (

@@ -417,7 +417,6 @@ class EnhancedTable extends React.Component {
                             if (loading) return <h4>Loading...</h4>;
                             if (error) console.log("Query error: ", error);
                             data = data.serviceShifts.filter(e => e.id === n.id)[0];
-                            console.log("data.basic", data)
                             return (
                               <Update serviceshift={n} />
                             );

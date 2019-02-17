@@ -63,7 +63,6 @@ class ServiceShiftModal extends React.Component {
     let { begindate, workspan } = this.state.serviceshift;
     begindate = dbDateTimeToView(begindate).dateTime;
     workspan = dbDateTimeToView(workspan).time;
-    // console.log("display", begindate, workspan);
     return (
       <div>
         <div>
