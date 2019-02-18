@@ -17,40 +17,9 @@ import Button from "components/CustomButtons/Button.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // customized components
 import AddRmvEmployees from "components/CustomBox/AddRmvEmployees.jsx";
-// queries and mutations with react-apollo
-import { Mutation } from "react-apollo";
-import { ADD_EMPLOYEE_TO_SERVICESHIFT } from "../../../mutations/serviceShift";
-import { DELETE_EMPLOYEE_FROM_SERVICESHIFT } from "../../../mutations/serviceShift";
-import { GET_SERVICESHIFTS } from "../../../queries/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
 
-const updateCacheAdd = (cache, { data: { addEmployeeToServiceShift } }) => {
-  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
-  const index = addEmployeeToServiceShift.id;
-  serviceShifts[index] = addEmployeeToServiceShift;
-  cache.writeQuery({
-    query: GET_SERVICESHIFTS,
-    data: {
-      serviceShifts: serviceShifts
-    }
-  });
-};
-
-const updateCacheDeleteEmployee = (
-  cache,
-  { data: { deleteEmployeeFromServiceShift } }
-) => {
-  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
-  const index = deleteEmployeeFromServiceShift.id;
-  serviceShifts[index] = deleteEmployeeFromServiceShift;
-  cache.writeQuery({
-    query: GET_SERVICESHIFTS,
-    data: {
-      serviceShifts: serviceShifts
-    }
-  });
-};
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -95,15 +64,12 @@ class AddEmployee extends React.Component {
   handleSave(addEmployeeToServiceShift, id) {
     addEmployeeToServiceShift({
       variables: { id: this.state.serviceShift.id, employeeId: id }
-    });
-    // alert(`Empleado ${this.state.employee.user} agregado`);
-    // this.handleClose("classicModal");
+    }).then(() => alert(`Empleado agregado`));
   }
   updateEmployeeInServiceShift(deleteEmployeeFromServiceShift, id) {
     deleteEmployeeFromServiceShift({
       variables: { id: this.state.serviceShift.id, employeeId: id }
-    });
-    // alert(`Empleado ${this.state.employeeToDelete.user} eliminado`);
+    }).then(() => alert(`Empleado desvinculado`));
   }
   handleEmployeeToDelete(e) {
     e.preventDefault();
@@ -158,97 +124,22 @@ class AddEmployee extends React.Component {
                       <Close className={classes.modalClose} />
                     </IconButton>
                     <h4 className={classes.modalTitle}>
-                      Añadir empleado a horario seleccionado
+                      Añadir empleado a horario
                     </h4>
                   </DialogTitle>
                   <DialogContent
                     id="classic-modal-slide-description"
                     className={classes.modalBody}
                   >
-                    <form />
                     <AddRmvEmployees
                       employees={this.props.employees}
                       handleSave={this.handleSave}
                       handleDelete={this.updateEmployeeInServiceShift}
                       serviceShift={this.state.serviceShift}
                     />
-                    {/* <div>Asignar empleados:</div>
-                    <select onChange={this.handleEmployeeSelected}>
-                      <option>Seleccione un empleado</option>
-                      {this.props.employees.map((employee, index) => {
-                        return (
-                          <option key={index} value={employee.id}>
-                            {employee.firstname + " " + employee.lastname}
-                          </option>
-                        );
-                      })}
-                    </select> */}
-                    <form>
-                      <div>Eliminar Empleados</div>
-                      {this.props.serviceShift.employees === undefined ? (
-                        <div />
-                      ) : (
-                        <select
-                          onChange={this.handleEmployeeToDelete}
-                          size={this.props.serviceShift.employees.length}
-                        >
-                          {this.props.serviceShift.employees.map(
-                            (employee, index) => {
-                              return (
-                                <option key={index} value={employee.id}>
-                                  {employee.firstname + " " + employee.lastname}
-                                </option>
-                              );
-                            }
-                          )}
-                        </select>
-                      )}
-                    </form>
-                    <Mutation
-                      mutation={DELETE_EMPLOYEE_FROM_SERVICESHIFT}
-                      update={updateCacheDeleteEmployee}
-                    >
-                      {deleteEmployeeFromServiceShift => (
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.updateEmployeeInServiceShift(
-                              deleteEmployeeFromServiceShift,
-                              this.state.employeeToDelete.id
-                            );
-                          }}
-                        >
-                          Eliminar
-                        </Button>
-                      )}
-                    </Mutation>
+                    <form />
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
-                    <Mutation
-                      mutation={ADD_EMPLOYEE_TO_SERVICESHIFT}
-                      update={updateCacheAdd}
-                      refetchQueries={() => {
-                        return [{ query: GET_SERVICESHIFTS }];
-                      }}
-                    >
-                      {addEmployeeToServiceShift => (
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.state.employee === undefined
-                              ? alert("No ha seleccionado un empleado!")
-                              : this.handleSave(
-                                  addEmployeeToServiceShift,
-                                  this.state.employee.id
-                                );
-                          }}
-                          color="transparent"
-                          simple
-                        >
-                          Guardar
-                        </Button>
-                      )}
-                    </Mutation>
                     <Button
                       onClick={() => this.handleClose("classicModal")}
                       color="danger"

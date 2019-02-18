@@ -6,8 +6,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+// Helper functions
+import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 
-var moment = require("moment");
 
 const styles = theme => ({
   root: {
@@ -93,9 +94,7 @@ class SimpleSelect extends React.Component {
             </MenuItem>
             {serviceShifts.map((serviceshift, index) => (
               <MenuItem key={index} value={serviceshift.id}>
-                {moment(serviceshift.begindate)
-                  .add(5, "hours")
-                  .format("YYYY-MM-DD HH:mm")}
+                {dbDateTimeToView(serviceshift.begindate).dateTime}
               </MenuItem>
             ))}
           </Select>

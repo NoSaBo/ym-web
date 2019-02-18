@@ -10,6 +10,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
@@ -19,16 +20,13 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
-import { DELETE_PARKING } from "../../../../mutations/parking";
-import { GET_PARKINGS } from "../../../../queries/parking";
+import { DELETE_BRANCH } from "../../../../mutations/branch";
+import { GET_BRANCHES } from "../../../../queries/branch";
 //Customized components
-import Display from "../../../../components/Modal/parking/Display";
-import BrchSshFilter from "../../../../components/Selector/Selector";
-// Helper functions
-import {
-  dbDateTimeToView,
-  getShiftandBranch
-} from "assets/helperFunctions/index.js";
+import Add from "../../../../components/Modal/branch/Add";
+import Update from "../../../../components/Modal/branch/Update";
+import Display from "../../../../components/Modal/branch/Display";
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -57,11 +55,12 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: "begindate", numeric: false, disablePadding: true, label: "HORARIO" },
   { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
-  { id: "owner", numeric: false, disablePadding: true, label: "PROPIETARIO" },
-  { id: "returned", numeric: false, disablePadding: true, label: "RETORNADO" },
-  { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
+  { id: "address", numeric: false, disablePadding: true, label: "DIRECCION" },
+  { id: "contact", numeric: false, disablePadding: true, label: "CONTACTO" },
+  { id: "phone", numeric: false, disablePadding: true, label: "TELEFONO" },
+  { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
+  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES"}
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -157,20 +156,20 @@ const toolbarStyles = theme => ({
   }
 });
 
-const updateCacheDelete = (cache, { data: { deleteParking } }) => {
-  const { parkings } = cache.readQuery({ query: GET_PARKINGS });
+const updateCacheDelete = (cache, { data: { deleteBranch } }) => {
+  const { branches } = cache.readQuery({ query: GET_BRANCHES });
   cache.writeQuery({
-    query: GET_PARKINGS,
+    query: GET_BRANCHES,
     data: {
-      parkings: parkings.filter(n => n.id !== deleteParking.id)
+      branches: branches.filter(n => n.id !== deleteBranch.id)
     }
   });
 };
 
 class EnhancedTableToolbar extends React.Component {
-  deleteOnClick(deleteParking, selected, history) {
+  deleteOnClick(deleteBranch, selected, history) {
     selected.map(id =>
-      deleteParking({
+      deleteBranch({
         variables: { id }
       })
     );
@@ -184,17 +183,32 @@ class EnhancedTableToolbar extends React.Component {
           [classes.highlight]: numSelected > 0
         })}
       >
+        <div className={classes.title}>
+          {numSelected > 0 ? (
+            <Typography color="inherit" variant="subheading">
+              {numSelected} selected
+            </Typography>
+          ) : (
+            <Typography
+              variant="subheading"
+              id="tableTitle"
+              className={classes.i}
+            >
+              <Add />
+            </Typography>
+          )}
+        </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
             <Tooltip title="Delete">
               <IconButton aria-label="Delete">
-                <Mutation mutation={DELETE_PARKING} update={updateCacheDelete}>
-                  {deleteParking => (
+                <Mutation mutation={DELETE_BRANCH} update={updateCacheDelete}>
+                  {deleteBranch => (
                     <DeleteIcon
                       onClick={() => {
-                        this.deleteOnClick(deleteParking, selected, history);
-                        alert(`Auto(s) registrado(s) eliminado(s)`);
+                        this.deleteOnClick(deleteBranch, selected, history);
+                        alert(`Sede(s) eliminada(s)`);
                         return null;
                       }}
                     />
@@ -243,9 +257,13 @@ const styles = theme => ({
     justifyContent: "flex-start",
     alignItems: "center"
   },
-  marginComponent: {
-    marginLeft: "20px"
-  }
+  cuttedView: {
+    margin: "0 0 0 0",
+    textOverflow: "ellipsis",
+    width: "130px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+  },
 });
 
 class EnhancedTable extends React.Component {
@@ -256,13 +274,10 @@ class EnhancedTable extends React.Component {
       orderBy: "user",
       selected: [],
       data: [],
-      branches: [],
-      serviceShifts: [],
       page: 0,
       rowsPerPage: 5
     };
     this.resetValues = this.resetValues.bind(this);
-    this.onFilterChanged = this.onFilterChanged.bind(this);
   }
 
   handleRequestSort = (event, property) => {
@@ -317,10 +332,6 @@ class EnhancedTable extends React.Component {
   componentWillMount() {
     let { data } = this.props;
     this.setState({ data });
-    this.setState({
-      branches: getShiftandBranch(data).branches,
-      serviceShifts: getShiftandBranch(data).serviceShifts
-    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -333,39 +344,9 @@ class EnhancedTable extends React.Component {
     this.setState({ selected: [] });
   }
 
-  onFilterChanged = (branchId, serviceshiftId) => {
-    const allParkings = this.props.data;
-    let newAllParkings = "";
-    if (serviceshiftId === "x" && branchId === "x") {
-      newAllParkings = allParkings;
-    } else if (branchId === "x" && serviceshiftId !== "x") {
-      newAllParkings = allParkings.filter(
-        parking => parking.serviceshift.id === serviceshiftId
-      );
-    } else if (serviceshiftId === "x" && branchId !== "x") {
-      newAllParkings = allParkings.filter(
-        parking => parking.serviceshift.branch.id === branchId
-      );
-    } else if (serviceshiftId !== "x" && branchId !== "x") {
-      newAllParkings = allParkings
-        .filter(parking => parking.serviceshift.id === serviceshiftId)
-        .filter(parking => parking.serviceshift.branch.id === branchId);
-    }
-    this.setState({ data: newAllParkings });
-  };
-
   render() {
     const { classes } = this.props;
-    const {
-      data,
-      order,
-      orderBy,
-      selected,
-      rowsPerPage,
-      page,
-      branches,
-      serviceShifts
-    } = this.state;
+    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
     return (
@@ -376,13 +357,6 @@ class EnhancedTable extends React.Component {
           history={this.props.history}
           resetValues={this.resetValues}
         />
-        <div className={classes.marginComponent}>
-          <BrchSshFilter
-            branches={branches}
-            serviceShifts={serviceShifts}
-            onFilterChanged={this.onFilterChanged}
-          />
-        </div>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -413,25 +387,18 @@ class EnhancedTable extends React.Component {
                       >
                         <Checkbox checked={isSelected} />
                       </TableCell>
+                      <TableCell component="th" scope="row" padding="none">{n.branch}</TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {dbDateTimeToView(n.serviceshift.begindate).dateTime}
+                        <p className={classes.cuttedView}>{n.address}</p>
                       </TableCell>
+                      <TableCell component="th" scope="row" padding="none">{n.contact}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">{n.phone}</TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.serviceshift.branch.branch}
+                        {n.active ? "ACTIVO" : "INACTIVO"}
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.owner}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.returned ? "SI" : "NO"}
-                      </TableCell>
-                      <TableCell
-                        className={classNames(
-                          classes.flexContainerActions,
-                          classes.td
-                        )}
-                      >
-                        <Display parking={n} />
+                      <TableCell className={classNames(classes.flexContainerActions, classes.td)}>
+                          <Display branch={n} />
+                          <Update branch={n} />
                       </TableCell>
                     </TableRow>
                   );

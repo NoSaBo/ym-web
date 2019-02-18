@@ -1,5 +1,5 @@
 import moment from "moment";
-import 'moment/locale/es'
+import "moment/locale/es";
 
 export const capitalize = word => {
   const response = word.toLowerCase();
@@ -15,9 +15,31 @@ export const modalDateTimeToLocalTime = dateTime => {
   return { format: { db: ForDB, view: ForModal, time: justTime } };
 };
 
-export const dbDateTimeToView = (dateTime) => {
-    let ans = moment(dateTime);
-    const ansDT = ans.locale('es').format("MMMM, dddd D,  h:mm a")
-    const ansT = ans.format("HH:mm a")
-    return {dateTime: ansDT, time: ansT};
+export const dbDateTimeToView = dateTime => {
+  let ans = moment(dateTime);
+  const ansDT = ans.locale("es").format("MMMM, dddd D,  h:mm a");
+  const ansT = ans.format("HH:mm a");
+  return { dateTime: ansDT, time: ansT };
+};
+
+const removeDuplicates = (arr, comp) => {
+  const unique = arr.map(e => e[comp])
+     // store the keys of the unique objects
+    .map((e, i, final) => final.indexOf(e) === i && i)
+    // eliminate the dead keys & store unique objects
+    .filter(e => arr[e]).map(e => arr[e]);
+   return unique;
 }
+
+export const getShiftandBranch = parkings => {
+  let serviceShifts = [];
+  let branches = [];
+  parkings.forEach(parking => {
+    serviceShifts.push(parking.serviceshift);
+    branches.push(parking.serviceshift.branch);
+  });
+  serviceShifts = removeDuplicates(serviceShifts, "id");
+  branches = removeDuplicates(branches, "id");
+
+  return { serviceShifts: serviceShifts, branches: branches };
+};

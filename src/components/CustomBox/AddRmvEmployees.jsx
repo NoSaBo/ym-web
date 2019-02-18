@@ -1,6 +1,5 @@
 import React from "react";
 // @material-ui/core components
-// import withStyles from "@material-ui/core/styles/withStyles";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 // queries and mutations with react-apollo
@@ -8,7 +7,6 @@ import { Mutation } from "react-apollo";
 import { ADD_EMPLOYEE_TO_SERVICESHIFT } from "../../mutations/serviceShift";
 import { GET_SERVICESHIFTS } from "../../queries/serviceShift";
 import { DELETE_EMPLOYEE_FROM_SERVICESHIFT } from "../../mutations/serviceShift";
-
 
 const updateCacheDeleteEmployee = (
   cache,
@@ -36,12 +34,6 @@ const updateCacheAdd = (cache, { data: { addEmployeeToServiceShift } }) => {
     }
   });
 };
-
-// const styles = theme => ({
-//   red600: {
-//     color: "#fa3200"
-//   }
-// });
 
 class AddRmvEmployees extends React.Component {
   constructor(props) {
@@ -79,8 +71,6 @@ class AddRmvEmployees extends React.Component {
   }
 
   render() {
-    let { assigned } = this.state;
-    console.log("assigned", assigned);
     return (
       <form>
         <div>Asignar empleados:</div>
@@ -92,6 +82,9 @@ class AddRmvEmployees extends React.Component {
                   <Mutation
                     mutation={ADD_EMPLOYEE_TO_SERVICESHIFT}
                     update={updateCacheAdd}
+                    refetchQueries={() => {
+                        return [{ query: GET_SERVICESHIFTS }];
+                      }}
                   >
                     {addEmployeeToServiceShift => (
                       <IconButton
@@ -111,28 +104,33 @@ class AddRmvEmployees extends React.Component {
                   </Mutation>
                 </Tooltip>
               )}
-              <Tooltip title="Desvincular">
-                <Mutation
-                  mutation={DELETE_EMPLOYEE_FROM_SERVICESHIFT}
-                  update={updateCacheDeleteEmployee}
-                >
-                  {deleteEmployeeFromServiceShift => (
-                    <IconButton
-                      aria-label="Asignar"
-                      style={{ padding: "2px" }}
-                      onClick={e =>
-                        this.handleUnlinked(
-                          e,
-                          employee.id,
-                          deleteEmployeeFromServiceShift
-                        )
-                      }
-                    >
-                      <i className="material-icons md-18">clear</i>
-                    </IconButton>
-                  )}
-                </Mutation>
-              </Tooltip>
+              {!this.isNotAssigned(employee.id) && (
+                <Tooltip title="Desvincular">
+                  <Mutation
+                    mutation={DELETE_EMPLOYEE_FROM_SERVICESHIFT}
+                    update={updateCacheDeleteEmployee}
+                    refetchQueries={() => {
+                        return [{ query: GET_SERVICESHIFTS }];
+                      }}
+                  >
+                    {deleteEmployeeFromServiceShift => (
+                      <IconButton
+                        aria-label="Asignar"
+                        style={{ padding: "2px" }}
+                        onClick={e =>
+                          this.handleUnlinked(
+                            e,
+                            employee.id,
+                            deleteEmployeeFromServiceShift
+                          )
+                        }
+                      >
+                        <i className="material-icons md-18">clear</i>
+                      </IconButton>
+                    )}
+                  </Mutation>
+                </Tooltip>
+              )}
               {employee.firstname + " " + employee.lastname}
             </div>
           );
@@ -142,5 +140,4 @@ class AddRmvEmployees extends React.Component {
   }
 }
 
-// export default withStyles(styles)(AddRmvEmployees);
 export default AddRmvEmployees;

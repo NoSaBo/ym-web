@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -95,11 +96,9 @@ class BranchModal extends React.Component {
         active: branch.active
       }
     });
-    alert(`${branch.branch} have been added!`);
+    alert(`Sede ${branch.branch} ha sido agregada`);
     this.handleClose("classicModal");
     this.resetBranchForm();
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
   }
 
   resetBranchForm() {
@@ -116,9 +115,14 @@ class BranchModal extends React.Component {
     const branch = this.state.branch;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Button color="info">+ Crear</Button>
-        </div>
+        <Tooltip title="Agregar Sede">
+          <IconButton
+            aria-label="Agregar Sede"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>add</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>

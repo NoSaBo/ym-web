@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,7 +15,6 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
@@ -71,9 +71,7 @@ class UpdateModal extends React.Component {
     this.handleClose("classicModal");
     let branch = this.state.branch;
     updateBranch({ variables: branch });
-    alert(branch.branch + " have been updated!");
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
+    alert(`Sede ${branch.branch} + ha sido actualizada`);
   }
 
   componentWillMount() {
@@ -85,11 +83,14 @@ class UpdateModal extends React.Component {
     let branch = this.state.branch;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="success">
-            <i className="material-icons">edit</i>
-          </Badge>
-        </div>
+        <Tooltip title="Editar">
+          <IconButton
+            aria-label="Editar"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>edit</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
