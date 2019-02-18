@@ -20,14 +20,15 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
-import { GET_EMPLOYEEXSERVICESHIFTS } from "../../../../queries/employeexserviceshifts";
-import { DELETE_EMPLOYEEXSERVICESHIFT } from "../../../../mutations/employeexserviceshifts";
+import { DELETE_PARKING } from "../../../../mutations/parking";
+import { GET_PARKINGS } from "../../../../queries/parking";
 //Customized components
-import Display from "../../../../components/Modal/empxsrv/Display";
+import Display from "../../../../components/Modal/parking/Display";
+import BrchSshFilter from "../../../../components/Selector/Selector";
 // Helper functions
 import {
   dbDateTimeToView,
-  getSshIdAndEmpId
+  getShiftandBranch
 } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
@@ -57,21 +58,10 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  {
-    id: "employeeName",
-    numeric: false,
-    disablePadding: true,
-    label: "EMPLEADO"
-  },
-  { id: "branchName", numeric: false, disablePadding: true, label: "SEDE" },
-  {
-    id: "begindate",
-    numeric: false,
-    disablePadding: true,
-    label: "HORARIO PROGRAMADO"
-  },
-  { id: "start", numeric: false, disablePadding: true, label: "INICIO" },
-  { id: "comment", numeric: false, disablePadding: true, label: "COMENTARIO" },
+  { id: "begindate", numeric: false, disablePadding: true, label: "HORARIO" },
+  { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
+  { id: "owner", numeric: false, disablePadding: true, label: "PROPIETARIO" },
+  { id: "returned", numeric: false, disablePadding: true, label: "RETORNADO" },
   { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
 ];
 
@@ -168,34 +158,23 @@ const toolbarStyles = theme => ({
   }
 });
 
-const updateCacheDelete = (
-  cache,
-  { data: { deleteEmployeexserviceshift } }
-) => {
-  const { employeesxserviceshifts } = cache.readQuery({
-    query: GET_EMPLOYEEXSERVICESHIFTS
-  });
+const updateCacheDelete = (cache, { data: { deleteParking } }) => {
+  const { parkings } = cache.readQuery({ query: GET_PARKINGS });
   cache.writeQuery({
-    query: GET_EMPLOYEEXSERVICESHIFTS,
+    query: GET_PARKINGS,
     data: {
-      employeesxserviceshifts: employeesxserviceshifts.filter(
-        n => n.id !== deleteEmployeexserviceshift.id
-      )
+      parkings: parkings.filter(n => n.id !== deleteParking.id)
     }
   });
 };
 
 class EnhancedTableToolbar extends React.Component {
-  deleteOnClick(deleteEmployeexserviceshift, selected, history) {
-    selected.map(id => {
-      let ids = getSshIdAndEmpId(id, this.props.empxsrv);
-      let employeeId = ids.employeeId;
-      let serviceshiftId = ids.serviceshiftId;
-      deleteEmployeexserviceshift({
-        variables: { id: serviceshiftId, employeeId }
-      });
-      return null;
-    });
+  deleteOnClick(deleteParking, selected, history) {
+    selected.map(id =>
+      deleteParking({
+        variables: { id }
+      })
+    );
     this.props.resetValues();
   }
   render() {
@@ -218,22 +197,12 @@ class EnhancedTableToolbar extends React.Component {
           {numSelected > 0 ? (
             <Tooltip title="Delete">
               <IconButton aria-label="Delete">
-                <Mutation
-                  mutation={DELETE_EMPLOYEEXSERVICESHIFT}
-                  update={updateCacheDelete}
-                  refetchQueries={() => {
-                    return [{ query: GET_EMPLOYEEXSERVICESHIFTS }];
-                  }}
-                >
-                  {deleteEmployeexserviceshift => (
+                <Mutation mutation={DELETE_PARKING} update={updateCacheDelete}>
+                  {deleteParking => (
                     <DeleteIcon
                       onClick={() => {
-                        this.deleteOnClick(
-                          deleteEmployeexserviceshift,
-                          selected,
-                          history
-                        );
-                        alert(`Turno(s) eliminado(s)`);
+                        this.deleteOnClick(deleteParking, selected, history);
+                        alert(`Auto(s) registrado(s) eliminado(s)`);
                         return null;
                       }}
                     />
@@ -282,12 +251,8 @@ const styles = theme => ({
     justifyContent: "flex-start",
     alignItems: "center"
   },
-  cuttedView: {
-    margin: "0 0 0 0",
-    textOverflow: "ellipsis",
-    width: "130px",
-    whiteSpace: "nowrap",
-    overflow: "hidden"
+  marginComponent: {
+    marginLeft: "20px"
   }
 });
 
@@ -305,6 +270,7 @@ class EnhancedTable extends React.Component {
       rowsPerPage: 5
     };
     this.resetValues = this.resetValues.bind(this);
+    this.onFilterChanged = this.onFilterChanged.bind(this);
   }
 
   handleRequestSort = (event, property) => {
@@ -357,8 +323,12 @@ class EnhancedTable extends React.Component {
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   componentWillMount() {
-    let { data, branches, serviceShifts } = this.props;
-    this.setState({ data, branches, serviceShifts });
+    let { data } = this.props;
+    this.setState({ data });
+    this.setState({
+      branches: getShiftandBranch(data).branches,
+      serviceShifts: getShiftandBranch(data).serviceShifts
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -371,74 +341,41 @@ class EnhancedTable extends React.Component {
     this.setState({ selected: [] });
   }
 
-  getBranchName(serviceshiftId) {
-    let serviceshift = "";
-    serviceshift = this.state.serviceShifts.filter(
-      serviceshift => serviceshift.id === serviceshiftId
-    );
-    let branchName = serviceshift[0].branch.branch;
-    let branchId = serviceshift[0].branch.id;
-    serviceshift = {};
-    serviceshift["branchName"] = branchName;
-    serviceshift["branchId"] = branchId;
-    return serviceshift;
-  }
-
-  getBegindate(serviceshiftId) {
-    let serviceshift = "";
-    serviceshift = this.state.serviceShifts.filter(
-      serviceshift => serviceshift.id === serviceshiftId
-    );
-    let begindate = serviceshift[0].begindate;
-    return begindate;
-  }
-
-  getEmployeeName(employeeId) {
-    let arrEmployees = [];
-    let employeeName = [];
-    this.state.serviceShifts.map(serviceshift => {
-      serviceshift.employees.map(employee =>
-        arrEmployees.push({ ...employee })
+  onFilterChanged = (branchId, serviceshiftId) => {
+    const allParkings = this.props.data;
+    let newAllParkings = "";
+    if (serviceshiftId === "x" && branchId === "x") {
+      newAllParkings = allParkings;
+    } else if (branchId === "x" && serviceshiftId !== "x") {
+      newAllParkings = allParkings.filter(
+        parking => parking.serviceshift.id === serviceshiftId
       );
-      return null;
-    });
-    arrEmployees = this.removeDuplicates(arrEmployees, "id");
-    employeeName = arrEmployees.filter(employee => employee.id === employeeId);
-    employeeName = `${employeeName[0].firstname} ${employeeName[0].lastname}`;
-    return employeeName;
-  }
-
-  removeDuplicates(originalArray, prop) {
-    var newArray = [];
-    var lookupObject = {};
-    for (var i in originalArray) {
-      lookupObject[originalArray[i][prop]] = originalArray[i];
+    } else if (serviceshiftId === "x" && branchId !== "x") {
+      newAllParkings = allParkings.filter(
+        parking => parking.serviceshift.branch.id === branchId
+      );
+    } else if (serviceshiftId !== "x" && branchId !== "x") {
+      newAllParkings = allParkings
+        .filter(parking => parking.serviceshift.id === serviceshiftId)
+        .filter(parking => parking.serviceshift.branch.id === branchId);
     }
-    for (i in lookupObject) {
-      newArray.push(lookupObject[i]);
-    }
-    return newArray;
-  }
-
-  buildNewAllEmpxSrv(allEmpxSrv) {
-    allEmpxSrv.map(empxsrv => {
-      let branch = this.getBranchName(empxsrv.serviceshiftId);
-      let begindate = this.getBegindate(empxsrv.serviceshiftId);
-      let employeeName = this.getEmployeeName(empxsrv.employeeId);
-      empxsrv["branchName"] = branch.branchName;
-      empxsrv["branchId"] = branch.branchId;
-      empxsrv["begindate"] = begindate;
-      empxsrv["employeeName"] = employeeName;
-      return null;
-    });
-  }
+    this.setState({ data: newAllParkings });
+  };
 
   render() {
     const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const {
+      data,
+      order,
+      orderBy,
+      selected,
+      rowsPerPage,
+      page,
+      branches,
+      serviceShifts
+    } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-    this.buildNewAllEmpxSrv(data);
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar
@@ -446,8 +383,14 @@ class EnhancedTable extends React.Component {
           selected={selected}
           history={this.props.history}
           resetValues={this.resetValues}
-          empxsrv={data}
         />
+        <div className={classes.marginComponent}>
+          <BrchSshFilter
+            branches={branches}
+            serviceShifts={serviceShifts}
+            onFilterChanged={this.onFilterChanged}
+          />
+        </div>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -479,21 +422,16 @@ class EnhancedTable extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.employeeName}
+                        {dbDateTimeToView(n.serviceshift.begindate).dateTime}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.branchName}
+                        {n.serviceshift.branch.branch}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {dbDateTimeToView(n.begindate).dateTime}
+                        {n.owner}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.start !== null
-                          ? dbDateTimeToView(n.start).dateTime
-                          : "SIN INICIO"}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        <p className={classes.cuttedView}>{n.comment}</p>
+                        {n.returned ? "SI" : "NO"}
                       </TableCell>
                       <TableCell
                         className={classNames(
@@ -501,7 +439,7 @@ class EnhancedTable extends React.Component {
                           classes.td
                         )}
                       >
-                        <Display empxsrv={n} />
+                        <Display parking={n} />
                       </TableCell>
                     </TableRow>
                   );

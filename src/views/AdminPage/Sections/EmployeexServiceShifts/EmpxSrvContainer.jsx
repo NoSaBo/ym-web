@@ -96,7 +96,6 @@ class EmpxSrvContainer extends Component {
   }
 
   buildNewAllEmpxSrv(allEmpxSrv) {
-    console.log("allEmpxSrv", allEmpxSrv);
     allEmpxSrv.map(empxsrv => {
       let branch = this.getBranchName(empxsrv.serviceshiftId);
       let begindate = this.getBegindate(empxsrv.serviceshiftId);
@@ -108,11 +107,12 @@ class EmpxSrvContainer extends Component {
       return null;
     });
   }
-
+  
   render() {
     const { allEmpxSrv } = this.state;
     const { classes } = this.props;
     this.buildNewAllEmpxSrv(allEmpxSrv);
+    console.log("allEmpxSrv", allEmpxSrv);
     return (
       <div className={classes.EmpxSrvContainer}>
         <Selector

@@ -43,3 +43,9 @@ export const getShiftandBranch = parkings => {
 
   return { serviceShifts: serviceShifts, branches: branches };
 };
+
+export const getSshIdAndEmpId = (id, empxssh) => {
+  let employeeId = empxssh.find(x => x.id === id).employeeId;
+  let serviceshiftId = empxssh.find(x => x.id === id).serviceshiftId;
+  return {employeeId, serviceshiftId}
+}

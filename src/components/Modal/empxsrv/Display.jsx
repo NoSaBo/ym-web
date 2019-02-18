@@ -7,6 +7,8 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
+
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,13 +16,12 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-// queries and mutations with react-apollo
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 
-var moment = require("moment");
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -48,20 +49,17 @@ class ParkingModal extends React.Component {
   render() {
     const { classes } = this.props;
     let begindate = this.props.empxsrv.begindate;
-    begindate = moment(begindate)
-      .add(5, "hours")
-      .format("YYYY-MM-DD HH:mm");
     let start = this.props.empxsrv.start;
-    start = moment(start)
-      .add(5, "hours")
-      .format("YYYY-MM-DD HH:mm");
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="info">
-            <i className="material-icons">view_headline</i>
-          </Badge>
-        </div>
+        <Tooltip title="Detalles">
+          <IconButton
+            aria-label="Detalles"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>alarm</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -112,7 +110,11 @@ class ParkingModal extends React.Component {
                       <CustomInput
                         labelText="Foto"
                         name="photo"
-                        value={this.props.empxsrv.photo ? this.props.empxsrv.photo : ""}
+                        value={
+                          this.props.empxsrv.photo
+                            ? this.props.empxsrv.photo
+                            : ""
+                        }
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
@@ -124,31 +126,43 @@ class ParkingModal extends React.Component {
                       <CustomInput
                         labelText="Horario"
                         name="begindate"
-                        value={begindate}
+                        value={dbDateTimeToView(begindate).dateTime}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Inicio"
                         name="start"
-                        value={start}
+                        value={dbDateTimeToView(start).dateTime}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Longitud"
                         name="longitude"
-                        value={this.props.empxsrv.longitude ? this.props.empxsrv.longitude : ""}
+                        value={
+                          this.props.empxsrv.longitude
+                            ? this.props.empxsrv.longitude
+                            : ""
+                        }
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Latitud"
                         name="latitude"
-                        value={this.props.empxsrv.longitude ? this.props.empxsrv.longitude : ""}
+                        value={
+                          this.props.empxsrv.longitude
+                            ? this.props.empxsrv.longitude
+                            : ""
+                        }
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Comentario"
                         name="comment"
-                        value={this.props.empxsrv.comment ? this.props.empxsrv.comment : ""}
+                        value={
+                          this.props.empxsrv.comment
+                            ? this.props.empxsrv.comment
+                            : ""
+                        }
                         formControlProps={{ fullWidth: true }}
                       />
                     </form>
