@@ -24,10 +24,13 @@ import { GET_EMPLOYEEXSERVICESHIFTS } from "../../../../queries/employeexservice
 import { DELETE_EMPLOYEEXSERVICESHIFT } from "../../../../mutations/employeexserviceshifts";
 //Customized components
 import Display from "../../../../components/Modal/empxsrv/Display";
+import BrchSshFilter from "../../../../components/Selector/Selector";
 // Helper functions
+
 import {
   dbDateTimeToView,
-  getSshIdAndEmpId
+  getSshIdAndEmpId,
+  getFilterData
 } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
@@ -288,6 +291,9 @@ const styles = theme => ({
     width: "130px",
     whiteSpace: "nowrap",
     overflow: "hidden"
+  },
+  marginComponent: {
+    marginLeft: "20px"
   }
 });
 
@@ -302,9 +308,12 @@ class EnhancedTable extends React.Component {
       branches: [],
       serviceShifts: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 5,
+      fBranches: [],
+      fServiceShifts: []
     };
     this.resetValues = this.resetValues.bind(this);
+    this.onFilterChanged = this.onFilterChanged.bind(this);
   }
 
   handleRequestSort = (event, property) => {
@@ -359,6 +368,10 @@ class EnhancedTable extends React.Component {
   componentWillMount() {
     let { data, branches, serviceShifts } = this.props;
     this.setState({ data, branches, serviceShifts });
+    this.setState({
+      fBranches: getFilterData(data, serviceShifts).branches,
+      fServiceShifts: getFilterData(data, serviceShifts).serviceShifts
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -433,9 +446,40 @@ class EnhancedTable extends React.Component {
     });
   }
 
+  onFilterChanged = (branchId, serviceshiftId) => {
+    let allEmpxSrv = this.props.data;
+    this.buildNewAllEmpxSrv(allEmpxSrv);
+    let newAllEmpxsrvs = "";
+    if (serviceshiftId === "x" && branchId === "x") {
+      newAllEmpxsrvs = allEmpxSrv;
+    } else if (branchId === "x" && serviceshiftId !== "x") {
+      newAllEmpxsrvs = allEmpxSrv.filter(
+        empxsrvs => empxsrvs.serviceshiftId === serviceshiftId
+      );
+    } else if (serviceshiftId === "x" && branchId !== "x") {
+      newAllEmpxsrvs = allEmpxSrv.filter(
+        empxsrvs => empxsrvs.branchId === branchId
+      );
+    } else if (serviceshiftId !== "x" && branchId !== "x") {
+      newAllEmpxsrvs = allEmpxSrv
+        .filter(empxsrvs => empxsrvs.serviceshiftId === serviceshiftId)
+        .filter(empxsrvs => empxsrvs.branchId === branchId);
+    }
+    this.setState({ data: newAllEmpxsrvs });
+  };
+
   render() {
     const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const {
+      data,
+      order,
+      orderBy,
+      selected,
+      rowsPerPage,
+      page,
+      fBranches,
+      fServiceShifts
+    } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
     this.buildNewAllEmpxSrv(data);
@@ -448,6 +492,13 @@ class EnhancedTable extends React.Component {
           resetValues={this.resetValues}
           empxsrv={data}
         />
+        <div className={classes.marginComponent}>
+          <BrchSshFilter
+            branches={fBranches}
+            serviceShifts={fServiceShifts}
+            onFilterChanged={this.onFilterChanged}
+          />
+        </div>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead

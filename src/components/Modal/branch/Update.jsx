@@ -71,7 +71,7 @@ class UpdateModal extends React.Component {
     this.handleClose("classicModal");
     let branch = this.state.branch;
     updateBranch({ variables: branch });
-    alert(`Sede ${branch.branch} + ha sido actualizada`);
+    alert(`Sede ${branch.branch} ha sido actualizada`);
   }
 
   componentWillMount() {

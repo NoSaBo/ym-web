@@ -23,13 +23,15 @@ export const dbDateTimeToView = dateTime => {
 };
 
 const removeDuplicates = (arr, comp) => {
-  const unique = arr.map(e => e[comp])
-     // store the keys of the unique objects
+  const unique = arr
+    .map(e => e[comp])
+    // store the keys of the unique objects
     .map((e, i, final) => final.indexOf(e) === i && i)
     // eliminate the dead keys & store unique objects
-    .filter(e => arr[e]).map(e => arr[e]);
-   return unique;
-}
+    .filter(e => arr[e])
+    .map(e => arr[e]);
+  return unique;
+};
 
 export const getShiftandBranch = parkings => {
   let serviceShifts = [];
@@ -44,8 +46,30 @@ export const getShiftandBranch = parkings => {
   return { serviceShifts: serviceShifts, branches: branches };
 };
 
+export const getFilterData = (empxsshs, ssshs) => {
+  let serviceShifts = [];
+  let branches = [];
+  empxsshs.map(e => {
+    let { serviceshiftId } = e;
+    let serviceshift = ssshs.find(e => e.id === serviceshiftId);
+    let { begindate } = serviceshift;
+    let branchName = serviceshift.branch.branch;
+    let branchId = serviceshift.branch.id;
+    serviceShifts.push({ id: serviceshiftId, begindate });
+    branches.push({ id: branchId, branch: branchName });
+    serviceShifts = removeDuplicates(serviceShifts, "id");
+    branches = removeDuplicates(branches, "id");
+    return null;
+  });
+  return { serviceShifts: serviceShifts, branches: branches };
+};
+
 export const getSshIdAndEmpId = (id, empxssh) => {
   let employeeId = empxssh.find(x => x.id === id).employeeId;
   let serviceshiftId = empxssh.find(x => x.id === id).serviceshiftId;
-  return {employeeId, serviceshiftId}
-}
+  return { employeeId, serviceshiftId };
+};
+
+export const getEmployeeName = (id, employees) => {
+  return employees.find(n => n.id === id);
+};

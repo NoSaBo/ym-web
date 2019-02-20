@@ -19,6 +19,8 @@ import javascriptStyles from "assets/jss/material-kit-react/views/componentsSect
 import AddRmvEmployees from "components/CustomBox/AddRmvEmployees.jsx";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { getEmployeeName } from "assets/helperFunctions/index.js";
 
 
 function Transition(props) {
@@ -62,14 +64,16 @@ class AddEmployee extends React.Component {
     this.setState({ employee });
   }
   handleSave(addEmployeeToServiceShift, id) {
+    let employee = getEmployeeName(id, this.state.employees);
     addEmployeeToServiceShift({
       variables: { id: this.state.serviceShift.id, employeeId: id }
-    }).then(() => alert(`Empleado agregado`));
+    }).then(() => alert(`Empleado ${employee.user} agregado`));
   }
   updateEmployeeInServiceShift(deleteEmployeeFromServiceShift, id) {
+    let employee = getEmployeeName(id, this.state.employees);
     deleteEmployeeFromServiceShift({
       variables: { id: this.state.serviceShift.id, employeeId: id }
-    }).then(() => alert(`Empleado desvinculado`));
+    }).then(() => alert(`Empleado ${employee.user} desvinculado`));
   }
   handleEmployeeToDelete(e) {
     e.preventDefault();
