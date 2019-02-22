@@ -61,7 +61,9 @@ const rows = [
   { id: "begindate", numeric: false, disablePadding: true, label: "HORARIO" },
   { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
   { id: "owner", numeric: false, disablePadding: true, label: "PROPIETARIO" },
+  { id: "createdAt", numeric: false, disablePadding: true, label: "RECEPCIÓN" },
   { id: "returned", numeric: false, disablePadding: true, label: "RETORNADO" },
+  { id: "updatedAt", numeric: false, disablePadding: true, label: "HORA DE RETORNO" },  
   { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
 ];
 
@@ -431,7 +433,13 @@ class EnhancedTable extends React.Component {
                         {n.owner}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
+                        {dbDateTimeToView(n.createdAt).time}
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
                         {n.returned ? "SI" : "NO"}
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        {n.updatedAt === n.createdAt ? " - " : dbDateTimeToView(n.updatedAt).time}
                       </TableCell>
                       <TableCell
                         className={classNames(
