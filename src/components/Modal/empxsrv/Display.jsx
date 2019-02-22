@@ -22,7 +22,6 @@ import { withRouter } from "react-router-dom";
 // Helper functions
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 
-
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
@@ -132,7 +131,7 @@ class ParkingModal extends React.Component {
                       <CustomInput
                         labelText="Inicio"
                         name="start"
-                        value={dbDateTimeToView(start).dateTime}
+                        value={start !== null ? dbDateTimeToView(start).dateTime : "SIN INICIO"}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
