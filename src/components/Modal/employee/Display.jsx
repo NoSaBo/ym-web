@@ -15,6 +15,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
+import TextFieldDisabled from "../../CustomBox/TextFieldDisabled";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //react-router
 import { withRouter } from "react-router-dom";
@@ -44,6 +45,14 @@ class EmployeeModal extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const {
+      firstname,
+      lastname,
+      user,
+      phone,
+      dni,
+      active
+    } = this.props.employee;
     return (
       <div align="left">
         <Tooltip title="Detalles">
@@ -93,42 +102,43 @@ class EmployeeModal extends React.Component {
                     className={classes.modalBody}
                   >
                     <form>
+                      <TextFieldDisabled n={firstname}/>
+
                       <CustomInput
                         labelText="Nombre"
                         name="firstname"
-                        value={this.props.employee.firstname}
+                        value={firstname}
                         formControlProps={{ fullWidth: true }}
+                        label="disabled"
                       />
                       <CustomInput
                         labelText="Apellido"
                         name="lastname"
-                        value={this.props.employee.lastname}
+                        value={lastname}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Usuario"
                         name="user"
-                        value={this.props.employee.user}
+                        value={user}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Teléfono"
                         name="phone"
-                        value={this.props.employee.phone}
+                        value={phone}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="D.N.I"
                         name="dni"
-                        value={this.props.employee.dni}
+                        value={dni}
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
                         labelText="Estado"
                         name="active"
-                        value={
-                          this.props.employee.active ? "Activo" : "Inactivo"
-                        }
+                        value={active ? "Activo" : "Inactivo"}
                         formControlProps={{ fullWidth: true }}
                       />
                     </form>
