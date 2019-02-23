@@ -259,10 +259,10 @@ const styles = theme => ({
   },
   cuttedView: {
     margin: "0 0 0 0",
+    width: "210px",
     textOverflow: "ellipsis",
-    width: "130px",
-    whiteSpace: "nowrap",
     overflow: "hidden",
+    whiteSpace: "nowrap"
   },
 });
 
@@ -388,8 +388,8 @@ class EnhancedTable extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">{n.branch}</TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        <p className={classes.cuttedView}>{n.address}</p>
+                      <TableCell component="th" scope="row" padding="none" margin="none">
+                        <p title={n.address} className={classes.cuttedView}>{n.address}</p>
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">{n.contact}</TableCell>
                       <TableCell component="th" scope="row" padding="none">{n.phone}</TableCell>
