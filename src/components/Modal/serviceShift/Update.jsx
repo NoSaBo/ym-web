@@ -15,7 +15,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-import Datetime from "react-datetime";
+import Datetime from "../../BoxForTime/NativeDateTime.jsx";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 //Customized components
@@ -27,7 +27,6 @@ import { GET_BRANCHES } from "../../../queries/branch";
 import { UPDATE_SERVICESHIFT } from "../../../mutations/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
-// Helper functions
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -63,7 +62,7 @@ class UpdateModal extends React.Component {
   handleStartDateState(event) {
     const field = "begindate";
     const serviceshift = this.state.serviceshift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceshift[field] = date;
     this.setState({ serviceshift });
   }
@@ -71,7 +70,7 @@ class UpdateModal extends React.Component {
   handleWorkspanDateState(event) {
     const field = "workspan";
     const serviceshift = this.state.serviceshift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceshift[field] = date;
     this.setState({ serviceshift });
   }
@@ -108,9 +107,9 @@ class UpdateModal extends React.Component {
         branchId: serviceshift.branch.id
       }
     })
-    .then(() => alert(" Tu horario ha sido actualizado"))
-    .then(() => this.resetServiceshift())
-    .then(() => this.handleClose("classicModal"));
+      .then(() => alert(" Tu horario ha sido actualizado"))
+      .then(() => this.resetServiceshift())
+      .then(() => this.handleClose("classicModal"));
   }
 
   componentWillMount() {
@@ -191,6 +190,7 @@ class UpdateModal extends React.Component {
                           renderInput={false}
                         />
                       </FormControl>
+
                       <br style={{ width: "250px" }} />
                       <br />
                       <InputLabel className={classes.label}>
@@ -199,14 +199,15 @@ class UpdateModal extends React.Component {
                       <br />
                       <FormControl fullWidth>
                         <Datetime
-                          dateFormat={true}
                           inputProps={{
                             placeholder: "Fecha y hora fin"
                           }}
                           value={workspan}
                           onChange={this.handleWorkspanDateState}
+                          renderInput={false}
                         />
                       </FormControl>
+
                       <br />
                       <br />
                       <InputLabel className={classes.label}>Sede</InputLabel>

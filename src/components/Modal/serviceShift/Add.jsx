@@ -14,7 +14,7 @@ import Close from "@material-ui/icons/Close";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import Datetime from "react-datetime";
+import Datetime from "../../BoxForTime/NativeDateTime.jsx";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
@@ -97,7 +97,7 @@ class Modal extends React.Component {
   handleStartDateState(event) {
     const field = "begindate";
     const serviceShift = this.state.serviceShift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceShift[field] = date;
     this.setState({ serviceShift });
   }
@@ -105,7 +105,7 @@ class Modal extends React.Component {
   handleWorkspanDateState(event) {
     const field = "workspan";
     const serviceShift = this.state.serviceShift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceShift[field] = date;
     this.setState({ serviceShift });
   }
@@ -135,7 +135,6 @@ class Modal extends React.Component {
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
     let { active, branchId } = this.state.serviceShift;
-    // console.log("this.state.serviceShift", this.state.serviceShift);
     return (
       <div>
         <Tooltip title="Agregar empleado">
@@ -200,6 +199,9 @@ class Modal extends React.Component {
                           renderInput={false}
                         />
                       </FormControl>
+                      <InputLabel className={classes.label}>
+                        Inicio de turno
+                      </InputLabel>
                       <br />
                       <br />
                       <InputLabel className={classes.label}>

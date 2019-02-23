@@ -26,7 +26,8 @@ import { GET_EMPLOYEES } from "../../../../queries/employee";
 import Add from "../../../../components/Modal/employee/Add";
 import Update from "../../../../components/Modal/employee/Update";
 import Display from "../../../../components/Modal/employee/Display";
-
+// Helper functions
+import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -59,7 +60,7 @@ const rows = [
   { id: "lastname", numeric: false, disablePadding: true, label: "APELLIDO" },
   { id: "user", numeric: false, disablePadding: true, label: "USUARIO" },
   { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
-  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES"}
+  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -172,6 +173,7 @@ class EnhancedTableToolbar extends React.Component {
         variables: { user }
       })
     );
+    alert(`Empleado(s) eliminado(s)`);
     this.props.resetValues();
   }
   render() {
@@ -205,11 +207,9 @@ class EnhancedTableToolbar extends React.Component {
                 <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
                   {deleteEmployee => (
                     <DeleteIcon
-                      onClick={() => {
-                        this.deleteOnClick(deleteEmployee, selected, history);
-                        alert(`Empleado(s) eliminado(s)`);
-                        return null;
-                      }}
+                      onClick={() =>
+                        this.deleteOnClick(deleteEmployee, selected, history)
+                      }
                     />
                   )}
                 </Mutation>
@@ -255,15 +255,15 @@ const styles = theme => ({
     flexFlow: "row wrap",
     justifyContent: "flex-start",
     alignItems: "center"
-  },
+  }
 });
 
 class EnhancedTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      order: "asc",
-      orderBy: "user",
+      order: "desc",
+      orderBy: "active",
       selected: [],
       data: [],
       page: 0,
@@ -348,6 +348,7 @@ class EnhancedTable extends React.Component {
           selected={selected}
           history={this.props.history}
           resetValues={this.resetValues}
+          serviceshifts={this.props.serviceshifts}
         />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
@@ -382,14 +383,23 @@ class EnhancedTable extends React.Component {
                       <TableCell component="th" scope="row" padding="none">
                         {n.firstname}
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">{n.lastname}</TableCell>
-                      <TableCell component="th" scope="row" padding="none">{n.user}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        {n.lastname}
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        {n.user}
+                      </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.active ? "ACTIVO" : "INACTIVO"}
                       </TableCell>
-                      <TableCell className={classNames(classes.flexContainerActions, classes.td)}>
-                          <Display employee={n} />
-                          <Update employee={n} />
+                      <TableCell
+                        className={classNames(
+                          classes.flexContainerActions,
+                          classes.td
+                        )}
+                      >
+                        <Display employee={n} />
+                        <Update employee={n} />
                       </TableCell>
                     </TableRow>
                   );

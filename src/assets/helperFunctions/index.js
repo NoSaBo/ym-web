@@ -9,7 +9,7 @@ export const capitalize = word => {
 export const modalDateTimeToLocalTime = dateTime => {
   let localDT = new Date(dateTime);
   localDT = moment(localDT);
-  let ForDB = localDT.format("YYYY-MM-DDTHH:mm:ss");
+  let ForDB = localDT.format("YYYY-MM-DDTHH:mm");
   let ForModal = localDT.format("LLLL");
   let justTime = localDT.format("HH:mm");
   return { format: { db: ForDB, view: ForModal, time: justTime } };
@@ -72,4 +72,15 @@ export const getSshIdAndEmpId = (id, empxssh) => {
 
 export const getEmployeeName = (id, employees) => {
   return employees.find(n => n.id === id);
+};
+
+export const employeesInServiceshifts = serviceshifts => {
+  let employees = [];
+  let users = [];
+  serviceshifts.map(serviceshift =>
+    serviceshift.employees.map(employee => employees.push(employee))
+  );
+  employees = removeDuplicates(employees, "id");
+  employees.map(user => users.push(user.user));
+  return users;
 };
