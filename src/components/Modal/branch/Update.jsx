@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,8 +15,10 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
+import FormControl from "@material-ui/core/FormControl";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
+//Customized components
+import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
 import { UPDATE_BRANCH } from "../../../mutations/branch";
@@ -55,7 +58,7 @@ class UpdateModal extends React.Component {
     const field = event.target.name;
     let value = event.target.value;
     if (field === "active") {
-      value = value === "true" ? true : false;
+      value = value === true ? true : false;
     }
     let branch = this.state.branch;
     branch[field] = value;
@@ -71,9 +74,7 @@ class UpdateModal extends React.Component {
     this.handleClose("classicModal");
     let branch = this.state.branch;
     updateBranch({ variables: branch });
-    alert(branch.branch + " have been updated!");
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
+    alert(`Sede ${branch.branch} ha sido actualizada`);
   }
 
   componentWillMount() {
@@ -85,11 +86,14 @@ class UpdateModal extends React.Component {
     let branch = this.state.branch;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="success">
-            <i className="material-icons">edit</i>
-          </Badge>
-        </div>
+        <Tooltip title="Editar">
+          <IconButton
+            aria-label="Editar"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>edit</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -173,17 +177,13 @@ class UpdateModal extends React.Component {
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
                       />
-                      <div>
-                        <div>Estado</div>
-                        <select
+                      <FormControl fullWidth style={{paddingTop:"10px"}}>
+                        <ActiveSelector
+                          active={branch.active}
                           onChange={this.handleChangeBranch}
-                          name="active"
-                          value={branch.active}
-                        >
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </div>
+                          modal="update"
+                        />
+                      </FormControl>
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

@@ -7,17 +7,20 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import Badge from "../../Badge/Badge.jsx";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-import Datetime from "react-datetime";
+import Datetime from "../../BoxForTime/NativeDateTime.jsx";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
+//Customized components
+import BranchSelector from "../../Selector/BranchSelector";
+import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Mutation, Query } from "react-apollo";
 import { GET_BRANCHES } from "../../../queries/branch";
@@ -36,13 +39,12 @@ class UpdateModal extends React.Component {
       classicModal: false,
       serviceshift: null
     };
-    this.handleChangeServiceshift = this.handleChangeServiceshift.bind(this);
     this.saveServiceshift = this.saveServiceshift.bind(this);
     this.resetServiceshift = this.resetServiceshift.bind(this);
     this.handleStartDateState = this.handleStartDateState.bind(this);
     this.handleWorkspanDateState = this.handleWorkspanDateState.bind(this);
     this.handleBranchSelected = this.handleBranchSelected.bind(this);
-    this.handleServiceShiftState = this.handleServiceShiftState.bind(this);
+    this.handleActiveState = this.handleActiveState.bind(this);
   }
 
   handleClickOpen(modal) {
@@ -51,27 +53,16 @@ class UpdateModal extends React.Component {
     this.setState(x);
   }
   handleClose(modal) {
+    this.resetServiceshift();
     var x = [];
     x[modal] = false;
     this.setState(x);
-    this.resetServiceshift();
-  }
-
-  handleChangeServiceshift(event) {
-    const field = event.target.name;
-    let value = event.target.value;
-    if (field === "active") {
-      value = value === "true" ? true : false;
-    }
-    let serviceshift = this.state.serviceshift;
-    serviceshift[field] = value;
-    this.setState({ serviceshift });
   }
 
   handleStartDateState(event) {
     const field = "begindate";
     const serviceshift = this.state.serviceshift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceshift[field] = date;
     this.setState({ serviceshift });
   }
@@ -79,101 +70,70 @@ class UpdateModal extends React.Component {
   handleWorkspanDateState(event) {
     const field = "workspan";
     const serviceshift = this.state.serviceshift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceshift[field] = date;
     this.setState({ serviceshift });
   }
 
   handleBranchSelected(event, dataBranches) {
-    event.preventDefault();
     const serviceshift = this.state.serviceshift;
     const branchId = event.target.value;
     const branch = dataBranches.filter(e => e.id === branchId)[0];
-    serviceshift["branch"] = branch;
+    serviceshift.branch["id"] = branch.id;
+    serviceshift.branch["branch"] = branch.branch;
     this.setState({ serviceshift });
   }
 
-  handleServiceShiftState(event) {
-    const field = event.target.name;
+  handleActiveState(event) {
     let value = event.target.value;
-    if (field === "active") {
-      value = value === "true" ? true : false;
-    }
     let serviceshift = this.state.serviceshift;
-    serviceshift[field] = value;
+    serviceshift["active"] = value;
     this.setState({ serviceshift });
   }
 
   resetServiceshift() {
-    let serviceshift = Object.assign({}, this.props.serviceshift);
-    delete serviceshift.employees;
-    ["active", "address", "contact", "latitude", "longitude", "phone"].forEach(
-      key => {
-        delete serviceshift.branch[key];
-      }
-    );
+    let serviceshift = JSON.parse(JSON.stringify(this.props.serviceshift));
     this.setState({ serviceshift });
   }
 
   saveServiceshift(updateServiceshift) {
-    this.handleClose("classicModal");
     let serviceshift = this.state.serviceshift;
-    let begindate = serviceshift.begindate;
-    begindate.setMinutes(
-      begindate.getMinutes() - begindate.getTimezoneOffset()
-    );
-    begindate = begindate.toISOString();
-    let workspan = this.state.serviceshift.workspan;
-    workspan.setMinutes(workspan.getMinutes() - workspan.getTimezoneOffset());
-    workspan = workspan.toISOString();
-
     updateServiceshift({
       variables: {
         id: serviceshift.id,
-        begindate: begindate,
-        workspan: workspan,
+        begindate: serviceshift.begindate,
+        workspan: serviceshift.workspan,
         active: serviceshift.active,
         branchId: serviceshift.branch.id
       }
-    });
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
-    alert(" Tu horario ha sido actualizado");
+    })
+      .then(() => alert(" Tu horario ha sido actualizado"))
+      .then(() => this.resetServiceshift())
+      .then(() => this.handleClose("classicModal"));
   }
 
   componentWillMount() {
-    const serviceshift = Object.assign({}, this.props.serviceshift);
-    delete serviceshift.employees;
-    ["active", "address", "contact", "latitude", "longitude", "phone"].forEach(
-      key => {
-        delete serviceshift.branch[key];
-      }
-    );
-    let begindateFormatted = new Date(serviceshift.begindate);
-    begindateFormatted.setMinutes(
-      begindateFormatted.getMinutes() + begindateFormatted.getTimezoneOffset()
-    );
-    serviceshift["begindate"] = begindateFormatted;
-    let workspanFormatted = new Date(serviceshift.workspan);
-    workspanFormatted.setMinutes(
-      workspanFormatted.getMinutes() + workspanFormatted.getTimezoneOffset()
-    );
-    serviceshift["workspan"] = workspanFormatted;
-    this.setState({ serviceshift });
+    this.resetServiceshift();
   }
 
   render() {
     const { classes } = this.props;
-    const serviceshift = this.state.serviceshift;
+    let { begindate, workspan, active, branch } = this.state.serviceshift;
+    begindate = new Date(begindate);
+    workspan = new Date(workspan);
+    let branchId = branch.id;
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="success">
-            <i className="material-icons">edit</i>
-          </Badge>
-        </div>
+        <Tooltip title="Editar">
+          <IconButton
+            aria-label="Editar"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>edit</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -217,7 +177,7 @@ class UpdateModal extends React.Component {
                     <span style={{ opacity: "0" }}>{widthTmpFix}</span>
                     <form>
                       <InputLabel className={classes.label}>
-                        Inicio de turno
+                        Inicio de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
@@ -225,27 +185,29 @@ class UpdateModal extends React.Component {
                           inputProps={{
                             placeholder: "Fecha y hora de inicio"
                           }}
-                          value={serviceshift.begindate}
+                          value={begindate}
                           onChange={this.handleStartDateState}
                           renderInput={false}
                         />
                       </FormControl>
+
                       <br style={{ width: "250px" }} />
                       <br />
                       <InputLabel className={classes.label}>
-                        Fin de turno
+                        Fin de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
                         <Datetime
-                          dateFormat={true}
                           inputProps={{
                             placeholder: "Fecha y hora fin"
                           }}
-                          value={serviceshift.workspan}
+                          value={workspan}
                           onChange={this.handleWorkspanDateState}
+                          renderInput={false}
                         />
                       </FormControl>
+
                       <br />
                       <br />
                       <InputLabel className={classes.label}>Sede</InputLabel>
@@ -256,20 +218,13 @@ class UpdateModal extends React.Component {
                             if (loading) return <h4>Loading...</h4>;
                             if (error) console.log("errror: ", error);
                             return (
-                              <select
+                              <BranchSelector
+                                branches={data.branches}
                                 onChange={e =>
                                   this.handleBranchSelected(e, data.branches)
                                 }
-                                value={serviceshift.branch.id}
-                              >
-                                {data.branches.map((branch, index) => {
-                                  return (
-                                    <option key={index} value={branch.id}>
-                                      {branch.branch}
-                                    </option>
-                                  );
-                                })}
-                              </select>
+                                branchId={branchId}
+                              />
                             );
                           }}
                         </Query>
@@ -279,15 +234,10 @@ class UpdateModal extends React.Component {
                       <InputLabel className={classes.label}>Estado</InputLabel>
                       <br />
                       <FormControl fullWidth>
-                        <select
-                          onChange={this.handleServiceShiftState}
-                          name="active"
-                          value={serviceshift.active}
-                        >
-                          <option>Seleccionar Estado</option>
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
+                        <ActiveSelector
+                          onChange={this.handleActiveState}
+                          active={active}
+                        />
                       </FormControl>
                     </form>
                   </DialogContent>

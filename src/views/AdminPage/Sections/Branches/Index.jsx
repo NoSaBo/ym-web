@@ -3,10 +3,11 @@ import React, { Component } from "react";
 // @material-ui/core & style components
 import withStyles from "@material-ui/core/styles/withStyles";
 import BranchPageStyle from "assets/jss/material-kit-react/views/branchPage.jsx";
-import BranchContainer from "./BranchContainer";
-import Add from "../../../../components/Modal/branch/Add";
+//GraphQL
 import { Query } from "react-apollo";
 import { GET_BRANCHES } from "../../../../queries/branch";
+//Customized components
+import Table from "./EnhancedTable";
 
 class IndexBranch extends Component {
   render() {
@@ -17,15 +18,13 @@ class IndexBranch extends Component {
         style={{ paddingBottom: "20px", color: "black" }}
       >
         <div className={classes.flexContainerNew}>
-          <h1>Sedes</h1>
-          <p style={{ marginLeft: "2em" }} />
-          <Add />
+          <h1 className={classes.text}>Sedes</h1>
         </div>
         <Query query={GET_BRANCHES}>
           {({ loading, error, data }) => {
             if (loading) return "Loading";
             if (error) return `Error ${error.message}`;
-            return <BranchContainer branches={data.branches} />;
+            return <Table data={data.branches} history={this.props.history} />;
           }}
         </Query>
       </div>

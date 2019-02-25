@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,13 +15,18 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
+import FormControl from "@material-ui/core/FormControl";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-// queries and mutations with react-apollo
+//Customized components
+import ActiveSelector from "../../Selector/ActiveSelector";
+// GraphQL
 import { Mutation } from "react-apollo";
 import { NEW_EMPLOYEE } from "../../../mutations/employee.js";
 import { GET_EMPLOYEES } from "../../../queries/employee";
-//react-router
+// react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { capitalize } from "assets/helperFunctions/index.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -85,7 +91,7 @@ class EmployeeModal extends React.Component {
     const field = event.target.name;
     let value = event.target.value;
     if (field === "active") {
-      value = value === "true" ? true : false;
+      value = value === true ? true : false;
     }
     let employee = this.state.employee;
     employee[field] = value;
@@ -96,8 +102,8 @@ class EmployeeModal extends React.Component {
     event.preventDefault();
     addEmployee({
       variables: {
-        firstname: employee.firstname,
-        lastname: employee.lastname,
+        firstname: capitalize(employee.firstname),
+        lastname: capitalize(employee.lastname),
         user: employee.user,
         password: employee.password,
         dni: employee.dni,
@@ -105,11 +111,9 @@ class EmployeeModal extends React.Component {
         active: employee.active
       }
     });
-    alert(`${employee.user} have been added!`);
+    alert(`${employee.user} ha sido agregado`);
     this.handleClose("classicModal");
     this.resetEmployeeForm();
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
   }
 
   resetEmployeeForm() {
@@ -126,9 +130,14 @@ class EmployeeModal extends React.Component {
     const employee = this.state.employee;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Button color="info">+ Crear</Button>
-        </div>
+        <Tooltip title="Agregar empleado">
+          <IconButton
+            aria-label="Agregar empleado"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>add</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -213,18 +222,13 @@ class EmployeeModal extends React.Component {
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
                       />
-                      <div>
-                        <div>Estado</div>
-                        <select
+                      <FormControl fullWidth style={{paddingTop:"10px"}}>
+                        <ActiveSelector
+                          active={employee.active}
                           onChange={this.handleChangeEmployee}
-                          name="active"
-                          value={employee.active}
-                        >
-                          <option>Seleccionar Estado</option>
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </div>
+                          modal="add"
+                        />
+                      </FormControl>
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
@@ -234,7 +238,7 @@ class EmployeeModal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={(e) => {
+                            onClick={e => {
                               this.saveEmployee(e, addEmployee, employee);
                             }}
                           >

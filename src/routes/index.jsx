@@ -7,6 +7,7 @@ import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/Index.jsx";
 import Parkings from "views/AdminPage/Sections/Parkings/Index.jsx";
 import EmployeexServiceShifts from "views/AdminPage/Sections/EmployeexServiceShifts/Index.jsx";
 
+
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
   { path: "/parkeo", name: "ParkeoPage", component: ParkeoPage },
