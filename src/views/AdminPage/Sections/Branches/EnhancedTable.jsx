@@ -16,7 +16,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
+// import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
@@ -216,13 +216,16 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) : (
+          ) :
+          null
+          /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
-          )}
+          ) */
+          }
         </div>
       </Toolbar>
     );
@@ -258,8 +261,8 @@ const styles = theme => ({
     alignItems: "center"
   },
   cuttedView: {
-    margin: "0 0 0 0",
-    width: "210px",
+    margin: "0 -30px 0 0",
+    width: "180px",
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap"
@@ -387,7 +390,9 @@ class EnhancedTable extends React.Component {
                       >
                         <Checkbox checked={isSelected} />
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">{n.branch}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        <p title={n.branch} className={classes.cuttedView}>{n.branch}</p>
+                      </TableCell>
                       <TableCell component="th" scope="row" padding="none" margin="none">
                         <p title={n.address} className={classes.cuttedView}>{n.address}</p>
                       </TableCell>

@@ -177,7 +177,7 @@ class UpdateModal extends React.Component {
                     <span style={{ opacity: "0" }}>{widthTmpFix}</span>
                     <form>
                       <InputLabel className={classes.label}>
-                        Inicio de turno
+                        Inicio de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
@@ -194,7 +194,7 @@ class UpdateModal extends React.Component {
                       <br style={{ width: "250px" }} />
                       <br />
                       <InputLabel className={classes.label}>
-                        Fin de turno
+                        Fin de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>

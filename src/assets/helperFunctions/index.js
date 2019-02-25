@@ -17,8 +17,8 @@ export const modalDateTimeToLocalTime = dateTime => {
 
 export const dbDateTimeToView = dateTime => {
   let ans = moment(dateTime);
-  const ansDT = ans.locale("es").format("MMMM, dddd D,  h:mm a");
-  const ansT = ans.format("HH:mm a");
+  const ansDT = ans.locale("es").format("dddd D, MMMM,  h:mm a");
+  const ansT = ans.format("hh:mm a");
   return { dateTime: ansDT, time: ansT };
 };
 

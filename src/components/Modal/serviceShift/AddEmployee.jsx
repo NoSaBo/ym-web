@@ -22,7 +22,6 @@ import { withRouter } from "react-router-dom";
 // Helper functions
 import { getEmployeeName } from "assets/helperFunctions/index.js";
 
-
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
@@ -135,13 +134,14 @@ class AddEmployee extends React.Component {
                     id="classic-modal-slide-description"
                     className={classes.modalBody}
                   >
-                    <AddRmvEmployees
-                      employees={this.props.employees}
-                      handleSave={this.handleSave}
-                      handleDelete={this.updateEmployeeInServiceShift}
-                      serviceShift={this.state.serviceShift}
-                    />
-                    <form />
+                    <div className={classes.overflow}>
+                      <AddRmvEmployees
+                        employees={this.props.employees}
+                        handleSave={this.handleSave}
+                        handleDelete={this.updateEmployeeInServiceShift}
+                        serviceShift={this.state.serviceShift}
+                      />
+                    </div>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
                     <Button

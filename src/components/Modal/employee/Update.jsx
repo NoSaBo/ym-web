@@ -1,5 +1,4 @@
 import React from "react";
-import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Slide from "@material-ui/core/Slide";
@@ -16,6 +15,10 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
+import FormControl from "@material-ui/core/FormControl";
+import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
+//Customized components
+import ActiveSelector from "../../Selector/ActiveSelector";
 //GraphQL
 import { Mutation } from "react-apollo";
 import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
@@ -58,7 +61,7 @@ class UpdateModal extends React.Component {
     const field = event.target.name;
     let value = event.target.value;
     if (field === "active") {
-      value = value === "true" ? true : false;
+      value = value === true ? true : false;
     }
     let employee = this.state.employee;
     employee[field] = value;
@@ -182,17 +185,13 @@ class UpdateModal extends React.Component {
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
                       />
-                      <div>
-                        <div>Estado</div>
-                        <select
+                      <FormControl fullWidth style={{paddingTop:"10px"}}>
+                        <ActiveSelector
+                          active={employee.active}
                           onChange={this.handleChangeEmployee}
-                          name="active"
-                          value={employee.active}
-                        >
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </div>
+                          modal="update"
+                        />
+                      </FormControl>
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

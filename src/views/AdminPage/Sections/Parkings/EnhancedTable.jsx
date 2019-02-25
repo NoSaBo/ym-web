@@ -16,7 +16,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
+// import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
@@ -61,8 +61,7 @@ const rows = [
   { id: "begindate", numeric: false, disablePadding: true, label: "HORARIO" },
   { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
   { id: "owner", numeric: false, disablePadding: true, label: "PROPIETARIO" },
-  { id: "createdAt", numeric: false, disablePadding: true, label: "RECEPCIÓN" },
-  { id: "returned", numeric: false, disablePadding: true, label: "RETORNADO" },
+  { id: "createdAt", numeric: false, disablePadding: true, label: "HORA DE RECEPCIÓN" },
   { id: "updatedAt", numeric: false, disablePadding: true, label: "HORA DE RETORNO" },  
   { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
 ];
@@ -212,13 +211,16 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) : (
+          ) :
+          null
+          /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
-          )}
+          ) */
+          }
         </div>
       </Toolbar>
     );
@@ -434,9 +436,6 @@ class EnhancedTable extends React.Component {
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {dbDateTimeToView(n.createdAt).time}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.returned ? "SI" : "NO"}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.updatedAt === n.createdAt ? " - " : dbDateTimeToView(n.updatedAt).time}

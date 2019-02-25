@@ -24,17 +24,18 @@ class SimpleSelect extends React.Component {
   };
 
   render() {
-    const { classes, active} = this.props;
+    const { classes, active, modal} = this.props;
     return (
       <Select
         value={active}
         onChange={this.handleChange}
         displayEmpty
         className={classes.selectEmpty}
+        name="active"
       >
-        <MenuItem value="">
+        {(modal === "add") && (<MenuItem value="">
           <em>Seleccione un Estado</em>
-        </MenuItem>
+        </MenuItem>)}
         <MenuItem value={true}>Activo</MenuItem>
         <MenuItem value={false}>Inactivo</MenuItem>
       </Select>

@@ -186,7 +186,7 @@ class Modal extends React.Component {
                     <span style={{ opacity: "0" }}>{widthTmpFix}</span>
                     <form>
                       <InputLabel className={classes.label}>
-                        Inicio de turno
+                        Inicio de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
@@ -199,13 +199,10 @@ class Modal extends React.Component {
                           renderInput={false}
                         />
                       </FormControl>
-                      <InputLabel className={classes.label}>
-                        Inicio de turno
-                      </InputLabel>
                       <br />
                       <br />
                       <InputLabel className={classes.label}>
-                        Fin de turno
+                        Fin de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
@@ -245,6 +242,7 @@ class Modal extends React.Component {
                         <ActiveSelector
                           onChange={this.handleActiveState}
                           active={active}
+                          modal="add"
                         />
                       </FormControl>
                     </form>

@@ -16,7 +16,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Query, Mutation } from "react-apollo";
@@ -33,13 +32,23 @@ import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmplo
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+  if (orderBy === "branch") {
+    if (b[orderBy].branch < a[orderBy].branch) {
+      return -1;
+    }
+    if (b[orderBy].branch > a[orderBy].branch) {
+      return 1;
+    }
+    return 0;
+  } else {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
 }
 
 function stableSort(array, cmp) {
@@ -227,13 +236,16 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) : (
+          ) : 
+          null
+          /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
-          )}
+          ) */
+          }
         </div>
       </Toolbar>
     );
@@ -275,7 +287,7 @@ class EnhancedTable extends React.Component {
     super(props);
     this.state = {
       order: "asc",
-      orderBy: "user",
+      orderBy: "branch",
       selected: [],
       data: [],
       page: 0,
@@ -416,10 +428,10 @@ class EnhancedTable extends React.Component {
                           {({ loading, error, data }) => {
                             if (loading) return <h4>Loading...</h4>;
                             if (error) console.log("Query error: ", error);
-                            data = data.serviceShifts.filter(e => e.id === n.id)[0];
-                            return (
-                              <Update serviceshift={n} />
-                            );
+                            data = data.serviceShifts.filter(
+                              e => e.id === n.id
+                            )[0];
+                            return <Update serviceshift={n} />;
                           }}
                         </Query>
                         <Query query={GET_EMPLOYEES}>

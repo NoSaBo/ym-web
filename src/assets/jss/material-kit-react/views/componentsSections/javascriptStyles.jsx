@@ -32,7 +32,12 @@ const javascriptStyles = {
     paddingLeft: "0"
   },
   ...tooltipsStyle,
-  ...popoverStyles
+  ...popoverStyles,
+  overflow: {
+    width: "207px",
+    height: "240px",
+    overflow: "auto"
+  }
 };
 
 export default javascriptStyles;
