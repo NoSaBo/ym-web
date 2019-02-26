@@ -84,7 +84,7 @@ function CustomInput({ ...props }) {
         {...inputProps}
       />
       <FormHelperText id="name-error-text" className={classes.errorInput}>
-        {inputProps ? inputProps.firstnameerror : null}
+        {inputProps ? inputProps.errorcomment : null}
       </FormHelperText>
     </FormControl>
   );

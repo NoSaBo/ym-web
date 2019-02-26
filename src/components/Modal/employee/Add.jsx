@@ -16,6 +16,7 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 import ActiveSelector from "../../Selector/ActiveSelector";
@@ -27,8 +28,7 @@ import { GET_EMPLOYEES } from "../../../queries/employee";
 import { withRouter } from "react-router-dom";
 // Helper functions
 import { capitalize } from "assets/helperFunctions/index.js";
-import { employeeValidation } from "assets/helperFunctions/validation.js";
-
+import { employeeValidation } from "assets/helperFunctions/validationEmployee.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -48,17 +48,17 @@ const newEmployee = {
   firstname: "",
   firstnameerror: "",
   lastname: "",
-  lastnameError: "",
+  lastnameerror: "",
   user: "",
-  userError: "",
+  usererror: "",
   password: "",
-  passwordError: "",
+  passworderror: "",
   dni: "",
-  dniError: "",
+  dnierror: "",
   phone: "",
-  phoneError: "",
+  phoneerror: "",
   active: "",
-  activeError: ""
+  activeerror: ""
 };
 
 class EmployeeModal extends React.Component {
@@ -109,21 +109,6 @@ class EmployeeModal extends React.Component {
     }
   }
 
-  // validate = () => {
-  //   let isError = false;
-  //   const errors = {};
-  //   if (this.state.employee.firstname.length < 5) {
-  //     isError = true;
-  //     errors.firstnameerror =
-  //       "El nombre de usuario debe contener mas de 5 caracteres";
-  //   }
-  //   if (isError) {
-  //     const employee = Object.assign({}, {...this.state.employee, ...errors});
-  //     this.setState({ employee });
-  //   }
-  //   return isError;
-  // };
-
   saveEmployee(event, addEmployee, emp) {
     event.preventDefault();
     let { isError, employee } = employeeValidation(emp);
@@ -158,8 +143,8 @@ class EmployeeModal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { employee, employee: { firstname , firstnameerror} } = this.state;
-    console.log("employee-render", employee);
+    const { employee } = this.state;
+    console.log("employee", employee);
     return (
       <div>
         <Tooltip title="Agregar empleado">
@@ -212,11 +197,10 @@ class EmployeeModal extends React.Component {
                       <CustomInput
                         labelText="Nombre"
                         name="firstname"
-                        value={firstname}
+                        value={employee.firstname}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
-                        inputProps={{firstnameerror}}
-                        // error={firstnameerror ? true : false}
+                        inputProps={{ errorcomment: employee.firstnameerror }}
                       />
                       <CustomInput
                         labelText="Apellido"
@@ -224,6 +208,7 @@ class EmployeeModal extends React.Component {
                         value={employee.lastname}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.lastnameerror }}
                       />
                       <CustomInput
                         labelText="Usuario"
@@ -231,6 +216,7 @@ class EmployeeModal extends React.Component {
                         value={employee.user}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.usererror }}
                       />
                       <CustomInput
                         labelText="Password"
@@ -239,6 +225,7 @@ class EmployeeModal extends React.Component {
                         value={employee.password}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.passworderror }}
                       />
                       <input type="checkbox" onClick={this.togglePassword} />
                       Mostrar password
@@ -248,6 +235,7 @@ class EmployeeModal extends React.Component {
                         value={employee.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.phoneerror }}
                       />
                       <CustomInput
                         labelText="D.N.I"
@@ -255,13 +243,21 @@ class EmployeeModal extends React.Component {
                         value={employee.dni}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.dnierror }}
                       />
                       <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={employee.active}
                           onChange={this.handleChangeEmployee}
                           modal="add"
+                          inputProps={{ errorcomment: employee.activeerror }}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{color:"red"}}
+                        >
+                          {employee.activeerror ? employee.activeerror : null}
+                        </FormHelperText>
                       </FormControl>
                     </form>
                   </DialogContent>
