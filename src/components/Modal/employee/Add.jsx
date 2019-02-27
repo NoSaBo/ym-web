@@ -100,9 +100,6 @@ class EmployeeModal extends React.Component {
     if (event) {
       const field = event.target.name;
       let value = event.target.value;
-      if (field === "active") {
-        value = value === true ? true : false;
-      }
       let employee = this.state.employee;
       employee[field] = value;
       this.setState({ employee });
@@ -144,7 +141,6 @@ class EmployeeModal extends React.Component {
   render() {
     const { classes } = this.props;
     const { employee } = this.state;
-    console.log("employee", employee);
     return (
       <div>
         <Tooltip title="Agregar empleado">

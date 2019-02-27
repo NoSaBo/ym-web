@@ -17,6 +17,7 @@ import Button from "components/CustomButtons/Button.jsx";
 import Datetime from "../../BoxForTime/NativeDateTime.jsx";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 import BranchSelector from "../../Selector/BranchSelector";
@@ -28,6 +29,9 @@ import { NEW_SERVICESHIFT } from "../../../mutations/serviceShift";
 import { GET_SERVICESHIFTS } from "../../../queries/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { serviceShiftValidation } from "assets/helperFunctions/validationServiceshift.js";
+
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -48,9 +52,13 @@ const updateCacheNew = (cache, { data: { addServiceShift } }) => {
 
 const initialState = {
   begindate: "",
+  begindateerror: "",
   workspan: "",
+  workspanerror: "",
   active: "",
-  branchId: ""
+  activeerror: "",
+  branchId: "",
+  branchIderror: ""
 };
 
 class Modal extends React.Component {
@@ -116,24 +124,30 @@ class Modal extends React.Component {
     this.setState({ serviceShift });
   }
 
-  saveServiceShift(addServiceShift) {
-    this.handleClose("classicModal");
-    addServiceShift({
-      variables: {
-        begindate: this.state.serviceShift.begindate,
-        workspan: this.state.serviceShift.workspan,
-        active: this.state.serviceShift.active,
-        branchId: this.state.serviceShift.branchId
-      }
-    });
-    this.resetForm();
-    alert("Nuevo horario ha sido agregado");
+  saveServiceShift(event, addServiceShift, ssh) {
+    event.preventDefault();
+    let { isError, serviceshift } = serviceShiftValidation(ssh);
+    this.setState({ serviceShift: serviceshift });
+    if (!isError) {
+      addServiceShift({
+        variables: {
+          begindate: this.state.serviceShift.begindate,
+          workspan: this.state.serviceShift.workspan,
+          active: this.state.serviceShift.active,
+          branchId: this.state.serviceShift.branchId
+        }
+      });
+      alert("Nuevo horario ha sido agregado");
+      this.handleClose("classicModal");
+      this.resetForm();
+    }
   }
 
   render() {
     const { classes } = this.props;
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
+    let serviceShift = this.state.serviceShift;
     let { active, branchId } = this.state.serviceShift;
     return (
       <div>
@@ -198,6 +212,14 @@ class Modal extends React.Component {
                           onChange={this.handleStartDateState}
                           renderInput={false}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.begindateerror
+                            ? serviceShift.begindateerror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
                       <br />
                       <br />
@@ -214,6 +236,14 @@ class Modal extends React.Component {
                           value={this.state.serviceShift.workspan}
                           onChange={this.handleWorkspanDateState}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.workspanerror
+                            ? serviceShift.workspanerror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
                       <br />
                       <br />
@@ -229,10 +259,19 @@ class Modal extends React.Component {
                                 branches={data.branches}
                                 onChange={this.handleBranchSelected}
                                 branchId={branchId}
+                                modal="add"
                               />
                             );
                           }}
                         </Query>
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.branchIderror
+                            ? serviceShift.branchIderror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
                       <br />
                       <br />
@@ -244,6 +283,14 @@ class Modal extends React.Component {
                           active={active}
                           modal="add"
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.activeerror
+                            ? serviceShift.activeerror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
                     </form>
                   </DialogContent>
@@ -257,8 +304,12 @@ class Modal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={() => {
-                              this.saveServiceShift(addServiceShift);
+                            onClick={e => {
+                              this.saveServiceShift(
+                                e,
+                                addServiceShift,
+                                serviceShift
+                              );
                             }}
                           >
                             Guardar

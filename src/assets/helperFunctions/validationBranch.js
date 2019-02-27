@@ -8,6 +8,14 @@ const initBranchErrors = {
   activeerror: ""
 };
 
+const isFloat = n => {
+  let ans = false;
+  if (!isNaN(n) && n.toString().indexOf(".") !== -1) {
+    ans = true;
+  }
+  return ans;
+};
+
 const lengthAttribute = object => {
   let isError = false;
   let errors = {};
@@ -23,6 +31,15 @@ const lengthAttribute = object => {
         errors[
           `${attr}error`
         ] = `La dirección debe contener como máximo 60 caracteres`;
+      }
+      if (
+        (attr === "longitude" || attr === "latitude") &&
+        isFloat(object[attr]) === false
+      ) {
+        isError = true;
+        errors[
+          `${attr}error`
+        ] = `El valor introducido no cumple con el formato de coordenada`;
       }
       if (object[attr].length < 5) {
         isError = true;

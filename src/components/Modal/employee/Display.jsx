@@ -15,7 +15,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import TextFieldDisabled from "../../CustomBox/TextFieldDisabled";
+// import TextFieldDisabled from "../../CustomBox/TextFieldDisabled";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //react-router
 import { withRouter } from "react-router-dom";
@@ -102,7 +102,7 @@ class EmployeeModal extends React.Component {
                     className={classes.modalBody}
                   >
                     <form>
-                      <TextFieldDisabled n={firstname}/>
+                      {/* <TextFieldDisabled n={firstname}/> */}
 
                       <CustomInput
                         labelText="Nombre"

@@ -132,7 +132,6 @@ class BranchModal extends React.Component {
   render() {
     const { classes } = this.props;
     const branch = this.state.branch;
-    console.log("branch", branch);
     return (
       <div>
         <Tooltip title="Agregar Sede">
@@ -204,7 +203,7 @@ class BranchModal extends React.Component {
                         value={branch.latitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
-                        inputProps={{ errorcomment: branch.contacterror }}
+                        inputProps={{ errorcomment: branch.latitudeerror }}
                       />
                       <CustomInput
                         labelText="Longitud"
@@ -212,7 +211,7 @@ class BranchModal extends React.Component {
                         value={branch.longitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
-                        inputProps={{ errorcomment: branch.latitudeerror }}
+                        inputProps={{ errorcomment: branch.longitudeerror }}
                       />
                       <CustomInput
                         labelText="Contacto"
@@ -220,7 +219,7 @@ class BranchModal extends React.Component {
                         value={branch.contact}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
-                        inputProps={{ errorcomment: branch.longitudeerror }}
+                        inputProps={{ errorcomment: branch.contacterror }}
                       />
                       <CustomInput
                         labelText="Teléfono"
