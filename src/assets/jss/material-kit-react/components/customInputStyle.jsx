@@ -4,6 +4,7 @@ import {
   successColor,
   defaultFont
 } from "assets/jss/material-kit-react.jsx";
+// import { red } from "@material-ui/core/colors";
 
 const customInputStyle = {
   disabled: {
@@ -81,6 +82,9 @@ const customInputStyle = {
       color: "#FFFFFF",
       opacity: "1"
     }
+  },
+  errorInput: {
+    color: "red",
   }
 };
 

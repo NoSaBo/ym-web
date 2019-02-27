@@ -16,6 +16,7 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 import ActiveSelector from "../../Selector/ActiveSelector";
@@ -27,6 +28,7 @@ import { GET_EMPLOYEES } from "../../../queries/employee";
 import { withRouter } from "react-router-dom";
 // Helper functions
 import { capitalize } from "assets/helperFunctions/index.js";
+import { employeeValidation } from "assets/helperFunctions/validationEmployee.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -44,12 +46,19 @@ const updateCacheAdd = (cache, { data: { addEmployee } }) => {
 
 const newEmployee = {
   firstname: "",
+  firstnameerror: "",
   lastname: "",
+  lastnameerror: "",
   user: "",
+  usererror: "",
   password: "",
+  passworderror: "",
   dni: "",
+  dnierror: "",
   phone: "",
-  active: ""
+  phoneerror: "",
+  active: "",
+  activeerror: ""
 };
 
 class EmployeeModal extends React.Component {
@@ -58,7 +67,7 @@ class EmployeeModal extends React.Component {
     this.state = {
       classicModal: false,
       togglePassword: "password",
-      employee: null
+      employee: newEmployee
     };
     this.saveEmployee = this.saveEmployee.bind(this);
     this.togglePassword = this.togglePassword.bind(this);
@@ -88,32 +97,36 @@ class EmployeeModal extends React.Component {
   }
 
   handleChangeEmployee(event) {
-    const field = event.target.name;
-    let value = event.target.value;
-    if (field === "active") {
-      value = value === true ? true : false;
+    if (event) {
+      const field = event.target.name;
+      let value = event.target.value;
+      let employee = this.state.employee;
+      employee[field] = value;
+      this.setState({ employee });
     }
-    let employee = this.state.employee;
-    employee[field] = value;
-    this.setState({ employee });
   }
 
-  saveEmployee(event, addEmployee, employee) {
+  saveEmployee(event, addEmployee, emp) {
     event.preventDefault();
-    addEmployee({
-      variables: {
-        firstname: capitalize(employee.firstname),
-        lastname: capitalize(employee.lastname),
-        user: employee.user,
-        password: employee.password,
-        dni: employee.dni,
-        phone: employee.phone,
-        active: employee.active
-      }
-    });
-    alert(`${employee.user} ha sido agregado`);
-    this.handleClose("classicModal");
-    this.resetEmployeeForm();
+    let { isError, employee } = employeeValidation(emp);
+    this.setState({ employee });
+    employee = this.state.employee;
+    if (!isError) {
+      addEmployee({
+        variables: {
+          firstname: capitalize(employee.firstname),
+          lastname: capitalize(employee.lastname),
+          user: employee.user,
+          password: employee.password,
+          dni: employee.dni,
+          phone: employee.phone,
+          active: employee.active
+        }
+      });
+      alert(`${employee.user} ha sido agregado`);
+      this.handleClose("classicModal");
+      this.resetEmployeeForm();
+    }
   }
 
   resetEmployeeForm() {
@@ -127,7 +140,7 @@ class EmployeeModal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const employee = this.state.employee;
+    const { employee } = this.state;
     return (
       <div>
         <Tooltip title="Agregar empleado">
@@ -183,6 +196,7 @@ class EmployeeModal extends React.Component {
                         value={employee.firstname}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.firstnameerror }}
                       />
                       <CustomInput
                         labelText="Apellido"
@@ -190,6 +204,7 @@ class EmployeeModal extends React.Component {
                         value={employee.lastname}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.lastnameerror }}
                       />
                       <CustomInput
                         labelText="Usuario"
@@ -197,6 +212,7 @@ class EmployeeModal extends React.Component {
                         value={employee.user}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.usererror }}
                       />
                       <CustomInput
                         labelText="Password"
@@ -205,6 +221,7 @@ class EmployeeModal extends React.Component {
                         value={employee.password}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.passworderror }}
                       />
                       <input type="checkbox" onClick={this.togglePassword} />
                       Mostrar password
@@ -214,6 +231,7 @@ class EmployeeModal extends React.Component {
                         value={employee.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.phoneerror }}
                       />
                       <CustomInput
                         labelText="D.N.I"
@@ -221,13 +239,21 @@ class EmployeeModal extends React.Component {
                         value={employee.dni}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.dnierror }}
                       />
-                      <FormControl fullWidth style={{paddingTop:"10px"}}>
+                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={employee.active}
                           onChange={this.handleChangeEmployee}
                           modal="add"
+                          inputProps={{ errorcomment: employee.activeerror }}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{color:"red"}}
+                        >
+                          {employee.activeerror ? employee.activeerror : null}
+                        </FormHelperText>
                       </FormControl>
                     </form>
                   </DialogContent>

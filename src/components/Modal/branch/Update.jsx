@@ -16,6 +16,7 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 import ActiveSelector from "../../Selector/ActiveSelector";
@@ -24,6 +25,9 @@ import { Mutation } from "react-apollo";
 import { UPDATE_BRANCH } from "../../../mutations/branch";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { branchValidation } from "assets/helperFunctions/validationBranch.js";
+
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -70,11 +74,15 @@ class UpdateModal extends React.Component {
     this.setState({ branch });
   }
 
-  saveBranch(updateBranch) {
-    this.handleClose("classicModal");
-    let branch = this.state.branch;
-    updateBranch({ variables: branch });
-    alert(`Sede ${branch.branch} ha sido actualizada`);
+  saveBranch(updateBranch, brn) {
+    let { isError, branch } = branchValidation(brn);
+    this.setState({ branch });
+    branch = this.state.branch;
+    if (!isError) {
+      updateBranch({ variables: branch });
+      alert(`Sede ${branch.branch} ha sido actualizada`);
+      this.handleClose("classicModal");
+    }
   }
 
   componentWillMount() {
@@ -141,6 +149,7 @@ class UpdateModal extends React.Component {
                         value={branch.branch}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.brancherror }}
                       />
                       <CustomInput
                         labelText="Dirección"
@@ -148,6 +157,7 @@ class UpdateModal extends React.Component {
                         value={branch.address}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.addresserror }}
                       />
                       <CustomInput
                         labelText="Latitud"
@@ -155,6 +165,7 @@ class UpdateModal extends React.Component {
                         value={branch.latitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.latitudeerror }}
                       />
                       <CustomInput
                         labelText="Longitud"
@@ -162,6 +173,7 @@ class UpdateModal extends React.Component {
                         value={branch.longitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.longitudeerror }}
                       />
                       <CustomInput
                         labelText="Contacto"
@@ -169,6 +181,7 @@ class UpdateModal extends React.Component {
                         value={branch.contact}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.contacterror }}
                       />
                       <CustomInput
                         labelText="Teléfono"
@@ -176,13 +189,20 @@ class UpdateModal extends React.Component {
                         value={branch.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.phoneerror }}
                       />
-                      <FormControl fullWidth style={{paddingTop:"10px"}}>
+                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={branch.active}
                           onChange={this.handleChangeBranch}
                           modal="update"
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {branch.activeerror ? branch.activeerror : null}
+                        </FormHelperText>
                       </FormControl>
                     </form>
                   </DialogContent>
@@ -194,7 +214,7 @@ class UpdateModal extends React.Component {
                             color="transparent"
                             simple
                             onClick={() => {
-                              this.saveBranch(updateBranch);
+                              this.saveBranch(updateBranch, branch);
                             }}
                           >
                             Guardar

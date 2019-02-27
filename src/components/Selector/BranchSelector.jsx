@@ -24,7 +24,7 @@ class SimpleSelect extends React.Component {
   };
 
   render() {
-    const { classes, branches, branchId } = this.props;
+    const { classes, branches, branchId, modal } = this.props;
     return (
       <Select
         value={branchId}
@@ -32,9 +32,9 @@ class SimpleSelect extends React.Component {
         displayEmpty
         className={classes.selectEmpty}
       >
-        <MenuItem value="">
+        {(modal === "add") && (<MenuItem value="">
           <em>Seleccione una Sede</em>
-        </MenuItem>
+        </MenuItem>)}
         {branches.map((branch, index) => {
           return (
             <MenuItem key={index} value={branch.id}>

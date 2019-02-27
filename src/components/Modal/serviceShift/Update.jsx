@@ -14,6 +14,7 @@ import Close from "@material-ui/icons/Close";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 import Datetime from "../../BoxForTime/NativeDateTime.jsx";
 import FormControl from "@material-ui/core/FormControl";
@@ -27,6 +28,8 @@ import { GET_BRANCHES } from "../../../queries/branch";
 import { UPDATE_SERVICESHIFT } from "../../../mutations/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { serviceShiftValidation } from "assets/helperFunctions/validationServiceshift.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -96,20 +99,24 @@ class UpdateModal extends React.Component {
     this.setState({ serviceshift });
   }
 
-  saveServiceshift(updateServiceshift) {
-    let serviceshift = this.state.serviceshift;
-    updateServiceshift({
-      variables: {
-        id: serviceshift.id,
-        begindate: serviceshift.begindate,
-        workspan: serviceshift.workspan,
-        active: serviceshift.active,
-        branchId: serviceshift.branch.id
-      }
-    })
-      .then(() => alert(" Tu horario ha sido actualizado"))
-      .then(() => this.resetServiceshift())
-      .then(() => this.handleClose("classicModal"));
+  saveServiceshift(updateServiceshift, ssh) {
+    let { isError, serviceshift } = serviceShiftValidation(ssh);
+    this.setState({ serviceshift });
+    serviceshift = this.state.serviceshift;
+    if (!isError) {
+      updateServiceshift({
+        variables: {
+          id: serviceshift.id,
+          begindate: serviceshift.begindate,
+          workspan: serviceshift.workspan,
+          active: serviceshift.active,
+          branchId: serviceshift.branch.id
+        }
+      })
+        .then(() => alert(" Tu horario ha sido actualizado"))
+        .then(() => this.resetServiceshift())
+        .then(() => this.handleClose("classicModal"));
+    }
   }
 
   componentWillMount() {
@@ -124,6 +131,9 @@ class UpdateModal extends React.Component {
     let branchId = branch.id;
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
+    let serviceshift = this.state.serviceshift;
+    // console.log("serviceshift", serviceshift);
+    console.log("this.state.serviceshift-render", serviceshift);
     return (
       <div>
         <Tooltip title="Editar">
@@ -189,8 +199,15 @@ class UpdateModal extends React.Component {
                           onChange={this.handleStartDateState}
                           renderInput={false}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceshift.begindateerror
+                            ? serviceshift.begindateerror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
-
                       <br style={{ width: "250px" }} />
                       <br />
                       <InputLabel className={classes.label}>
@@ -224,6 +241,7 @@ class UpdateModal extends React.Component {
                                   this.handleBranchSelected(e, data.branches)
                                 }
                                 branchId={branchId}
+                                modal="update"
                               />
                             );
                           }}
@@ -237,6 +255,7 @@ class UpdateModal extends React.Component {
                         <ActiveSelector
                           onChange={this.handleActiveState}
                           active={active}
+                          modal="update"
                         />
                       </FormControl>
                     </form>
@@ -249,7 +268,10 @@ class UpdateModal extends React.Component {
                             color="transparent"
                             simple
                             onClick={() => {
-                              this.saveServiceshift(updateServiceShift);
+                              this.saveServiceshift(
+                                updateServiceShift,
+                                serviceshift
+                              );
                             }}
                           >
                             Guardar

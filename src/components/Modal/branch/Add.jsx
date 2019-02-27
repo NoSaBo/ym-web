@@ -16,6 +16,7 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 import ActiveSelector from "../../Selector/ActiveSelector";
@@ -25,6 +26,8 @@ import { NEW_BRANCH } from "../../../mutations/branch";
 import { GET_BRANCHES } from "../../../queries/branch";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { branchValidation } from "assets/helperFunctions/validationBranch.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -42,12 +45,19 @@ const updateCacheAdd = (cache, { data: { addBranch } }) => {
 
 const newBranch = {
   branch: "",
+  brancherror: "",
   address: "",
+  addresserror: "",
   latitude: "",
+  latitudeerror: "",
   longitude: "",
+  longitudeerror: "",
   contact: "",
+  contacterror: "",
   phone: "",
-  active: ""
+  phoneerror: "",
+  active: "",
+  activeerror: ""
 };
 
 class BranchModal extends React.Component {
@@ -86,22 +96,28 @@ class BranchModal extends React.Component {
     this.setState({ branch });
   }
 
-  saveBranch(event, addBranch, branch) {
+  saveBranch(event, addBranch, brn) {
     event.preventDefault();
-    addBranch({
-      variables: {
-        branch: branch.branch,
-        address: branch.address,
-        latitude: branch.latitude,
-        longitude: branch.longitude,
-        contact: branch.contact,
-        phone: branch.phone,
-        active: branch.active
-      }
-    });
-    alert(`Sede ${branch.branch} ha sido agregada`);
-    this.handleClose("classicModal");
-    this.resetBranchForm();
+
+    let { isError, branch } = branchValidation(brn);
+    this.setState({ branch });
+    branch = this.state.branch;
+    if (!isError) {
+      addBranch({
+        variables: {
+          branch: branch.branch,
+          address: branch.address,
+          latitude: branch.latitude,
+          longitude: branch.longitude,
+          contact: branch.contact,
+          phone: branch.phone,
+          active: branch.active
+        }
+      });
+      alert(`Sede ${branch.branch} ha sido agregada`);
+      this.handleClose("classicModal");
+      this.resetBranchForm();
+    }
   }
 
   resetBranchForm() {
@@ -171,6 +187,7 @@ class BranchModal extends React.Component {
                         value={branch.branch}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.brancherror }}
                       />
                       <CustomInput
                         labelText="Dirección"
@@ -178,6 +195,7 @@ class BranchModal extends React.Component {
                         value={branch.address}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.addresserror }}
                       />
                       <CustomInput
                         labelText="Latitud"
@@ -185,6 +203,7 @@ class BranchModal extends React.Component {
                         value={branch.latitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.latitudeerror }}
                       />
                       <CustomInput
                         labelText="Longitud"
@@ -192,6 +211,7 @@ class BranchModal extends React.Component {
                         value={branch.longitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.longitudeerror }}
                       />
                       <CustomInput
                         labelText="Contacto"
@@ -199,6 +219,7 @@ class BranchModal extends React.Component {
                         value={branch.contact}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.contacterror }}
                       />
                       <CustomInput
                         labelText="Teléfono"
@@ -206,13 +227,20 @@ class BranchModal extends React.Component {
                         value={branch.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.phoneerror }}
                       />
-                      <FormControl fullWidth style={{paddingTop:"10px"}}>
+                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={branch.active}
                           onChange={this.handleChangeBranch}
                           modal="add"
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {branch.activeerror ? branch.activeerror : null}
+                        </FormHelperText>
                       </FormControl>
                     </form>
                   </DialogContent>
@@ -223,7 +251,7 @@ class BranchModal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={(e) => {
+                            onClick={e => {
                               this.saveBranch(e, addBranch, branch);
                             }}
                           >
