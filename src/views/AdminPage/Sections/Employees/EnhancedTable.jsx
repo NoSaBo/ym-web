@@ -27,7 +27,7 @@ import Add from "../../../../components/Modal/employee/Add";
 import Update from "../../../../components/Modal/employee/Update";
 import Display from "../../../../components/Modal/employee/Display";
 // Helper functions
-
+import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -168,13 +168,31 @@ const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
 
 class EnhancedTableToolbar extends React.Component {
   deleteOnClick(deleteEmployee, selected, history) {
-    selected.map(user =>
-      deleteEmployee({
-        variables: { user }
-      })
-    );
-    alert(`Empleado(s) eliminado(s)`);
-    this.props.resetValues();
+    let { serviceshifts } = this.props;
+    let employeesLinked = employeesInServiceshifts(serviceshifts);
+    let employeesRestricted = [];
+    selected.map(user => {
+      employeesLinked.map(employee => {
+        if (employee.user === user) {
+          employeesRestricted.push(employee);
+        }
+      });
+    });
+    if (employeesRestricted.length === 0) {
+      selected.map(user =>
+        deleteEmployee({
+          variables: { user }
+        })
+      );
+      alert(`Empleado(s) eliminado(s)`);
+      this.props.resetValues();
+    } else {
+      alert(
+        `No puede eliminar los siguientes empleados porque se encuentran asignados a los turnos respectivos:\r\n ${employeesRestricted.map(
+          emp => `${emp.user} -> ${emp.branch}\r\n`
+        )}`
+      );
+    }
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
@@ -215,8 +233,7 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) :
-          null
+          ) : null
           /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
