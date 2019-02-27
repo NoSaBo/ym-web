@@ -20,7 +20,7 @@ const lengthAttribute = object => {
   let isError = false;
   let errors = {};
   for (let attr in object) {
-    if (!attr.includes("error")) {
+    if (!attr.includes("error") && attr !== "id") {
       if (!/\S/.test(object[attr])) {
         isError = true;
         errors[`${attr}error`] =

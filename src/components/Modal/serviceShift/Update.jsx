@@ -100,7 +100,6 @@ class UpdateModal extends React.Component {
   }
 
   saveServiceshift(updateServiceshift, ssh) {
-    // let serviceshift = this.state.serviceshift;
     let { isError, serviceshift } = serviceShiftValidation(ssh);
     this.setState({ serviceshift });
     serviceshift = this.state.serviceshift;

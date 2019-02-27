@@ -56,8 +56,8 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: "firstname", numeric: false, disablePadding: true, label: "NOMBRE" },
-  { id: "lastname", numeric: false, disablePadding: true, label: "APELLIDO" },
+  { id: "firstname", numeric: false, disablePadding: true, label: "NOMBRES" },
+  { id: "lastname", numeric: false, disablePadding: true, label: "APELLIDOS" },
   { id: "user", numeric: false, disablePadding: true, label: "USUARIO" },
   { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
   { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
