@@ -26,7 +26,7 @@ import { GET_BRANCHES } from "../../../../queries/branch";
 import Add from "../../../../components/Modal/branch/Add";
 import Update from "../../../../components/Modal/branch/Update";
 import Display from "../../../../components/Modal/branch/Display";
-
+import { branchesInServiceshifts } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -60,7 +60,7 @@ const rows = [
   { id: "contact", numeric: false, disablePadding: true, label: "CONTACTO" },
   { id: "phone", numeric: false, disablePadding: true, label: "TELEFONO" },
   { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
-  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES"}
+  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -168,12 +168,33 @@ const updateCacheDelete = (cache, { data: { deleteBranch } }) => {
 
 class EnhancedTableToolbar extends React.Component {
   deleteOnClick(deleteBranch, selected, history) {
-    selected.map(id =>
-      deleteBranch({
-        variables: { id }
-      })
-    );
-    this.props.resetValues();
+    let { serviceshifts } = this.props;
+    let branchesLinked = branchesInServiceshifts(serviceshifts);
+    let branchesRestricted = [];
+    selected.map(branch => {
+      branchesLinked.map(brn => {
+        if (brn.id === branch) {
+          branchesRestricted.push({ id: brn.id, branch: brn.branch });
+        }
+        return null;
+      });
+      return null;
+    });
+    if (branchesRestricted.length === 0) {
+      selected.map(id =>
+        deleteBranch({
+          variables: { id }
+        })
+      );
+      alert(`Sede(s) eliminada(s)`);
+      this.props.resetValues();
+    } else {
+      alert(
+        `No puede eliminar las siguientes sedes porque se encuentran asignadas a uno o varios horarios:\r\n ${branchesRestricted.map(
+          brn => `${brn.branch}\r\n`
+        )}`
+      );
+    }
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
@@ -208,7 +229,6 @@ class EnhancedTableToolbar extends React.Component {
                     <DeleteIcon
                       onClick={() => {
                         this.deleteOnClick(deleteBranch, selected, history);
-                        alert(`Sede(s) eliminada(s)`);
                         return null;
                       }}
                     />
@@ -216,8 +236,7 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) :
-          null
+          ) : null
           /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
@@ -266,7 +285,7 @@ const styles = theme => ({
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap"
-  },
+  }
 });
 
 class EnhancedTable extends React.Component {
@@ -359,6 +378,7 @@ class EnhancedTable extends React.Component {
           selected={selected}
           history={this.props.history}
           resetValues={this.resetValues}
+          serviceshifts={this.props.serviceshifts}
         />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
@@ -391,19 +411,37 @@ class EnhancedTable extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        <p title={n.branch} className={classes.cuttedView}>{n.branch}</p>
+                        <p title={n.branch} className={classes.cuttedView}>
+                          {n.branch}
+                        </p>
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none" margin="none">
-                        <p title={n.address} className={classes.cuttedView}>{n.address}</p>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        padding="none"
+                        margin="none"
+                      >
+                        <p title={n.address} className={classes.cuttedView}>
+                          {n.address}
+                        </p>
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">{n.contact}</TableCell>
-                      <TableCell component="th" scope="row" padding="none">{n.phone}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        {n.contact}
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        {n.phone}
+                      </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.active ? "ACTIVO" : "INACTIVO"}
                       </TableCell>
-                      <TableCell className={classNames(classes.flexContainerActions, classes.td)}>
-                          <Display branch={n} />
-                          <Update branch={n} />
+                      <TableCell
+                        className={classNames(
+                          classes.flexContainerActions,
+                          classes.td
+                        )}
+                      >
+                        <Display branch={n} />
+                        <Update branch={n} />
                       </TableCell>
                     </TableRow>
                   );

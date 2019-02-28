@@ -132,8 +132,6 @@ class UpdateModal extends React.Component {
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
     let serviceshift = this.state.serviceshift;
-    // console.log("serviceshift", serviceshift);
-    console.log("this.state.serviceshift-render", serviceshift);
     return (
       <div>
         <Tooltip title="Editar">
