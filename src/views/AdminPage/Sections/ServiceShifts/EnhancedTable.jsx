@@ -30,7 +30,7 @@ import Display from "../../../../components/Modal/serviceShift/Display";
 import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
 // Helper functions
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
-
+import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
   if (orderBy === "branch") {
@@ -181,13 +181,41 @@ const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
 
 class EnhancedTableToolbar extends React.Component {
   deleteOnClick(deleteServiceShift, selected, history) {
+    let allServiceshifts = this.props.allServiceshifts;
+    let serviceshiftsToDelete = [];
+    let serviceshiftsLinked = [];
     selected.map(id => {
-      deleteServiceShift({
-        variables: { id }
+      allServiceshifts.map(serviceshift => {
+        if (serviceshift.id === id) {
+          serviceshiftsToDelete.push({
+            begindate: serviceshift.begindate,
+            branch: serviceshift.branch.branch,
+            employees: serviceshift.employees
+          });
+        }
       });
-      return null;
     });
-    this.props.resetValues();
+    serviceshiftsToDelete.map(n => {
+      if (n.employees.length !== 0) {
+        serviceshiftsLinked.push(n)
+    }});
+    if (serviceshiftsLinked.length === 0) {
+      selected.map(id => {
+        deleteServiceShift({
+          variables: { id }
+        });
+        return null;
+      });
+      alert(`Horario(s) eliminado(s)`);
+      this.props.resetValues();
+    } else {
+      alert(
+        `No puede eliminar los horarios de las siguientes sedes porque se encuentran asignados a uno o varios empleados:\r\n ${serviceshiftsLinked.map(
+          ssh => `En sede" ${ssh.branch}, inicio: ${dbDateTimeToView(ssh.begindate).dateTime}\r\n`
+        )}`
+      );
+    }
+
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
@@ -229,7 +257,6 @@ class EnhancedTableToolbar extends React.Component {
                           selected,
                           history
                         );
-                        alert(`Horario(s) eliminado(s)`);
                         return null;
                       }}
                     />
@@ -237,8 +264,7 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) : 
-          null
+          ) : null
           /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
@@ -373,6 +399,7 @@ class EnhancedTable extends React.Component {
           selected={selected}
           history={this.props.history}
           resetValues={this.resetValues}
+          allServiceshifts={this.props.data}
         />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
