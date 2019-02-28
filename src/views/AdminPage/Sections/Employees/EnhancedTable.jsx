@@ -176,7 +176,9 @@ class EnhancedTableToolbar extends React.Component {
         if (employee.user === user) {
           employeesRestricted.push(employee);
         }
+        return null;
       });
+      return null;
     });
     if (employeesRestricted.length === 0) {
       selected.map(user =>

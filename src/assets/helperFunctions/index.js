@@ -76,15 +76,25 @@ export const getEmployeeName = (id, employees) => {
 
 export const employeesInServiceshifts = serviceshifts => {
   let employees = [];
-  let users = [];
+  // let users = [];
   serviceshifts.map(serviceshift => {
     let branch = serviceshift.branch.branch;
     serviceshift.employees.map(employee =>
       employees.push({ id: employee.id, user: employee.user, branch })
     );
-    console.log("employees", employees);
+    return null;
   });
   // employees = removeDuplicates(employees, "id");
   // employees.map(user => users.push(user.user));
   return employees;
+};
+
+export const branchesInServiceshifts = serviceshifts => {
+  let branches = [];
+  serviceshifts.map(serviceshift => {
+    branches.push({ id: serviceshift.branch.id, branch: serviceshift.branch.branch })
+    return null;
+  });
+  branches = removeDuplicates(branches, "id");
+  return branches;
 };

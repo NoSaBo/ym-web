@@ -24,7 +24,6 @@ class IndexServiceshifts extends Component {
           {({ loading, error, data }) => {
             if (loading) return "Loading";
             if (error) return `Error ${error.message}`;
-            console.log("serviceshift", data.serviceShifts);
             return (
               <Table data={data.serviceShifts} history={this.props.history} />
             );
