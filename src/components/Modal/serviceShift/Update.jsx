@@ -135,12 +135,15 @@ class UpdateModal extends React.Component {
     return (
       <div>
         <Tooltip title="Editar">
-          <IconButton
-            aria-label="Editar"
-            onClick={() => this.handleClickOpen("classicModal")}
-          >
-            <i className={"material-icons"}>edit</i>
-          </IconButton>
+          <div>
+            <IconButton
+              aria-label="Editar"
+              onClick={() => this.handleClickOpen("classicModal")}
+              // disabled={!serviceshift.active}
+            >
+              <i className={"material-icons"}>edit</i>
+            </IconButton>
+          </div>
         </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>

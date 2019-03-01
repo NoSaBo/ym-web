@@ -1,3 +1,5 @@
+import { dbDateTimeToView } from "./index.js";
+
 const initEmployeeErrors = {
   firstnameerror: "",
   lastnameerror: "",
@@ -46,4 +48,44 @@ export const employeeValidation = emp => {
     employee = Object.assign({}, { ...employee, ...errors });
   }
   return { isError, employee };
+};
+
+// Delete validation
+export const notDeletable = (allServiceshifts, selected) => {
+  let match = {};
+  let error = false;
+  let alert = "";
+  selected.forEach(user => {
+    allServiceshifts.map(serviceshift => {
+      let empMatch = serviceshift.employees.find(emp => emp.user === user);
+      if (empMatch !== undefined) {
+        error = true;
+        let msgSsh = `Horario de sede ${
+          serviceshift.branch.branch
+        } con inicio el ${
+          dbDateTimeToView(serviceshift.begindate).dateTime
+        } y fin el ${dbDateTimeToView(serviceshift.workspan).dateTime}\r\n`;
+        if (match[user] === undefined) {
+          match[user] = [msgSsh];
+        } else {
+          match[user].push(msgSsh);
+        }
+      }
+      return null;
+    });
+  });
+  let message = [];
+  Object.keys(match).forEach(key => {
+    message.push(
+      `Empleado ${key} asociado con:\r\n${match[key].map(m => `${m}`)}`
+    );
+  });
+  if (error) {
+    alert = `No puede eliminar los siguientes empleados porque se encuentran asignados a uno o varios horarios:\r\n${message.map(
+      m => `${m}`
+    )}`;
+  } else {
+    alert = `Empleados(s) eliminado(s) correctamente`;
+  }
+  return { alert, error };
 };

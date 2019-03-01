@@ -21,6 +21,7 @@ import AddRmvEmployees from "components/CustomBox/AddRmvEmployees.jsx";
 import { withRouter } from "react-router-dom";
 // Helper functions
 import { getEmployeeName } from "assets/helperFunctions/index.js";
+import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -42,6 +43,7 @@ class AddEmployee extends React.Component {
     );
     this.handleEmployeeToDelete = this.handleEmployeeToDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.filterDisabledEmployees = this.filterDisabledEmployees.bind(this);
   }
 
   handleClickOpen(modal) {
@@ -82,17 +84,37 @@ class AddEmployee extends React.Component {
     employeeToDelete = employeeToDelete[0];
     this.setState({ employeeToDelete });
   }
+
+  filterDisabledEmployees(employees) {
+    let filteredEmployees = [];
+    let employeesLinked = [];
+
+    let tmp = employeesInServiceshifts([this.state.serviceShift]);
+    tmp.map(emp => employeesLinked.push(emp.user));
+
+    filteredEmployees = employees.filter(
+      employee =>
+        employee.active === true ||
+        (employee.active === false &&
+          employeesLinked.indexOf(employee.user) !== -1)
+    );
+    return filteredEmployees;
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, serviceShift } = this.props;
     return (
       <div>
         <Tooltip title="Agregar Empleado">
-          <IconButton
-            aria-label="Agregar Empleado"
-            onClick={() => this.handleClickOpen("classicModal")}
-          >
-            <i className={"material-icons"}>group_add</i>
-          </IconButton>
+          <div>
+            <IconButton
+              aria-label="Agregar Empleado"
+              onClick={() => this.handleClickOpen("classicModal")}
+              // disabled={!serviceShift.active}
+            >
+              <i className={"material-icons"}>group_add</i>
+            </IconButton>
+          </div>
         </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -136,7 +158,9 @@ class AddEmployee extends React.Component {
                   >
                     <div className={classes.overflow}>
                       <AddRmvEmployees
-                        employees={this.props.employees}
+                        employees={this.filterDisabledEmployees(
+                          this.props.employees
+                        )}
                         handleSave={this.handleSave}
                         handleDelete={this.updateEmployeeInServiceShift}
                         serviceShift={this.state.serviceShift}

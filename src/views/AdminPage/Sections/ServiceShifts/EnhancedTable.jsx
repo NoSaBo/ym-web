@@ -30,7 +30,7 @@ import Display from "../../../../components/Modal/serviceShift/Display";
 import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
 // Helper functions
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
-import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
+import { notDeletable } from "assets/helperFunctions/validationServiceshift.js";
 
 function desc(a, b, orderBy) {
   if (orderBy === "branch") {
@@ -181,41 +181,15 @@ const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
 
 class EnhancedTableToolbar extends React.Component {
   deleteOnClick(deleteServiceShift, selected, history) {
-    let allServiceshifts = this.props.allServiceshifts;
-    let serviceshiftsToDelete = [];
-    let serviceshiftsLinked = [];
-    selected.map(id => {
-      allServiceshifts.map(serviceshift => {
-        if (serviceshift.id === id) {
-          serviceshiftsToDelete.push({
-            begindate: serviceshift.begindate,
-            branch: serviceshift.branch.branch,
-            employees: serviceshift.employees
-          });
-        }
-      });
-    });
-    serviceshiftsToDelete.map(n => {
-      if (n.employees.length !== 0) {
-        serviceshiftsLinked.push(n)
-    }});
-    if (serviceshiftsLinked.length === 0) {
-      selected.map(id => {
-        deleteServiceShift({
-          variables: { id }
-        });
-        return null;
-      });
-      alert(`Horario(s) eliminado(s)`);
+    const validationDelete = notDeletable(
+      this.props.allServiceshifts,
+      selected
+    );
+    if (!validationDelete.error) {
+      selected.map(id => deleteServiceShift({ variables: { id } }));
       this.props.resetValues();
-    } else {
-      alert(
-        `No puede eliminar los horarios de las siguientes sedes porque se encuentran asignados a uno o varios empleados:\r\n ${serviceshiftsLinked.map(
-          ssh => `En sede" ${ssh.branch}, inicio: ${dbDateTimeToView(ssh.begindate).dateTime}\r\n`
-        )}`
-      );
     }
-
+    alert(validationDelete.alert);
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;

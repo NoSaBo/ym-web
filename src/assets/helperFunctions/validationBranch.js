@@ -1,3 +1,5 @@
+import { dbDateTimeToView } from "./index.js";
+
 const initBranchErrors = {
   brancherror: "",
   addresserror: "",
@@ -69,4 +71,40 @@ export const branchValidation = brn => {
     branch = Object.assign({}, { ...branch, ...errors });
   }
   return { isError, branch };
+};
+
+// Delete validation
+export const notDeletable = (allServiceshifts, selected) => {
+  let match = {};
+  let error = false;
+  let alert = "";
+  selected.forEach(id => {
+    allServiceshifts.map(serviceshift => {
+      let brnMatch = serviceshift.branch.id === id ? serviceshift : undefined;
+      if (brnMatch !== undefined) {
+        error = true;
+        let message = `Horario que inicia el ${
+          dbDateTimeToView(serviceshift.begindate).dateTime
+        } y finaliza el ${dbDateTimeToView(serviceshift.workspan).dateTime}\r\n`;
+        if (match[id] === undefined) {
+          match[serviceshift.branch.branch] = [message];
+        } else {
+          match[serviceshift.branch.branch].push(message);
+        }
+      }
+      return null;
+    });
+  });
+  let message = [];
+  Object.keys(match).forEach(key => {
+    message.push(`Sede ${key} asociada con:\r\n${match[key].map(m => `${m}`)}`);
+  });
+  if (error) {
+    alert = `No puede eliminar las siguientes sedes porque se encuentran asignadas a uno o varios horarios:\r\n${message.map(
+      m => `${m}`
+    )}`;
+  } else {
+    alert = `Sede(s) eliminada(s) correctamente`;
+  }
+  return { alert, error };
 };

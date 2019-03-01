@@ -26,7 +26,8 @@ import { GET_BRANCHES } from "../../../../queries/branch";
 import Add from "../../../../components/Modal/branch/Add";
 import Update from "../../../../components/Modal/branch/Update";
 import Display from "../../../../components/Modal/branch/Display";
-import { branchesInServiceshifts } from "assets/helperFunctions/index.js";
+// Helper functions
+import { notDeletable } from "assets/helperFunctions/validationBranch.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -168,33 +169,12 @@ const updateCacheDelete = (cache, { data: { deleteBranch } }) => {
 
 class EnhancedTableToolbar extends React.Component {
   deleteOnClick(deleteBranch, selected, history) {
-    let { serviceshifts } = this.props;
-    let branchesLinked = branchesInServiceshifts(serviceshifts);
-    let branchesRestricted = [];
-    selected.map(branch => {
-      branchesLinked.map(brn => {
-        if (brn.id === branch) {
-          branchesRestricted.push({ id: brn.id, branch: brn.branch });
-        }
-        return null;
-      });
-      return null;
-    });
-    if (branchesRestricted.length === 0) {
-      selected.map(id =>
-        deleteBranch({
-          variables: { id }
-        })
-      );
-      alert(`Sede(s) eliminada(s)`);
+    const validationDelete = notDeletable(this.props.serviceshifts, selected);
+    if (!validationDelete.error) {
+      selected.map(id => deleteBranch({ variables: { id } }));
       this.props.resetValues();
-    } else {
-      alert(
-        `No puede eliminar las siguientes sedes porque se encuentran asignadas a uno o varios horarios:\r\n ${branchesRestricted.map(
-          brn => `${brn.branch}\r\n`
-        )}`
-      );
     }
+    alert(validationDelete.alert);
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
