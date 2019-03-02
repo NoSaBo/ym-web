@@ -15,11 +15,11 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
+// import FormControl from "@material-ui/core/FormControl";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
-import ActiveSelector from "../../Selector/ActiveSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
 import { UPDATE_BRANCH } from "../../../mutations/branch";
@@ -27,7 +27,6 @@ import { UPDATE_BRANCH } from "../../../mutations/branch";
 import { withRouter } from "react-router-dom";
 // Helper functions
 import { branchValidation } from "assets/helperFunctions/validationBranch.js";
-
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -95,12 +94,15 @@ class UpdateModal extends React.Component {
     return (
       <div>
         <Tooltip title="Editar">
-          <IconButton
-            aria-label="Editar"
-            onClick={() => this.handleClickOpen("classicModal")}
-          >
-            <i className={"material-icons"}>edit</i>
-          </IconButton>
+          <div>
+            <IconButton
+              aria-label="Editar"
+              onClick={() => this.handleClickOpen("classicModal")}
+              disabled={!this.props.branch.active}
+            >
+              <i className={"material-icons"}>edit</i>
+            </IconButton>
+          </div>
         </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -191,7 +193,7 @@ class UpdateModal extends React.Component {
                         onChange={this.handleChangeBranch}
                         inputProps={{ errorcomment: branch.phoneerror }}
                       />
-                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
+                      {/* <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={branch.active}
                           onChange={this.handleChangeBranch}
@@ -203,7 +205,7 @@ class UpdateModal extends React.Component {
                         >
                           {branch.activeerror ? branch.activeerror : null}
                         </FormHelperText>
-                      </FormControl>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

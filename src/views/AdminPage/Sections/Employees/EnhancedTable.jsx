@@ -20,6 +20,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
+import { DISABLE_EMPLOYEE } from "../../../../mutations/employee";
 import { DELETE_EMPLOYEE } from "../../../../mutations/employee";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 //Customized components
@@ -27,7 +28,10 @@ import Add from "../../../../components/Modal/employee/Add";
 import Update from "../../../../components/Modal/employee/Update";
 import Display from "../../../../components/Modal/employee/Display";
 // Helper functions
-import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
+import {
+  notDeletable,
+  notDisable
+} from "assets/helperFunctions/validationEmployee.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -153,6 +157,11 @@ const toolbarStyles = theme => ({
   },
   i: {
     marginLeft: "-12px"
+  },
+  disableDeleteRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
   }
 });
 
@@ -166,35 +175,37 @@ const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
   });
 };
 
-class EnhancedTableToolbar extends React.Component {
-  deleteOnClick(deleteEmployee, selected, history) {
-    let { serviceshifts } = this.props;
-    let employeesLinked = employeesInServiceshifts(serviceshifts);
-    let employeesRestricted = [];
-    selected.map(user => {
-      employeesLinked.map(employee => {
-        if (employee.user === user) {
-          employeesRestricted.push(employee);
-        }
-        return null;
-      });
-      return null;
-    });
-    if (employeesRestricted.length === 0) {
-      selected.map(user =>
-        deleteEmployee({
-          variables: { user }
-        })
-      );
-      alert(`Empleado(s) eliminado(s)`);
-      this.props.resetValues();
-    } else {
-      alert(
-        `No puede eliminar los siguientes empleados porque se encuentran asignados a los turnos respectivos:\r\n ${employeesRestricted.map(
-          emp => `${emp.user} -> ${emp.branch}\r\n`
-        )}`
-      );
+const updateCacheDisable = (cache, { data: { disableEmployee } }) => {
+  const { employees } = cache.readQuery({ query: GET_EMPLOYEES });
+  const { user, active } = disableEmployee;
+  employees.find(employee => {
+    if (employee.user === user) {
+      employee["active"] = active;
     }
+    return null;
+  });
+  cache.writeQuery({
+    query: GET_EMPLOYEES,
+    data: { employees }
+  });
+};
+
+class EnhancedTableToolbar extends React.Component {
+  disableOnClick(disableEmployee, selected) {
+    const validationDisable = notDisable(this.props.serviceshifts, selected);
+    if (!validationDisable.error) {
+      selected.map(user => disableEmployee({ variables: { user } }));
+      this.props.resetValues();
+    }
+    alert(validationDisable.alert);
+  }
+  deleteOnClick(deleteEmployee, selected, history) {
+    const validationDelete = notDeletable(this.props.serviceshifts, selected);
+    if (!validationDelete.error) {
+      selected.map(user => deleteEmployee({ variables: { user } }));
+      this.props.resetValues();
+    }
+    alert(validationDelete.alert);
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
@@ -222,19 +233,43 @@ class EnhancedTableToolbar extends React.Component {
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
-                <Mutation mutation={DELETE_EMPLOYEE} update={updateCacheDelete}>
-                  {deleteEmployee => (
-                    <DeleteIcon
-                      onClick={() =>
-                        this.deleteOnClick(deleteEmployee, selected, history)
-                      }
-                    />
-                  )}
-                </Mutation>
-              </IconButton>
-            </Tooltip>
+            <div className={classes.disableDeleteRow}>
+              <Tooltip title="Activar / Desactivar">
+                <IconButton aria-label="Activar / Desactivar">
+                  <Mutation
+                    mutation={DISABLE_EMPLOYEE}
+                    update={updateCacheDisable}
+                  >
+                    {disableEmployee => (
+                      <i
+                        className="material-icons"
+                        onClick={() =>
+                          this.disableOnClick(disableEmployee, selected)
+                        }
+                      >
+                        exposure
+                      </i>
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton aria-label="Delete">
+                  <Mutation
+                    mutation={DELETE_EMPLOYEE}
+                    update={updateCacheDelete}
+                  >
+                    {deleteEmployee => (
+                      <DeleteIcon
+                        onClick={() =>
+                          this.deleteOnClick(deleteEmployee, selected, history)
+                        }
+                      />
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+            </div>
           ) : null
           /* (
             <Tooltip title="Filtrar lista">
@@ -289,7 +324,7 @@ class EnhancedTable extends React.Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 10
     };
     this.resetValues = this.resetValues.bind(this);
   }

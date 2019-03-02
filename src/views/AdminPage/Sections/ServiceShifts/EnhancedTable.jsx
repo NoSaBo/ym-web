@@ -22,6 +22,7 @@ import { Query, Mutation } from "react-apollo";
 import { GET_SERVICESHIFTS_BASIC } from "../../../../queries/serviceShift";
 import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
+import { DISABLE_SERVICESHIFT } from "../../../../mutations/serviceShift";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 //Customized components
 import Add from "../../../../components/Modal/serviceShift/Add";
@@ -30,7 +31,7 @@ import Display from "../../../../components/Modal/serviceShift/Display";
 import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmployee.jsx";
 // Helper functions
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
-import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
+import { notDeletable } from "assets/helperFunctions/validationServiceshift.js";
 
 function desc(a, b, orderBy) {
   if (orderBy === "branch") {
@@ -166,6 +167,11 @@ const toolbarStyles = theme => ({
   },
   i: {
     marginLeft: "-12px"
+  },
+  disableDeleteRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
   }
 });
 
@@ -179,43 +185,42 @@ const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
   });
 };
 
-class EnhancedTableToolbar extends React.Component {
-  deleteOnClick(deleteServiceShift, selected, history) {
-    let allServiceshifts = this.props.allServiceshifts;
-    let serviceshiftsToDelete = [];
-    let serviceshiftsLinked = [];
-    selected.map(id => {
-      allServiceshifts.map(serviceshift => {
-        if (serviceshift.id === id) {
-          serviceshiftsToDelete.push({
-            begindate: serviceshift.begindate,
-            branch: serviceshift.branch.branch,
-            employees: serviceshift.employees
-          });
-        }
-      });
-    });
-    serviceshiftsToDelete.map(n => {
-      if (n.employees.length !== 0) {
-        serviceshiftsLinked.push(n)
-    }});
-    if (serviceshiftsLinked.length === 0) {
-      selected.map(id => {
-        deleteServiceShift({
-          variables: { id }
-        });
-        return null;
-      });
-      alert(`Horario(s) eliminado(s)`);
-      this.props.resetValues();
-    } else {
-      alert(
-        `No puede eliminar los horarios de las siguientes sedes porque se encuentran asignados a uno o varios empleados:\r\n ${serviceshiftsLinked.map(
-          ssh => `En sede" ${ssh.branch}, inicio: ${dbDateTimeToView(ssh.begindate).dateTime}\r\n`
-        )}`
-      );
+const updateCacheDisable = (cache, { data: { disableServiceshift } }) => {
+  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
+  const {id, active } = disableServiceshift
+  serviceShifts.find(serviceshift => {
+    if (serviceshift.id === id) {
+      serviceshift["active"] = active;
     }
+    return null;
+  });
+  cache.writeQuery({
+    query: GET_SERVICESHIFTS,
+    data: { serviceShifts }
+  });
+};
 
+class EnhancedTableToolbar extends React.Component {
+  disableOnClick(disableServiceshift, selected) {
+    selected.map(id => {
+      disableServiceshift({ variables: { id } }).then(() =>
+        alert(`Estado de horarios(s) ha sido cambiado exitosamente`)
+      );
+      return null;
+    });
+    this.props.resetValues();
+  }
+
+  deleteOnClick(deleteServiceShift, selected, history) {
+    const validationDelete = notDeletable(
+      this.props.allServiceshifts,
+      selected
+    );
+    if (!validationDelete.error) {
+      selected.map(id => deleteServiceShift({ variables: { id } }));
+      this.props.resetValues();
+    }
+    alert(validationDelete.alert);
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
@@ -243,27 +248,48 @@ class EnhancedTableToolbar extends React.Component {
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
-                <Mutation
-                  mutation={DELETE_SERVICESHIFT}
-                  update={updateCacheDelete}
-                >
-                  {deleteServiceShift => (
-                    <DeleteIcon
-                      onClick={() => {
-                        this.deleteOnClick(
-                          deleteServiceShift,
-                          selected,
-                          history
-                        );
-                        return null;
-                      }}
-                    />
-                  )}
-                </Mutation>
-              </IconButton>
-            </Tooltip>
+            <div className={classes.disableDeleteRow}>
+              <Tooltip title="Activar / Desactivar">
+                <IconButton aria-label="Activar / Desactivar">
+                  <Mutation
+                    mutation={DISABLE_SERVICESHIFT}
+                    update={updateCacheDisable}
+                  >
+                    {disableServiceshift => (
+                      <i
+                        className="material-icons"
+                        onClick={() =>
+                          this.disableOnClick(disableServiceshift, selected)
+                        }
+                      >
+                        exposure
+                      </i>
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Eliminar">
+                <IconButton aria-label="Eliminar">
+                  <Mutation
+                    mutation={DELETE_SERVICESHIFT}
+                    update={updateCacheDelete}
+                  >
+                    {deleteServiceShift => (
+                      <DeleteIcon
+                        onClick={() => {
+                          this.deleteOnClick(
+                            deleteServiceShift,
+                            selected,
+                            history
+                          );
+                          return null;
+                        }}
+                      />
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+            </div>
           ) : null
           /* (
             <Tooltip title="Filtrar lista">
@@ -313,12 +339,12 @@ class EnhancedTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      order: "asc",
-      orderBy: "branch",
+      order: "desc",
+      orderBy: "active",
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 10
     };
     this.resetValues = this.resetValues.bind(this);
   }
@@ -392,6 +418,7 @@ class EnhancedTable extends React.Component {
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    // console.log("data", data);
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar

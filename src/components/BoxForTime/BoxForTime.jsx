@@ -27,7 +27,6 @@ class BoxForTime extends Component {
         this.setState({workspan});
     }
   render() {
-      console.log("workspan", this.state.workspan);
     return (
       <div>
         <div>

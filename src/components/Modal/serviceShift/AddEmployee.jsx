@@ -42,6 +42,7 @@ class AddEmployee extends React.Component {
     );
     this.handleEmployeeToDelete = this.handleEmployeeToDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.filterDisabledEmployees = this.filterDisabledEmployees.bind(this);
   }
 
   handleClickOpen(modal) {
@@ -82,17 +83,35 @@ class AddEmployee extends React.Component {
     employeeToDelete = employeeToDelete[0];
     this.setState({ employeeToDelete });
   }
+
+  filterDisabledEmployees(employees, serviceShift) {
+    let assignedEmployees = [];
+    let allowedEmployees = [];
+    serviceShift.employees.map(emp => assignedEmployees.push(emp.user));
+    allowedEmployees = employees.filter(
+      employee =>
+        employee.active === true ||
+        (employee.active === false &&
+          assignedEmployees.indexOf(employee.user) !== -1)
+    );
+    return allowedEmployees;
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, serviceShift } = this.props;
+    const filler = "lorem".repeat(8);
     return (
       <div>
         <Tooltip title="Agregar Empleado">
-          <IconButton
-            aria-label="Agregar Empleado"
-            onClick={() => this.handleClickOpen("classicModal")}
-          >
-            <i className={"material-icons"}>group_add</i>
-          </IconButton>
+          <div>
+            <IconButton
+              aria-label="Agregar Empleado"
+              onClick={() => this.handleClickOpen("classicModal")}
+              disabled={!serviceShift.active}
+            >
+              <i className={"material-icons"}>group_add</i>
+            </IconButton>
+          </div>
         </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -112,6 +131,7 @@ class AddEmployee extends React.Component {
                   aria-labelledby="classic-modal-slide-title"
                   aria-describedby="classic-modal-slide-description"
                 >
+                  <span style={{ opacity: "0" }}>{filler}</span>
                   <DialogTitle
                     id="classic-modal-slide-title"
                     disableTypography
@@ -136,7 +156,10 @@ class AddEmployee extends React.Component {
                   >
                     <div className={classes.overflow}>
                       <AddRmvEmployees
-                        employees={this.props.employees}
+                        employees={this.filterDisabledEmployees(
+                          this.props.employees,
+                          this.props.serviceShift
+                        )}
                         handleSave={this.handleSave}
                         handleDelete={this.updateEmployeeInServiceShift}
                         serviceShift={this.state.serviceShift}

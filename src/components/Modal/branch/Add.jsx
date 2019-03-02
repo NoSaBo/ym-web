@@ -15,11 +15,11 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
+// import FormControl from "@material-ui/core/FormControl";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
-import ActiveSelector from "../../Selector/ActiveSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
 import { NEW_BRANCH } from "../../../mutations/branch";
@@ -111,7 +111,8 @@ class BranchModal extends React.Component {
           longitude: branch.longitude,
           contact: branch.contact,
           phone: branch.phone,
-          active: branch.active
+          // active: branch.active
+          active: true
         }
       });
       alert(`Sede ${branch.branch} ha sido agregada`);
@@ -229,7 +230,7 @@ class BranchModal extends React.Component {
                         onChange={this.handleChangeBranch}
                         inputProps={{ errorcomment: branch.phoneerror }}
                       />
-                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
+                      {/* <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={branch.active}
                           onChange={this.handleChangeBranch}
@@ -241,7 +242,7 @@ class BranchModal extends React.Component {
                         >
                           {branch.activeerror ? branch.activeerror : null}
                         </FormHelperText>
-                      </FormControl>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

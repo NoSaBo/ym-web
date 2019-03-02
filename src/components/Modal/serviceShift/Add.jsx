@@ -21,7 +21,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 import BranchSelector from "../../Selector/BranchSelector";
-import ActiveSelector from "../../Selector/ActiveSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Query, Mutation } from "react-apollo";
 import { GET_BRANCHES } from "../../../queries/branch";
@@ -148,7 +148,7 @@ class Modal extends React.Component {
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
     let serviceShift = this.state.serviceShift;
-    let { active, branchId } = this.state.serviceShift;
+    let { /*active,*/ branchId } = this.state.serviceShift;
     return (
       <div>
         <Tooltip title="Agregar empleado">
@@ -273,7 +273,7 @@ class Modal extends React.Component {
                             : null}
                         </FormHelperText>
                       </FormControl>
-                      <br />
+                      {/* <br />
                       <br />
                       <InputLabel className={classes.label}>Estado</InputLabel>
                       <br />
@@ -291,7 +291,7 @@ class Modal extends React.Component {
                             ? serviceShift.activeerror
                             : null}
                         </FormHelperText>
-                      </FormControl>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
