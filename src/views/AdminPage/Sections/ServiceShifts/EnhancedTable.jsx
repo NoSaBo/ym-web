@@ -339,8 +339,8 @@ class EnhancedTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      order: "asc",
-      orderBy: "branch",
+      order: "desc",
+      orderBy: "active",
       selected: [],
       data: [],
       page: 0,
