@@ -226,7 +226,7 @@ class EnhancedTableToolbar extends React.Component {
               id="tableTitle"
               className={classes.i}
             >
-              <Add />
+              <Add branches={this.props.branches}/>
             </Typography>
           )}
         </div>
@@ -411,6 +411,7 @@ class EnhancedTable extends React.Component {
           history={this.props.history}
           resetValues={this.resetValues}
           serviceshifts={this.props.serviceshifts}
+          branches={this.props.data}
         />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
@@ -473,7 +474,7 @@ class EnhancedTable extends React.Component {
                         )}
                       >
                         <Display branch={n} />
-                        <Update branch={n} />
+                        <Update branch={n} branches={this.props.data}/>
                       </TableCell>
                     </TableRow>
                   );

@@ -78,7 +78,8 @@ class UpdateModal extends React.Component {
 
   saveEmployee(event, updateEmployee, emp) {
     event.preventDefault();
-    let { isError, employee } = employeeValidation(emp);
+    const employees = this.props.employees;
+    let { isError, employee } = employeeValidation(emp, employees, "update");
     this.setState({ employee });
     employee = this.state.employee;
     employee["firstname"] = capitalize(employee.firstname);

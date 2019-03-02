@@ -10,7 +10,7 @@ const initEmployeeErrors = {
   activeerror: ""
 };
 
-const lengthAttribute = object => {
+const lengthAttribute = (object, employees, modal) => {
   let isError = false;
   let errors = {};
   for (let attr in object) {
@@ -18,7 +18,7 @@ const lengthAttribute = object => {
       if (!/\S/.test(object[attr])) {
         isError = true;
         errors[`${attr}error`] =
-          "Un campo no puede contener únicamente espacios en blanco";
+        "Un campo no puede contener únicamente espacios en blanco";
       }
       if (attr === "password" && object[attr].length < 7) {
         isError = true;
@@ -32,16 +32,22 @@ const lengthAttribute = object => {
           `${attr}error`
         ] = `El campo debe contener como mínimo 5 caracteres`;
       }
+      if (attr === "user" && object[attr] !== "" && userUnique(object[attr], employees) === false && modal === "add" ) {
+        isError = true;
+        errors[
+          `${attr}error`
+        ] = `El nombre de usuario ya esta siendo utilizado por otro empleado`;
+      }
     }
   }
   return { isError, errors };
 };
 
-export const employeeValidation = emp => {
+export const employeeValidation = (emp, employees, modal) => {
   let isError = false;
   let errors = Object.assign({}, { ...initEmployeeErrors });
   let employee = Object.assign({}, { ...emp, ...errors });
-  const lengthvalidation = lengthAttribute(employee);
+  const lengthvalidation = lengthAttribute(employee, employees, modal);
   if (lengthvalidation.isError) {
     isError = true;
     errors = lengthvalidation.errors;
@@ -132,3 +138,12 @@ export const notDisable = (allServiceshifts, selected) => {
   }
   return { alert, error };
 };
+
+const userUnique = (newUser, employees) => {
+  let unique = true;
+  const match = employees.filter(employee => employee.user === newUser)
+  if (match.length !== 0) {
+    unique = false
+  }
+  return unique
+}

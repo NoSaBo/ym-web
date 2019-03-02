@@ -74,7 +74,7 @@ class UpdateModal extends React.Component {
   }
 
   saveBranch(updateBranch, brn) {
-    let { isError, branch } = branchValidation(brn);
+    let { isError, branch } = branchValidation(brn, this.props.branches, "update");
     this.setState({ branch });
     branch = this.state.branch;
     if (!isError) {
