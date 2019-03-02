@@ -22,6 +22,7 @@ import { Query, Mutation } from "react-apollo";
 import { GET_SERVICESHIFTS_BASIC } from "../../../../queries/serviceShift";
 import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
 import { DELETE_SERVICESHIFT } from "../../../../mutations/serviceShift";
+import { DISABLE_SERVICESHIFT } from "../../../../mutations/serviceShift";
 import { GET_EMPLOYEES } from "../../../../queries/employee";
 //Customized components
 import Add from "../../../../components/Modal/serviceShift/Add";
@@ -166,6 +167,11 @@ const toolbarStyles = theme => ({
   },
   i: {
     marginLeft: "-12px"
+  },
+  disableDeleteRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
   }
 });
 
@@ -179,7 +185,32 @@ const updateCacheDelete = (cache, { data: { deleteServiceShift } }) => {
   });
 };
 
+const updateCacheDisable = (cache, { data: { disableServiceshift } }) => {
+  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
+  const {id, active } = disableServiceshift
+  serviceShifts.find(serviceshift => {
+    if (serviceshift.id === id) {
+      serviceshift["active"] = active;
+    }
+    return null;
+  });
+  cache.writeQuery({
+    query: GET_SERVICESHIFTS,
+    data: { serviceShifts }
+  });
+};
+
 class EnhancedTableToolbar extends React.Component {
+  disableOnClick(disableServiceshift, selected) {
+    selected.map(id => {
+      disableServiceshift({ variables: { id } }).then(() =>
+        alert(`Estado de horarios(s) ha sido cambiado exitosamente`)
+      );
+      return null;
+    });
+    this.props.resetValues();
+  }
+
   deleteOnClick(deleteServiceShift, selected, history) {
     const validationDelete = notDeletable(
       this.props.allServiceshifts,
@@ -217,27 +248,48 @@ class EnhancedTableToolbar extends React.Component {
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
-                <Mutation
-                  mutation={DELETE_SERVICESHIFT}
-                  update={updateCacheDelete}
-                >
-                  {deleteServiceShift => (
-                    <DeleteIcon
-                      onClick={() => {
-                        this.deleteOnClick(
-                          deleteServiceShift,
-                          selected,
-                          history
-                        );
-                        return null;
-                      }}
-                    />
-                  )}
-                </Mutation>
-              </IconButton>
-            </Tooltip>
+            <div className={classes.disableDeleteRow}>
+              <Tooltip title="Activar / Desactivar">
+                <IconButton aria-label="Activar / Desactivar">
+                  <Mutation
+                    mutation={DISABLE_SERVICESHIFT}
+                    update={updateCacheDisable}
+                  >
+                    {disableServiceshift => (
+                      <i
+                        className="material-icons"
+                        onClick={() =>
+                          this.disableOnClick(disableServiceshift, selected)
+                        }
+                      >
+                        exposure
+                      </i>
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Eliminar">
+                <IconButton aria-label="Eliminar">
+                  <Mutation
+                    mutation={DELETE_SERVICESHIFT}
+                    update={updateCacheDelete}
+                  >
+                    {deleteServiceShift => (
+                      <DeleteIcon
+                        onClick={() => {
+                          this.deleteOnClick(
+                            deleteServiceShift,
+                            selected,
+                            history
+                          );
+                          return null;
+                        }}
+                      />
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+            </div>
           ) : null
           /* (
             <Tooltip title="Filtrar lista">
@@ -292,7 +344,7 @@ class EnhancedTable extends React.Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 10
     };
     this.resetValues = this.resetValues.bind(this);
   }
@@ -366,6 +418,7 @@ class EnhancedTable extends React.Component {
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    // console.log("data", data);
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar

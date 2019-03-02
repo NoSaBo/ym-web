@@ -13,7 +13,7 @@ const lengthAttribute = object => {
   let isError = false;
   let errors = {};
   for (let attr in object) {
-    if (!attr.includes("error") && attr !== "id") {
+    if (!attr.includes("error") && attr !== "id" && attr !== "active") {
       if (
         (attr === "begindate" || attr === "workspan") &&
         object[attr].length === 0

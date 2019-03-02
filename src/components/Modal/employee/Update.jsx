@@ -15,11 +15,11 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
+// import FormControl from "@material-ui/core/FormControl";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
-import ActiveSelector from "../../Selector/ActiveSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 //GraphQL
 import { Mutation } from "react-apollo";
 import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
@@ -100,12 +100,15 @@ class UpdateModal extends React.Component {
     return (
       <div align="left">
         <Tooltip title="Editar">
-          <IconButton
-            aria-label="Editar"
-            onClick={() => this.handleClickOpen("classicModal")}
-          >
-            <i className={"material-icons"}>edit</i>
-          </IconButton>
+          <div>
+            <IconButton
+              aria-label="Editar"
+              onClick={() => this.handleClickOpen("classicModal")}
+              disabled={!this.props.employee.active}
+            >
+              <i className={"material-icons"}>edit</i>
+            </IconButton>
+          </div>
         </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -197,7 +200,7 @@ class UpdateModal extends React.Component {
                         onChange={this.handleChangeEmployee}
                         inputProps={{ errorcomment: employee.dnierror }}
                       />
-                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
+                      {/* <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={employee.active}
                           onChange={this.handleChangeEmployee}
@@ -209,7 +212,7 @@ class UpdateModal extends React.Component {
                         >
                           {employee.activeerror ? employee.activeerror : null}
                         </FormHelperText>
-                      </FormControl>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

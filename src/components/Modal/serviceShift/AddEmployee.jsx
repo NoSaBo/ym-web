@@ -21,7 +21,6 @@ import AddRmvEmployees from "components/CustomBox/AddRmvEmployees.jsx";
 import { withRouter } from "react-router-dom";
 // Helper functions
 import { getEmployeeName } from "assets/helperFunctions/index.js";
-import { employeesInServiceshifts } from "assets/helperFunctions/index.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -85,24 +84,22 @@ class AddEmployee extends React.Component {
     this.setState({ employeeToDelete });
   }
 
-  filterDisabledEmployees(employees) {
-    let filteredEmployees = [];
-    let employeesLinked = [];
-
-    let tmp = employeesInServiceshifts([this.state.serviceShift]);
-    tmp.map(emp => employeesLinked.push(emp.user));
-
-    filteredEmployees = employees.filter(
+  filterDisabledEmployees(employees, serviceShift) {
+    let assignedEmployees = [];
+    let allowedEmployees = [];
+    serviceShift.employees.map(emp => assignedEmployees.push(emp.user));
+    allowedEmployees = employees.filter(
       employee =>
         employee.active === true ||
         (employee.active === false &&
-          employeesLinked.indexOf(employee.user) !== -1)
+          assignedEmployees.indexOf(employee.user) !== -1)
     );
-    return filteredEmployees;
+    return allowedEmployees;
   }
 
   render() {
     const { classes, serviceShift } = this.props;
+    const filler = "lorem".repeat(8);
     return (
       <div>
         <Tooltip title="Agregar Empleado">
@@ -110,7 +107,7 @@ class AddEmployee extends React.Component {
             <IconButton
               aria-label="Agregar Empleado"
               onClick={() => this.handleClickOpen("classicModal")}
-              // disabled={!serviceShift.active}
+              disabled={!serviceShift.active}
             >
               <i className={"material-icons"}>group_add</i>
             </IconButton>
@@ -134,6 +131,7 @@ class AddEmployee extends React.Component {
                   aria-labelledby="classic-modal-slide-title"
                   aria-describedby="classic-modal-slide-description"
                 >
+                  <span style={{ opacity: "0" }}>{filler}</span>
                   <DialogTitle
                     id="classic-modal-slide-title"
                     disableTypography
@@ -159,7 +157,8 @@ class AddEmployee extends React.Component {
                     <div className={classes.overflow}>
                       <AddRmvEmployees
                         employees={this.filterDisabledEmployees(
-                          this.props.employees
+                          this.props.employees,
+                          this.props.serviceShift
                         )}
                         handleSave={this.handleSave}
                         handleDelete={this.updateEmployeeInServiceShift}

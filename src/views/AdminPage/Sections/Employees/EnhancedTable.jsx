@@ -28,8 +28,10 @@ import Add from "../../../../components/Modal/employee/Add";
 import Update from "../../../../components/Modal/employee/Update";
 import Display from "../../../../components/Modal/employee/Display";
 // Helper functions
-import { notDeletable } from "assets/helperFunctions/validationEmployee.js";
-
+import {
+  notDeletable,
+  notDisable
+} from "assets/helperFunctions/validationEmployee.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -156,9 +158,10 @@ const toolbarStyles = theme => ({
   i: {
     marginLeft: "-12px"
   },
-  sameRow: {
+  disableDeleteRow: {
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    justifyContent: "center"
   }
 });
 
@@ -174,10 +177,10 @@ const updateCacheDelete = (cache, { data: { deleteEmployee } }) => {
 
 const updateCacheDisable = (cache, { data: { disableEmployee } }) => {
   const { employees } = cache.readQuery({ query: GET_EMPLOYEES });
-  const user = disableEmployee.user;
+  const { user, active } = disableEmployee;
   employees.find(employee => {
     if (employee.user === user) {
-      employee["active"] = false;
+      employee["active"] = active;
     }
     return null;
   });
@@ -189,12 +192,12 @@ const updateCacheDisable = (cache, { data: { disableEmployee } }) => {
 
 class EnhancedTableToolbar extends React.Component {
   disableOnClick(disableEmployee, selected) {
-    selected.map(user =>
-      disableEmployee({ variables: { user } }).then(() =>
-        alert(`Empleado(s) deshabilitado(s)`)
-      )
-    );
-    this.props.resetValues();
+    const validationDisable = notDisable(this.props.serviceshifts, selected);
+    if (!validationDisable.error) {
+      selected.map(user => disableEmployee({ variables: { user } }));
+      this.props.resetValues();
+    }
+    alert(validationDisable.alert);
   }
   deleteOnClick(deleteEmployee, selected, history) {
     const validationDelete = notDeletable(this.props.serviceshifts, selected);
@@ -230,7 +233,26 @@ class EnhancedTableToolbar extends React.Component {
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
-            <div className={classes.sameRow}>
+            <div className={classes.disableDeleteRow}>
+              <Tooltip title="Activar / Desactivar">
+                <IconButton aria-label="Activar / Desactivar">
+                  <Mutation
+                    mutation={DISABLE_EMPLOYEE}
+                    update={updateCacheDisable}
+                  >
+                    {disableEmployee => (
+                      <i
+                        className="material-icons"
+                        onClick={() =>
+                          this.disableOnClick(disableEmployee, selected)
+                        }
+                      >
+                        exposure
+                      </i>
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Delete">
                 <IconButton aria-label="Delete">
                   <Mutation
@@ -243,26 +265,6 @@ class EnhancedTableToolbar extends React.Component {
                           this.deleteOnClick(deleteEmployee, selected, history)
                         }
                       />
-                    )}
-                  </Mutation>
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title="Disable">
-                <IconButton aria-label="Disable">
-                  <Mutation
-                    mutation={DISABLE_EMPLOYEE}
-                    update={updateCacheDisable}
-                  >
-                    {disableEmployee => (
-                      <i
-                        className="material-icons"
-                        onClick={() =>
-                          this.disableOnClick(disableEmployee, selected)
-                        }
-                      >
-                        clear
-                      </i>
                     )}
                   </Mutation>
                 </IconButton>
@@ -322,7 +324,7 @@ class EnhancedTable extends React.Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 10
     };
     this.resetValues = this.resetValues.bind(this);
   }

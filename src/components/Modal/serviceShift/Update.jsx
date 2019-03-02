@@ -21,7 +21,7 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 //Customized components
 import BranchSelector from "../../Selector/BranchSelector";
-import ActiveSelector from "../../Selector/ActiveSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Mutation, Query } from "react-apollo";
 import { GET_BRANCHES } from "../../../queries/branch";
@@ -125,7 +125,7 @@ class UpdateModal extends React.Component {
 
   render() {
     const { classes } = this.props;
-    let { begindate, workspan, active, branch } = this.state.serviceshift;
+    let { begindate, workspan, /*active,*/ branch } = this.state.serviceshift;
     begindate = new Date(begindate);
     workspan = new Date(workspan);
     let branchId = branch.id;
@@ -139,7 +139,7 @@ class UpdateModal extends React.Component {
             <IconButton
               aria-label="Editar"
               onClick={() => this.handleClickOpen("classicModal")}
-              // disabled={!serviceshift.active}
+              disabled={!this.props.serviceshift.active}
             >
               <i className={"material-icons"}>edit</i>
             </IconButton>
@@ -248,7 +248,7 @@ class UpdateModal extends React.Component {
                           }}
                         </Query>
                       </FormControl>
-                      <br />
+                      {/* <br />
                       <br />
                       <InputLabel className={classes.label}>Estado</InputLabel>
                       <br />
@@ -258,7 +258,7 @@ class UpdateModal extends React.Component {
                           active={active}
                           modal="update"
                         />
-                      </FormControl>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

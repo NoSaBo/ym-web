@@ -14,7 +14,7 @@ const lengthAttribute = object => {
   let isError = false;
   let errors = {};
   for (let attr in object) {
-    if (!attr.includes("error") && attr !== "id") {
+    if (!attr.includes("error") && attr !== "id" && attr !== "active") {
       if (!/\S/.test(object[attr])) {
         isError = true;
         errors[`${attr}error`] =
@@ -86,6 +86,49 @@ export const notDeletable = (allServiceshifts, selected) => {
     )}`;
   } else {
     alert = `Empleados(s) eliminado(s) correctamente`;
+  }
+  return { alert, error };
+};
+
+// Disable validation
+export const notDisable = (allServiceshifts, selected) => {
+  let match = {};
+  let error = false;
+  let alert = "";
+  const activeServiceshifts = allServiceshifts.filter(
+    serviceshift => serviceshift.active === true
+  );
+  selected.forEach(user => {
+    activeServiceshifts.map(serviceshift => {
+      let empMatch = serviceshift.employees.find(emp => emp.user === user);
+      if (empMatch !== undefined) {
+        error = true;
+        let msgSsh = `Horario de sede ${
+          serviceshift.branch.branch
+        } con inicio el ${
+          dbDateTimeToView(serviceshift.begindate).dateTime
+        } y fin el ${dbDateTimeToView(serviceshift.workspan).dateTime}\r\n`;
+        if (match[user] === undefined) {
+          match[user] = [msgSsh];
+        } else {
+          match[user].push(msgSsh);
+        }
+      }
+      return null;
+    });
+  });
+  let message = [];
+  Object.keys(match).forEach(key => {
+    message.push(
+      `Empleado ${key} asociado con:\r\n${match[key].map(m => `${m}`)}`
+    );
+  });
+  if (error) {
+    alert = `No puede deshabilitar los siguientes empleados porque se encuentran asignados a uno o varios horarios activos:\r\n${message.map(
+      m => `${m}`
+    )}`;
+  } else {
+    alert = `Estado de usuario(s) ha sido cambiado exitosamente`;
   }
   return { alert, error };
 };

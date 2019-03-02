@@ -15,11 +15,11 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
+// import FormControl from "@material-ui/core/FormControl";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
-import ActiveSelector from "../../Selector/ActiveSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // GraphQL
 import { Mutation } from "react-apollo";
 import { NEW_EMPLOYEE } from "../../../mutations/employee.js";
@@ -120,7 +120,8 @@ class EmployeeModal extends React.Component {
           password: employee.password,
           dni: employee.dni,
           phone: employee.phone,
-          active: employee.active
+          active: true
+          // active: employee.active
         }
       });
       alert(`${employee.user} ha sido agregado`);
@@ -241,7 +242,7 @@ class EmployeeModal extends React.Component {
                         onChange={this.handleChangeEmployee}
                         inputProps={{ errorcomment: employee.dnierror }}
                       />
-                      <FormControl fullWidth style={{ paddingTop: "10px" }}>
+                      {/* <FormControl fullWidth style={{ paddingTop: "10px" }}>
                         <ActiveSelector
                           active={employee.active}
                           onChange={this.handleChangeEmployee}
@@ -254,7 +255,7 @@ class EmployeeModal extends React.Component {
                         >
                           {employee.activeerror ? employee.activeerror : null}
                         </FormHelperText>
-                      </FormControl>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>

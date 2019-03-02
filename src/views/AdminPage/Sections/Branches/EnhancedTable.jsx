@@ -20,14 +20,17 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
-import { DELETE_BRANCH } from "../../../../mutations/branch";
+import { DELETE_BRANCH, DISABLE_BRANCH } from "../../../../mutations/branch";
 import { GET_BRANCHES } from "../../../../queries/branch";
 //Customized components
 import Add from "../../../../components/Modal/branch/Add";
 import Update from "../../../../components/Modal/branch/Update";
 import Display from "../../../../components/Modal/branch/Display";
 // Helper functions
-import { notDeletable } from "assets/helperFunctions/validationBranch.js";
+import {
+  notDeletable,
+  notDisable
+} from "assets/helperFunctions/validationBranch.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -154,6 +157,11 @@ const toolbarStyles = theme => ({
   },
   i: {
     marginLeft: "-12px"
+  },
+  disableDeleteRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
   }
 });
 
@@ -167,7 +175,30 @@ const updateCacheDelete = (cache, { data: { deleteBranch } }) => {
   });
 };
 
+const updateCacheDisable = (cache, { data: { disableBranch } }) => {
+  const { branches } = cache.readQuery({ query: GET_BRANCHES });
+  const { id, active } = disableBranch;
+  branches.find(branch => {
+    if (branch.id === id) {
+      branch["active"] = active;
+    }
+    return null;
+  });
+  cache.writeQuery({
+    query: GET_BRANCHES,
+    data: { branches }
+  });
+};
+
 class EnhancedTableToolbar extends React.Component {
+  disableOnClick(disableBranch, selected) {
+    const validationDisable = notDisable(this.props.serviceshifts, selected);
+    if (!validationDisable.error) {
+      selected.map(id => disableBranch({ variables: { id } }));
+      this.props.resetValues();
+    }
+    alert(validationDisable.alert);
+  }
   deleteOnClick(deleteBranch, selected, history) {
     const validationDelete = notDeletable(this.props.serviceshifts, selected);
     if (!validationDelete.error) {
@@ -202,20 +233,41 @@ class EnhancedTableToolbar extends React.Component {
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
-                <Mutation mutation={DELETE_BRANCH} update={updateCacheDelete}>
-                  {deleteBranch => (
-                    <DeleteIcon
-                      onClick={() => {
-                        this.deleteOnClick(deleteBranch, selected, history);
-                        return null;
-                      }}
-                    />
-                  )}
-                </Mutation>
-              </IconButton>
-            </Tooltip>
+            <div className={classes.disableDeleteRow}>
+              <Tooltip title="Activar / Desactivar">
+                <IconButton aria-label="Activar / Desactivar">
+                  <Mutation
+                    mutation={DISABLE_BRANCH}
+                    update={updateCacheDisable}
+                  >
+                    {disableBranch => (
+                      <i
+                        className="material-icons"
+                        onClick={() =>
+                          this.disableOnClick(disableBranch, selected)
+                        }
+                      >
+                        exposure
+                      </i>
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton aria-label="Delete">
+                  <Mutation mutation={DELETE_BRANCH} update={updateCacheDelete}>
+                    {deleteBranch => (
+                      <DeleteIcon
+                        onClick={() => {
+                          this.deleteOnClick(deleteBranch, selected, history);
+                          return null;
+                        }}
+                      />
+                    )}
+                  </Mutation>
+                </IconButton>
+              </Tooltip>
+            </div>
           ) : null
           /* (
             <Tooltip title="Filtrar lista">
@@ -277,7 +329,7 @@ class EnhancedTable extends React.Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 10
     };
     this.resetValues = this.resetValues.bind(this);
   }

@@ -78,3 +78,12 @@ export const DELETE_BRANCH = gql`
     }
   }
 `;
+
+export const DISABLE_BRANCH = gql`
+  mutation disableBranch($id: ID!) {
+    disableBranch(id: $id) {
+      id
+      active
+    }
+  }
+`;

@@ -34,7 +34,7 @@ const javascriptStyles = {
   ...tooltipsStyle,
   ...popoverStyles,
   overflow: {
-    width: "207px",
+    width: "300px",
     height: "240px",
     overflow: "auto"
   }
