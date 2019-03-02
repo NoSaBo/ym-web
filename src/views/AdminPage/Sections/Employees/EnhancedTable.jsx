@@ -226,7 +226,7 @@ class EnhancedTableToolbar extends React.Component {
               id="tableTitle"
               className={classes.i}
             >
-              <Add />
+              <Add employees={this.props.employees}/>
             </Typography>
           )}
         </div>
@@ -406,6 +406,7 @@ class EnhancedTable extends React.Component {
           history={this.props.history}
           resetValues={this.resetValues}
           serviceshifts={this.props.serviceshifts}
+          employees={this.props.data}
         />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
@@ -456,7 +457,7 @@ class EnhancedTable extends React.Component {
                         )}
                       >
                         <Display employee={n} />
-                        <Update employee={n} />
+                        <Update employee={n} employees={this.props.data} />
                       </TableCell>
                     </TableRow>
                   );

@@ -108,7 +108,7 @@ class EmployeeModal extends React.Component {
 
   saveEmployee(event, addEmployee, emp) {
     event.preventDefault();
-    let { isError, employee } = employeeValidation(emp);
+    let { isError, employee } = employeeValidation(emp, this.props.employees, "add");
     this.setState({ employee });
     employee = this.state.employee;
     if (!isError) {

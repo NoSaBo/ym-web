@@ -98,8 +98,7 @@ class BranchModal extends React.Component {
 
   saveBranch(event, addBranch, brn) {
     event.preventDefault();
-
-    let { isError, branch } = branchValidation(brn);
+    let { isError, branch } = branchValidation(brn, this.props.branches, "add");
     this.setState({ branch });
     branch = this.state.branch;
     if (!isError) {

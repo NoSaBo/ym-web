@@ -18,7 +18,7 @@ const isFloat = n => {
   return ans;
 };
 
-const lengthAttribute = object => {
+const lengthAttribute = (object, branches, modal) => {
   let isError = false;
   let errors = {};
   for (let attr in object) {
@@ -55,16 +55,30 @@ const lengthAttribute = object => {
           `${attr}error`
         ] = `El campo debe contener como máximo 25 caracteres`;
       }
+      if (attr === "branch" && object[attr] !== "" && branchUnique(object[attr], branches) === false && modal === "add" ) {
+        isError = true;
+        errors[
+          `${attr}error`
+        ] = `El nombre de la sede ya esta siendo utilizado`;
+      }
+      const pastValue = branches.filter(x => x.id === object.id)[0].branch;
+      const newValue = object["branch"];
+      if (attr === "branch" && modal === "update" && object[attr] !== ""  && branchUnique(object[attr], branches) === false && pastValue !== newValue) {
+        isError = true;
+        errors[
+          `${attr}error`
+        ] = `El nombre de la sede ya esta siendo utilizado`;
+      }
     }
   }
   return { isError, errors };
 };
 
-export const branchValidation = brn => {
+export const branchValidation = (brn, branches, modal) => {
   let isError = false;
   let errors = Object.assign({}, { ...initBranchErrors });
   let branch = Object.assign({}, { ...brn, ...errors });
-  const lengthvalidation = lengthAttribute(branch);
+  const lengthvalidation = lengthAttribute(branch, branches, modal);
   if (lengthvalidation.isError) {
     isError = true;
     errors = lengthvalidation.errors;
@@ -151,3 +165,12 @@ export const notDisable = (allServiceshifts, selected) => {
   }
   return { alert, error };
 };
+
+const branchUnique = (newBranch, branches) => {
+  let unique = true;
+  const match = branches.filter(branch => branch.branch === newBranch)
+  if (match.length !== 0) {
+    unique = false
+  }
+  return unique
+}
