@@ -17,15 +17,15 @@ import Parallax from "components/Parallax/Parallax.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 
-import { HashLink as Link } from "react-router-hash-link";
+// import { HashLink as Link } from "react-router-hash-link";
 
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 // import teamStyle from "assets/jss/material-kit-react/views/landingPageSections/teamStyle.jsx";
 
 // Sections for this page
 import AboutSection from "./Sections/AboutSection.jsx";
-import ServicesSection from "./Sections/ServicesSection.jsx";
-import WorkSection from "./Sections/WorkSection.jsx";
+// import ServicesSection from "./Sections/ServicesSection.jsx";
+// import WorkSection from "./Sections/WorkSection.jsx";
 import ClientsSection from "./Sections/ClientsSection.jsx";
 import PartnersSection from "./Sections/PartnersSection";
 

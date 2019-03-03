@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,13 +15,19 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
+// import FormControl from "@material-ui/core/FormControl";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
+//Customized components
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Mutation } from "react-apollo";
 import { NEW_BRANCH } from "../../../mutations/branch";
 import { GET_BRANCHES } from "../../../queries/branch";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { branchValidation } from "assets/helperFunctions/validationBranch.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -38,12 +45,19 @@ const updateCacheAdd = (cache, { data: { addBranch } }) => {
 
 const newBranch = {
   branch: "",
+  brancherror: "",
   address: "",
+  addresserror: "",
   latitude: "",
+  latitudeerror: "",
   longitude: "",
+  longitudeerror: "",
   contact: "",
+  contacterror: "",
   phone: "",
-  active: ""
+  phoneerror: "",
+  active: "",
+  activeerror: ""
 };
 
 class BranchModal extends React.Component {
@@ -75,31 +89,35 @@ class BranchModal extends React.Component {
     const field = event.target.name;
     let value = event.target.value;
     if (field === "active") {
-      value = value === "true" ? true : false;
+      value = value ? true : false;
     }
     let branch = this.state.branch;
     branch[field] = value;
     this.setState({ branch });
   }
 
-  saveBranch(event, addBranch, branch) {
+  saveBranch(event, addBranch, brn) {
     event.preventDefault();
-    addBranch({
-      variables: {
-        branch: branch.branch,
-        address: branch.address,
-        latitude: branch.latitude,
-        longitude: branch.longitude,
-        contact: branch.contact,
-        phone: branch.phone,
-        active: branch.active
-      }
-    });
-    alert(`${branch.branch} have been added!`);
-    this.handleClose("classicModal");
-    this.resetBranchForm();
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
+    let { isError, branch } = branchValidation(brn, this.props.branches, "add");
+    this.setState({ branch });
+    branch = this.state.branch;
+    if (!isError) {
+      addBranch({
+        variables: {
+          branch: branch.branch,
+          address: branch.address,
+          latitude: branch.latitude,
+          longitude: branch.longitude,
+          contact: branch.contact,
+          phone: branch.phone,
+          // active: branch.active
+          active: true
+        }
+      });
+      alert(`Sede ${branch.branch} ha sido agregada`);
+      this.handleClose("classicModal");
+      this.resetBranchForm();
+    }
   }
 
   resetBranchForm() {
@@ -116,9 +134,14 @@ class BranchModal extends React.Component {
     const branch = this.state.branch;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Button color="info">+ Crear</Button>
-        </div>
+        <Tooltip title="Agregar Sede">
+          <IconButton
+            aria-label="Agregar Sede"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>add</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -164,6 +187,7 @@ class BranchModal extends React.Component {
                         value={branch.branch}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.brancherror }}
                       />
                       <CustomInput
                         labelText="Dirección"
@@ -171,6 +195,7 @@ class BranchModal extends React.Component {
                         value={branch.address}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.addresserror }}
                       />
                       <CustomInput
                         labelText="Latitud"
@@ -178,6 +203,7 @@ class BranchModal extends React.Component {
                         value={branch.latitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.latitudeerror }}
                       />
                       <CustomInput
                         labelText="Longitud"
@@ -185,6 +211,7 @@ class BranchModal extends React.Component {
                         value={branch.longitude}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.longitudeerror }}
                       />
                       <CustomInput
                         labelText="Contacto"
@@ -192,6 +219,7 @@ class BranchModal extends React.Component {
                         value={branch.contact}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.contacterror }}
                       />
                       <CustomInput
                         labelText="Teléfono"
@@ -199,19 +227,21 @@ class BranchModal extends React.Component {
                         value={branch.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeBranch}
+                        inputProps={{ errorcomment: branch.phoneerror }}
                       />
-                      <div>
-                        <div>Estado</div>
-                        <select
+                      {/* <FormControl fullWidth style={{ paddingTop: "10px" }}>
+                        <ActiveSelector
+                          active={branch.active}
                           onChange={this.handleChangeBranch}
-                          name="active"
-                          value={branch.active}
+                          modal="add"
+                        />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
                         >
-                          <option>Seleccionar Estado</option>
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </div>
+                          {branch.activeerror ? branch.activeerror : null}
+                        </FormHelperText>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
@@ -221,7 +251,7 @@ class BranchModal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={(e) => {
+                            onClick={e => {
                               this.saveBranch(e, addBranch, branch);
                             }}
                           >

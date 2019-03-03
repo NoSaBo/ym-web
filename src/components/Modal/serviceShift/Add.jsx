@@ -7,18 +7,21 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-
-import Datetime from "react-datetime";
+import Datetime from "../../BoxForTime/NativeDateTime.jsx";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
-
+import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
+//Customized components
+import BranchSelector from "../../Selector/BranchSelector";
+// import ActiveSelector from "../../Selector/ActiveSelector";
 // queries and mutations with react-apollo
 import { Query, Mutation } from "react-apollo";
 import { GET_BRANCHES } from "../../../queries/branch";
@@ -26,26 +29,36 @@ import { NEW_SERVICESHIFT } from "../../../mutations/serviceShift";
 import { GET_SERVICESHIFTS } from "../../../queries/serviceShift";
 //react-router
 import { withRouter } from "react-router-dom";
+// Helper functions
+import { serviceShiftValidation } from "assets/helperFunctions/validationServiceshift.js";
+
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
 const updateCacheNew = (cache, { data: { addServiceShift } }) => {
-  const { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
+  let { serviceShifts } = cache.readQuery({ query: GET_SERVICESHIFTS });
+  addServiceShift["employees"] = [];
+  serviceShifts.push(addServiceShift);
   cache.writeQuery({
     query: GET_SERVICESHIFTS,
     data: {
-      serviceShifts: serviceShifts.concat([addServiceShift])
+      serviceShifts
     }
   });
+  return null;
 };
 
 const initialState = {
   begindate: "",
+  begindateerror: "",
   workspan: "",
+  workspanerror: "",
   active: "",
-  branchId: ""
+  activeerror: "",
+  branchId: "",
+  branchIderror: ""
 };
 
 class Modal extends React.Component {
@@ -55,7 +68,7 @@ class Modal extends React.Component {
       classicModal: false,
       serviceShift: initialState
     };
-    this.handleServiceShiftState = this.handleServiceShiftState.bind(this);
+    this.handleActiveState = this.handleActiveState.bind(this);
     this.handleBranchSelected = this.handleBranchSelected.bind(this);
     this.saveServiceShift = this.saveServiceShift.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -83,21 +96,16 @@ class Modal extends React.Component {
     this.resetForm();
   }
 
-  handleServiceShiftState(event) {
-    const field = event.target.name;
-    let value = event.target.value;
-    if (field === "active") {
-      value = value === "true" ? true : false;
-    }
+  handleActiveState(event) {
     let serviceShift = this.state.serviceShift;
-    serviceShift[field] = value;
+    serviceShift["active"] = event.target.value;
     this.setState({ serviceShift });
   }
 
   handleStartDateState(event) {
     const field = "begindate";
     const serviceShift = this.state.serviceShift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceShift[field] = date;
     this.setState({ serviceShift });
   }
@@ -105,51 +113,52 @@ class Modal extends React.Component {
   handleWorkspanDateState(event) {
     const field = "workspan";
     const serviceShift = this.state.serviceShift;
-    let date = new Date(event);
+    let date = new Date(event.target.value);
     serviceShift[field] = date;
     this.setState({ serviceShift });
   }
 
   handleBranchSelected(event) {
-    const branch = event.target.name;
     const serviceShift = this.state.serviceShift;
-    serviceShift[branch] = event.target.value;
+    serviceShift["branchId"] = event.target.value;
     this.setState({ serviceShift });
   }
 
-  saveServiceShift(addServiceShift) {
-    this.handleClose("classicModal");
-    let begindate = this.state.serviceShift.begindate;
-    begindate.setMinutes(
-      begindate.getMinutes() - begindate.getTimezoneOffset()
-    );
-    begindate = begindate.toISOString();
-    let workspan = this.state.serviceShift.workspan;
-    workspan.setMinutes(workspan.getMinutes() - workspan.getTimezoneOffset());
-    workspan = workspan.toISOString();
-    addServiceShift({
-      variables: {
-        begindate: begindate,
-        workspan: workspan,
-        active: this.state.serviceShift.active,
-        branchId: this.state.serviceShift.branchId
-      }
-    });
-    this.resetForm();
-    alert("Nuevo horario ha sido agregado");
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
+  saveServiceShift(event, addServiceShift, ssh) {
+    event.preventDefault();
+    let { isError, serviceshift } = serviceShiftValidation(ssh);
+    this.setState({ serviceShift: serviceshift });
+    if (!isError) {
+      addServiceShift({
+        variables: {
+          begindate: this.state.serviceShift.begindate,
+          workspan: this.state.serviceShift.workspan,
+          active: this.state.serviceShift.active,
+          branchId: this.state.serviceShift.branchId
+        }
+      });
+      alert("Nuevo horario ha sido agregado");
+      this.handleClose("classicModal");
+      this.resetForm();
+    }
   }
 
   render() {
     const { classes } = this.props;
     let widthTmpFix = "lorem";
     widthTmpFix = widthTmpFix.repeat(8);
+    let serviceShift = this.state.serviceShift;
+    let { /*active,*/ branchId } = this.state.serviceShift;
     return (
       <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Button color="info">+ Crear</Button>
-        </div>
+        <Tooltip title="Agregar empleado">
+          <IconButton
+            aria-label="Agregar empleado"
+            onClick={() => this.handleClickOpen("classicModal")}
+          >
+            <i className={"material-icons"}>add</i>
+          </IconButton>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -191,7 +200,7 @@ class Modal extends React.Component {
                     <span style={{ opacity: "0" }}>{widthTmpFix}</span>
                     <form>
                       <InputLabel className={classes.label}>
-                        Inicio de turno
+                        Inicio de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
@@ -203,11 +212,19 @@ class Modal extends React.Component {
                           onChange={this.handleStartDateState}
                           renderInput={false}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.begindateerror
+                            ? serviceShift.begindateerror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
                       <br />
                       <br />
                       <InputLabel className={classes.label}>
-                        Fin de turno
+                        Fin de turno (mes / día / año)
                       </InputLabel>
                       <br />
                       <FormControl fullWidth>
@@ -219,6 +236,14 @@ class Modal extends React.Component {
                           value={this.state.serviceShift.workspan}
                           onChange={this.handleWorkspanDateState}
                         />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.workspanerror
+                            ? serviceShift.workspanerror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
                       <br />
                       <br />
@@ -230,38 +255,43 @@ class Modal extends React.Component {
                             if (loading) return <h4>Loading...</h4>;
                             if (error) console.log("errror: ", error);
                             return (
-                              <select
-                                name="branchId"
+                              <BranchSelector
+                                branches={data.branches}
                                 onChange={this.handleBranchSelected}
-                              >
-                                <option>Elija una sede</option>
-                                {data.branches.map((branch, index) => {
-                                  return (
-                                    <option key={index} value={branch.id}>
-                                      {branch.branch}
-                                    </option>
-                                  );
-                                })}
-                              </select>
+                                branchId={branchId}
+                                modal="add"
+                              />
                             );
                           }}
                         </Query>
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
+                        >
+                          {serviceShift.branchIderror
+                            ? serviceShift.branchIderror
+                            : null}
+                        </FormHelperText>
                       </FormControl>
-                      <br />
+                      {/* <br />
                       <br />
                       <InputLabel className={classes.label}>Estado</InputLabel>
                       <br />
                       <FormControl fullWidth>
-                        <select
-                          onChange={this.handleServiceShiftState}
-                          name="active"
-                          value={this.state.serviceShift.active}
+                        <ActiveSelector
+                          onChange={this.handleActiveState}
+                          active={active}
+                          modal="add"
+                        />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
                         >
-                          <option>Seleccionar Estado</option>
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </FormControl>
+                          {serviceShift.activeerror
+                            ? serviceShift.activeerror
+                            : null}
+                        </FormHelperText>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
@@ -274,8 +304,12 @@ class Modal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={() => {
-                              this.saveServiceShift(addServiceShift);
+                            onClick={e => {
+                              this.saveServiceShift(
+                                e,
+                                addServiceShift,
+                                serviceShift
+                              );
                             }}
                           >
                             Guardar

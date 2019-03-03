@@ -1,17 +1,15 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Component } from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
 // @material-ui/core & style components
 import withStyles from "@material-ui/core/styles/withStyles";
 import ServiceShiftPageStyle from "assets/jss/material-kit-react/views/serviceShiftPage.jsx";
-// GraphQL and Apollo components
+//GraphQL
 import { Query } from "react-apollo";
 import { GET_SERVICESHIFTS } from "../../../../queries/serviceShift";
-// core components
-import ServiceShiftRow from "./ServiceShiftRow";
-import ModalAdd from "../../../../components/Modal/serviceShift/Add.jsx";
+//Customized components
+import Table from "./EnhancedTable";
 
-class ServiceShifts extends Component {
+class IndexServiceshifts extends Component {
   render() {
     const { classes } = this.props;
     return (
@@ -19,39 +17,15 @@ class ServiceShifts extends Component {
         className="container-fluid"
         style={{ paddingBottom: "20px", color: "black" }}
       >
-        <div className={classNames(classes.flexContainerNew)}>
-          <h1>Horarios</h1>
-          <p style={{ marginLeft: "2em" }} />
-          <ModalAdd />
+        <div className={classes.flexContainerNew}>
+          <h1 className={classes.text}>Horarios</h1>
         </div>
         <Query query={GET_SERVICESHIFTS}>
           {({ loading, error, data }) => {
-            if (loading) return <h4>Loading...</h4>;
-            if (error) console.log("error: ", error);
+            if (loading) return "Loading";
+            if (error) return `Error ${error.message}`;
             return (
-              <div className={classes.MarginContainer}>
-                <table width="100%">
-                  <thead align="center">
-                    <tr>
-                      <th style={{ padding: "1%" }}>#</th>
-                      <th>SEDE</th>
-                      <th>INICIO</th>
-                      <th>FIN</th>
-                      <th>ACTIVO</th>
-                      <th>ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.serviceShifts.map((serviceShift, index) => (
-                      <ServiceShiftRow
-                        key={index}
-                        serviceShift={serviceShift}
-                        index={index}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <Table data={data.serviceShifts} history={this.props.history} />
             );
           }}
         </Query>
@@ -60,4 +34,4 @@ class ServiceShifts extends Component {
   }
 }
 
-export default withStyles(ServiceShiftPageStyle)(ServiceShifts);
+export default withStyles(ServiceShiftPageStyle)(IndexServiceshifts);

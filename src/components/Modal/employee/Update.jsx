@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 // core components
@@ -14,14 +15,19 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../CustomInput/CustomInput.jsx";
-import Badge from "../../Badge/Badge.jsx";
+// import FormControl from "@material-ui/core/FormControl";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
-// queries and mutations with react-apollo
+//Customized components
+// import ActiveSelector from "../../Selector/ActiveSelector";
+//GraphQL
 import { Mutation } from "react-apollo";
 import { UPDATE_EMPLOYEE } from "../../../mutations/employee.js";
 //react-router
 import { withRouter } from "react-router-dom";
-
+// Helper functions
+import { capitalize } from "assets/helperFunctions/index.js";
+import { employeeValidation } from "assets/helperFunctions/validationEmployee.js";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -32,12 +38,10 @@ class UpdateModal extends React.Component {
     super(props);
     this.state = {
       classicModal: false,
-      togglePassword: "password",
       employee: null
     };
     this.handleChangeEmployee = this.handleChangeEmployee.bind(this);
     this.saveEmployee = this.saveEmployee.bind(this);
-    this.togglePassword = this.togglePassword.bind(this);
     this.resetEmployee = this.resetEmployee.bind(this);
   }
 
@@ -54,19 +58,11 @@ class UpdateModal extends React.Component {
     this.resetEmployee();
   }
 
-  togglePassword() {
-    if (this.state.togglePassword === "password") {
-      this.setState({ togglePassword: "text" });
-    } else {
-      this.setState({ togglePassword: "password" });
-    }
-  }
-
   handleChangeEmployee(event) {
     const field = event.target.name;
     let value = event.target.value;
     if (field === "active") {
-      value = value === "true" ? true : false;
+      value = value === true ? true : false;
     }
     let employee = this.state.employee;
     employee[field] = value;
@@ -80,13 +76,19 @@ class UpdateModal extends React.Component {
     });
   }
 
-  saveEmployee(updateEmployee) {
-    this.handleClose("classicModal");
-    let employee = this.state.employee;
-    updateEmployee({ variables: employee });
-    alert(employee.user + " have been updated!");
-    window.location.reload();
-    this.props.history.push("/parkeo/admin-page");
+  saveEmployee(event, updateEmployee, emp) {
+    event.preventDefault();
+    const employees = this.props.employees;
+    let { isError, employee } = employeeValidation(emp, employees, "update");
+    this.setState({ employee });
+    employee = this.state.employee;
+    employee["firstname"] = capitalize(employee.firstname);
+    employee["lastname"] = capitalize(employee.lastname);
+    if (!isError) {
+      updateEmployee({ variables: employee });
+      alert(employee.user + " ha sido actualizado!");
+      this.handleClose("classicModal");
+    }
   }
 
   componentWillMount() {
@@ -97,12 +99,18 @@ class UpdateModal extends React.Component {
     const { classes } = this.props;
     const employee = this.state.employee;
     return (
-      <div>
-        <div onClick={() => this.handleClickOpen("classicModal")}>
-          <Badge color="success">
-            <i className="material-icons">edit</i>
-          </Badge>
-        </div>
+      <div align="left">
+        <Tooltip title="Editar">
+          <div>
+            <IconButton
+              aria-label="Editar"
+              onClick={() => this.handleClickOpen("classicModal")}
+              disabled={!this.props.employee.active}
+            >
+              <i className={"material-icons"}>edit</i>
+            </IconButton>
+          </div>
+        </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <GridContainer>
@@ -150,6 +158,7 @@ class UpdateModal extends React.Component {
                         value={employee.firstname}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.firstnameerror }}
                       />
                       <CustomInput
                         labelText="Apellido"
@@ -157,6 +166,7 @@ class UpdateModal extends React.Component {
                         value={employee.lastname}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.lastnameerror }}
                       />
                       <CustomInput
                         labelText="Usuario"
@@ -164,23 +174,24 @@ class UpdateModal extends React.Component {
                         value={employee.user}
                         formControlProps={{ fullWidth: true }}
                         disabled={true}
+                        inputProps={{ errorcomment: employee.usererror }}
                       />
                       <CustomInput
                         labelText="Password"
                         name="password"
                         value={employee.password}
-                        type={this.state.togglePassword}
+                        type="password"
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.passworderror }}
                       />
-                      <input type="checkbox" onClick={this.togglePassword} />
-                      Mostrar password
                       <CustomInput
                         labelText="Teléfono"
                         name="phone"
                         value={employee.phone}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.phoneerror }}
                       />
                       <CustomInput
                         labelText="D.N.I"
@@ -188,18 +199,21 @@ class UpdateModal extends React.Component {
                         value={employee.dni}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeEmployee}
+                        inputProps={{ errorcomment: employee.dnierror }}
                       />
-                      <div>
-                        <div>Estado</div>
-                        <select
+                      {/* <FormControl fullWidth style={{ paddingTop: "10px" }}>
+                        <ActiveSelector
+                          active={employee.active}
                           onChange={this.handleChangeEmployee}
-                          name="active"
-                          value={employee.active}
+                          modal="update"
+                        />
+                        <FormHelperText
+                          id="name-error-text"
+                          style={{ color: "red" }}
                         >
-                          <option value={true}>Activo</option>
-                          <option value={false}>Inactivo</option>
-                        </select>
-                      </div>
+                          {employee.activeerror ? employee.activeerror : null}
+                        </FormHelperText>
+                      </FormControl> */}
                     </form>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
@@ -209,8 +223,8 @@ class UpdateModal extends React.Component {
                           <Button
                             color="transparent"
                             simple
-                            onClick={() => {
-                              this.saveEmployee(updateEmployee);
+                            onClick={e => {
+                              this.saveEmployee(e, updateEmployee, employee);
                             }}
                           >
                             Guardar

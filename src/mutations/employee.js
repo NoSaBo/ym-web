@@ -61,6 +61,15 @@ mutation updateEmployee(
 }
 `;
 
+export const DISABLE_EMPLOYEE = gql`
+mutation disableEmployee($user: String!) {
+  disableEmployee(user: $user) {
+    user
+    active
+  }
+}
+`;
+
 export const DELETE_EMPLOYEE = gql`
 mutation deleteEmployee($user: String!) {
   deleteEmployee(user: $user) {

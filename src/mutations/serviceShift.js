@@ -121,3 +121,12 @@ mutation updateServiceShift(
   }
 }
 `;
+
+export const DISABLE_SERVICESHIFT = gql`
+mutation disableServiceshift($id: ID!) {
+  disableServiceshift(id: $id) {
+    id
+    active
+  }
+}
+`;

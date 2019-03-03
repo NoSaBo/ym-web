@@ -20,6 +20,8 @@ export const GET_PARKINGS = gql`
           branch
         }
       }
+      createdAt
+      updatedAt
     }
   }
 `;

@@ -10,6 +10,7 @@ import Register from "views/AdminPage/Sections/Login/Index.jsx";
 // import Login from "views/AdminPage/Sections/Login/Login.jsx";
 
 
+
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
   { path: "/parkeo", name: "ParkeoPage", component: ParkeoPage },

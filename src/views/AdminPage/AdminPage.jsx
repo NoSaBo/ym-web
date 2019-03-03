@@ -15,7 +15,7 @@ import Parallax from "components/Parallax/Parallax.jsx";
 // import Card from "components/Card/Card.jsx";
 // import CardBody from "components/Card/CardBody.jsx";
 //react-router
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 import Employees from "views/AdminPage/Sections/Employees/Index.jsx";
 import Branch from "views/AdminPage/Sections/Branches/Index.jsx";
@@ -41,7 +41,7 @@ class AdminPage extends Component {
 
   render() {
     const { classes, ...rest } = this.props;
-    const imageClasses = classNames(classes.imgCenter);
+    // const imageClasses = classNames(classes.imgCenter);
     let pageElement;
     if (this.state.currentTab === "employees") pageElement = <Employees />;
     if (this.state.currentTab === "branches") pageElement = <Branch />;
