@@ -13,6 +13,7 @@ import Table from "./EnhancedTable";
 class IndexEmployee extends Component {
   render() {
     const { classes } = this.props;
+    console.log("Employee.props", this.props)
     return (
       <div
         className="container-fluid"

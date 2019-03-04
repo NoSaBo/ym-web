@@ -27,13 +27,13 @@ const isAuthenticated = () => {
     decode(token);
     decode(refreshToken);
   } catch (err) {
-    console.log("err", err);
     return false;
   }
   return true;
 }
 
 function PrivateRoute({ component: Component, ...rest }) {
+  console.log("rest", rest)
   return (
     <Route
       {...rest}

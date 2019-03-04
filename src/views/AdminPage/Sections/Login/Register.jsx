@@ -49,7 +49,7 @@ class SectionLogin extends React.Component {
                   <CardBody>
                     <CustomInput
                       error={!!usernameError}
-                      labelText="First Name..."
+                      labelText="Usuario..."
                       id="first"
                       formControlProps={{
                         fullWidth: true
