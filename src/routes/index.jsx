@@ -6,13 +6,14 @@ import Branches from "views/AdminPage/Sections/Branches/Index.jsx";
 import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/Index.jsx";
 import Parkings from "views/AdminPage/Sections/Parkings/Index.jsx";
 import EmployeexServiceShifts from "views/AdminPage/Sections/EmployeexServiceShifts/Index.jsx";
+import Login from "views/AdminPage/Sections/Login/Login.jsx";
 
 
 var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
   { path: "/parkeo", name: "ParkeoPage", component: ParkeoPage },
 
-  { path: "/parkeo/admin-page", name: "AdminPage", component: AdminPage },
+  // { path: "/parkeo/admin-page", name: "AdminPage", component: AdminPage },
   {
     path: "/parkeo/admin-page/employees",
     name: "Employees",
@@ -37,6 +38,11 @@ var indexRoutes = [
     path: "/parkeo/admin-page/employeexserviceshifts",
     name: "EmployeexServiceShifts",
     component: EmployeexServiceShifts
+  },
+  {
+    path: "/parkeo/admin-page/login",
+    name: "Login",
+    component: Login
   }
 ];
 
