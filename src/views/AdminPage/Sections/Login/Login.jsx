@@ -18,8 +18,9 @@ import Notification from "components/Notifications/Notifications.jsx";
 // style
 import loginStyle from "assets/jss/material-kit-react/views/componentsSections/loginStyle.jsx";
 // queries and mutations
-// import { Mutation } from "react-apollo";
-// import { LOGIN } from "../../../../mutations/login";
+import { ApolloConsumer } from "react-apollo";
+import { WEB_LOGIN } from "../../../../queries/login";
+import AuthContext from "../../../../context/auth-context";
 
 class Login extends React.Component {
   constructor(props) {
@@ -27,31 +28,30 @@ class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      errors: {}
+      errors: {},
+      admin: {}
     };
   }
+  
+  static contextType = AuthContext;
 
-  onSubmit = async (e, login, data) => {
-    const { email, password } = this.state;
-    const response = await login({
-      variables: {
-        email,
-        password
-      }
-    });
-    const { ok, token, refreshToken, errors } = response.data.login;
-    if (ok) {
+  onSubmit = data => {
+    this.setState({ admin: data });
+    const { token, tokenExpiration, userID, username} = this.state.admin;
+    this.context.login(token, tokenExpiration, userID, username)
+    // if (ok) {
       localStorage.setItem("token", token);
-      localStorage.setItem("refreshToken", refreshToken);
-      this.props.history.push("/parkeo/admin-page");
-    } else {
-      const err = {};
-      errors.forEach(({ path, message }) => {
-        err[`${path}Error`] = message;
-      });
-      this.setState({ ["errors"]: err });
-      this.state["errors"] = err;
-    }
+      localStorage.setItem("username", username);
+    //   localStorage.setItem("refreshToken", refreshToken);
+    //   this.props.history.push("/parkeo/admin-page");
+    // } else {
+    //   const err = {};
+    //   errors.forEach(({ path, message }) => {
+    //     err[`${path}Error`] = message;
+    //   });
+    //   this.setState({ ["errors"]: err });
+    //   this.state["errors"] = err;
+    // }
   };
 
   onChange = e => {
@@ -122,19 +122,27 @@ class Login extends React.Component {
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    {/* <Mutation mutation={LOGIN}>
-                      {(login, { data }) => ( */}
+                    <ApolloConsumer>
+                      {client => (
                         <Button
                           simple
                           color="primary"
                           size="lg"
-                          onClick={e => this.onSubmit(e)}
-                        //   onClick={e => this.onSubmit(e, login, data)}
+                          onClick={async () => {
+                            const { data } = await client.query({
+                              query: WEB_LOGIN,
+                              variables: {
+                                email: this.state.email,
+                                password: this.state.password
+                              }
+                            });
+                            this.onSubmit(data.webLogin);
+                          }}
                         >
-                          > Iniciar Sesión
+                          Iniciar Sesión
                         </Button>
-                      {/* )}
-                    </Mutation> */}
+                      )}
+                    </ApolloConsumer>
                   </CardFooter>
                   {!!emailError || !!passwordError ? (
                     <Notification errorList={errorList} />

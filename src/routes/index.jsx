@@ -13,7 +13,7 @@ var indexRoutes = [
   { path: "/", name: "LandingPage", component: LandingPage },
   { path: "/parkeo", name: "ParkeoPage", component: ParkeoPage },
 
-  // { path: "/parkeo/admin-page", name: "AdminPage", component: AdminPage },
+  { path: "/parkeo/admin-page", name: "AdminPage", component: AdminPage },
   {
     path: "/parkeo/admin-page/employees",
     name: "Employees",

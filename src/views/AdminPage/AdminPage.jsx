@@ -23,6 +23,7 @@ import ServiceShifts from "views/AdminPage/Sections/ServiceShifts/Index.jsx";
 import Attendance from "views/AdminPage/Sections/EmployeexServiceShifts/Index.jsx";
 import Parkings from "views/AdminPage/Sections/Parkings/Index.jsx";
 
+
 const dashboardRoutes = [];
 
 class AdminPage extends Component {

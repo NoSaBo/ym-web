@@ -32,6 +32,7 @@ import {
   notDeletable,
   notDisable
 } from "assets/helperFunctions/validationEmployee.js";
+import AuthContext from "../../../../context/auth-context";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -210,77 +211,87 @@ class EnhancedTableToolbar extends React.Component {
   render() {
     const { numSelected, classes, selected, history } = this.props;
     return (
-      <Toolbar
-        className={classNames(classes.root, {
-          [classes.highlight]: numSelected > 0
-        })}
-      >
-        <div className={classes.title}>
-          {numSelected > 0 ? (
-            <Typography color="inherit" variant="subheading">
-              {numSelected} selected
-            </Typography>
-          ) : (
-            <Typography
-              variant="subheading"
-              id="tableTitle"
-              className={classes.i}
+      <AuthContext.Consumer>
+        {context => {
+          return (
+            <Toolbar
+              className={classNames(classes.root, {
+                [classes.highlight]: numSelected > 0
+              })}
             >
-              <Add employees={this.props.employees}/>
-            </Typography>
-          )}
-        </div>
-        <div className={classes.spacer} />
-        <div className={classes.actions}>
-          {numSelected > 0 ? (
-            <div className={classes.disableDeleteRow}>
-              <Tooltip title="Activar / Desactivar">
-                <IconButton aria-label="Activar / Desactivar">
-                  <Mutation
-                    mutation={DISABLE_EMPLOYEE}
-                    update={updateCacheDisable}
+              <div className={classes.title}>
+                {numSelected > 0 ? (
+                  <Typography color="inherit" variant="subheading">
+                    {numSelected} selected
+                  </Typography>
+                ) : (
+                  <Typography
+                    variant="subheading"
+                    id="tableTitle"
+                    className={classes.i}
                   >
-                    {disableEmployee => (
-                      <i
-                        className="material-icons"
-                        onClick={() =>
-                          this.disableOnClick(disableEmployee, selected)
-                        }
-                      >
-                        exposure
-                      </i>
-                    )}
-                  </Mutation>
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton aria-label="Delete">
-                  <Mutation
-                    mutation={DELETE_EMPLOYEE}
-                    update={updateCacheDelete}
-                  >
-                    {deleteEmployee => (
-                      <DeleteIcon
-                        onClick={() =>
-                          this.deleteOnClick(deleteEmployee, selected, history)
-                        }
-                      />
-                    )}
-                  </Mutation>
-                </IconButton>
-              </Tooltip>
-            </div>
-          ) : null
-          /* (
+                    <Add employees={this.props.employees} />
+                  </Typography>
+                )}
+              </div>
+              <div className={classes.spacer} />
+              <div className={classes.actions}>
+                {numSelected > 0 ? (
+                  <div className={classes.disableDeleteRow}>
+                    <Tooltip title="Activar / Desactivar">
+                      <IconButton aria-label="Activar / Desactivar">
+                        <Mutation
+                          mutation={DISABLE_EMPLOYEE}
+                          update={updateCacheDisable}
+                        >
+                          {disableEmployee => (
+                            <i
+                              className="material-icons"
+                              onClick={() =>
+                                this.disableOnClick(disableEmployee, selected)
+                              }
+                            >
+                              exposure
+                            </i>
+                          )}
+                        </Mutation>
+                      </IconButton>
+                    </Tooltip>
+                    {context.username === "superadmin" && (<Tooltip title="Delete">
+                      <IconButton aria-label="Delete">
+                        <Mutation
+                          mutation={DELETE_EMPLOYEE}
+                          update={updateCacheDelete}
+                        >
+                          {deleteEmployee => (
+                            <DeleteIcon
+                              onClick={() =>
+                                this.deleteOnClick(
+                                  deleteEmployee,
+                                  selected,
+                                  history
+                                )
+                              }
+                            />
+                          )}
+                        </Mutation>
+                      </IconButton>
+                    </Tooltip>)}
+                  </div>
+                ) : null
+                /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
           ) */
-          }
-        </div>
-      </Toolbar>
+                }
+              </div>
+            </Toolbar>
+          );
+        }}
+      </AuthContext.Consumer>
     );
   }
 }
