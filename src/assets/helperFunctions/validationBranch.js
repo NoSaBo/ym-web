@@ -28,11 +28,11 @@ const lengthAttribute = (object, branches, modal) => {
         errors[`${attr}error`] =
           "Un campo no puede contener únicamente espacios en blanco";
       }
-      if (attr === "address" && object[attr].length > 60) {
+      if (attr === "address" && object[attr].length > 100) {
         isError = true;
         errors[
           `${attr}error`
-        ] = `La dirección debe contener como máximo 60 caracteres`;
+        ] = `La dirección debe contener como máximo 100 caracteres`;
       }
       if (
         (attr === "longitude" || attr === "latitude") &&
@@ -55,19 +55,31 @@ const lengthAttribute = (object, branches, modal) => {
           `${attr}error`
         ] = `El campo debe contener como máximo 25 caracteres`;
       }
-      if (attr === "branch" && object[attr] !== "" && branchUnique(object[attr], branches) === false && modal === "add" ) {
+      if (
+        attr === "branch" &&
+        object[attr] !== "" &&
+        branchUnique(object[attr], branches) === false &&
+        modal === "add"
+      ) {
         isError = true;
         errors[
           `${attr}error`
         ] = `El nombre de la sede ya esta siendo utilizado`;
       }
-      const pastValue = branches.filter(x => x.id === object.id)[0].branch;
-      const newValue = object["branch"];
-      if (attr === "branch" && modal === "update" && object[attr] !== ""  && branchUnique(object[attr], branches) === false && pastValue !== newValue) {
-        isError = true;
-        errors[
-          `${attr}error`
-        ] = `El nombre de la sede ya esta siendo utilizado`;
+      if (
+        attr === "branch" &&
+        modal === "update" &&
+        object[attr] !== "" &&
+        branchUnique(object[attr], branches) === false
+      ) {
+        const pastValue = branches.filter(x => x.id === object.id)[0].branch;
+        const newValue = object["branch"];
+        if (pastValue !== newValue) {
+          isError = true;
+          errors[
+            `${attr}error`
+          ] = `El nombre de la sede ya esta siendo utilizado`;
+        }
       }
     }
   }
@@ -168,9 +180,9 @@ export const notDisable = (allServiceshifts, selected) => {
 
 const branchUnique = (newBranch, branches) => {
   let unique = true;
-  const match = branches.filter(branch => branch.branch === newBranch)
+  const match = branches.filter(branch => branch.branch === newBranch);
   if (match.length !== 0) {
-    unique = false
+    unique = false;
   }
-  return unique
-}
+  return unique;
+};
