@@ -21,6 +21,9 @@ import loginStyle from "assets/jss/material-kit-react/views/componentsSections/l
 import { Mutation } from "react-apollo";
 import { LOGIN } from "../../../../mutations/login";
 
+import decode from "jwt-decode";
+
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -58,6 +61,17 @@ class Login extends React.Component {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
+
+  componentWillMount() {
+    let token = localStorage.getItem("token");
+    if (token !== null) {
+      token = decode(token);
+      const { username } = token.user;
+      if (username === "admin" || username === "superadmin") {
+        this.props.history.push("/parkeo/admin-page");
+      }
+    }
+  }
 
   render() {
     const { classes } = this.props;

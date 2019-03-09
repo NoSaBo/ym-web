@@ -19,6 +19,8 @@ import Button from "components/CustomButtons/Button.jsx";
 import { HashLink as Link } from "react-router-hash-link";
 
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
+import ChipAdmin from "../Chip/ChipAdmin";
+
 
 function HeaderLinks({ ...props }) {
   const { classes, onClick } = props;
@@ -74,6 +76,7 @@ function HeaderLinks({ ...props }) {
           AUTOS REGISTRADOS
         </Button>
       </ListItem>
+      <ChipAdmin history={props.history}/>
     </List>
   );
 }

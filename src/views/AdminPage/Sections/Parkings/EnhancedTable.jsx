@@ -30,6 +30,7 @@ import {
   dbDateTimeToView,
   getShiftandBranch
 } from "assets/helperFunctions/index.js";
+import { adminFullPrivileges } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -61,10 +62,22 @@ const rows = [
   { id: "begindate", numeric: false, disablePadding: true, label: "HORARIO" },
   { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
   { id: "owner", numeric: false, disablePadding: true, label: "PROPIETARIO" },
-  { id: "createdAt", numeric: false, disablePadding: true, label: "HORA DE RECEPCIÓN" },
-  { id: "updatedAt", numeric: false, disablePadding: true, label: "HORA DE RETORNO" },  
+  {
+    id: "createdAt",
+    numeric: false,
+    disablePadding: true,
+    label: "HORA DE RECEPCIÓN"
+  },
+  {
+    id: "updatedAt",
+    numeric: false,
+    disablePadding: true,
+    label: "HORA DE RETORNO"
+  },
   { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
 ];
+
+const privileges = adminFullPrivileges();
 
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -211,8 +224,7 @@ class EnhancedTableToolbar extends React.Component {
                 </Mutation>
               </IconButton>
             </Tooltip>
-          ) :
-          null
+          ) : null
           /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
@@ -380,6 +392,7 @@ class EnhancedTable extends React.Component {
     } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+      console.log("privileges", privileges);
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar
@@ -421,9 +434,12 @@ class EnhancedTable extends React.Component {
                     >
                       <TableCell
                         padding="checkbox"
-                        onClick={event => this.handleClick(event, n.id)}
+                        onClick={!privileges ? null : (event => this.handleClick(event, n.id))}
                       >
-                        <Checkbox checked={isSelected} />
+                        <Checkbox
+                          checked={!privileges ? null : isSelected}
+                          disabled={!privileges}
+                        />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {dbDateTimeToView(n.serviceshift.begindate).dateTime}
@@ -438,7 +454,9 @@ class EnhancedTable extends React.Component {
                         {dbDateTimeToView(n.createdAt).time}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.updatedAt === n.createdAt ? " - " : dbDateTimeToView(n.updatedAt).time}
+                        {n.updatedAt === n.createdAt
+                          ? " - "
+                          : dbDateTimeToView(n.updatedAt).time}
                       </TableCell>
                       <TableCell
                         className={classNames(

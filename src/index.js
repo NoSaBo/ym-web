@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
+import LandingPage from "views/LandingPage/LandingPage.jsx";
+import ParkeoPage from "views/ParkeoPage/ParkeoPage.jsx";
 
 import indexRoutes from "routes/index.jsx";
 
@@ -21,8 +23,8 @@ const client = new ApolloClient({
 var hist = createBrowserHistory();
 
 const isAuthenticated = () => {
-  const token = localStorage.getItem('token');
-  const refreshToken = localStorage.getItem('refreshToken');
+  const token = localStorage.getItem("token");
+  const refreshToken = localStorage.getItem("refreshToken");
   try {
     decode(token);
     decode(refreshToken);
@@ -30,10 +32,9 @@ const isAuthenticated = () => {
     return false;
   }
   return true;
-}
+};
 
 function PrivateRoute({ component: Component, ...rest }) {
-  console.log("rest", rest)
   return (
     <Route
       {...rest}
@@ -41,11 +42,7 @@ function PrivateRoute({ component: Component, ...rest }) {
         isAuthenticated() ? (
           <Component {...props} />
         ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-            }}
-          />
+          <Redirect exact to="/parkeo/admin-page/login" />
         )
       }
     />
@@ -56,12 +53,9 @@ ReactDOM.render(
   <ApolloProvider client={client}>
     <Router history={hist}>
       <Switch>
-      <Route
-              exact
-              path="/login"
-              name="Login"
-              component={Login}
-            />
+        <Route exact path="/" name="LandingPage" component={LandingPage} />
+        <Route exact path="/parkeo" name="ParkeoPage" component={ParkeoPage} />
+        <Route exact path="/parkeo/admin-page/login" name="Login" component={Login} />
         {indexRoutes.map((prop, key) => {
           return (
             <PrivateRoute

@@ -55,7 +55,7 @@ class AdminPage extends Component {
           color="transparent"
           routes={dashboardRoutes}
           rightLinks={
-            <HeaderLinksParkeoAdmin onClick={name => this.changeTab(name)} />
+            <HeaderLinksParkeoAdmin onClick={name => this.changeTab(name)} history={this.props.history}/>
           }
           brand="Administracion Parkeo"
           fixed
