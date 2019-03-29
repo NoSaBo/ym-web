@@ -1,11 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
 import Chip from "@material-ui/core/Chip";
 import decode from "jwt-decode";
 import { capitalize } from "assets/helperFunctions/index.js";
-
 
 const styles = theme => ({
   root: {
@@ -18,35 +16,51 @@ const styles = theme => ({
   }
 });
 
-let username = "";
+class Chips extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null
+    };
+  }
 
-if (localStorage.getItem("token") !== null) {
-  const token = localStorage.getItem("token");
-  username = decode(token).user.username;
-}
-
-function handleDelete() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("refreshToken");
-  alert("Sesion de administrado cerrada");
-}
-
-function Chips(props) {
-  const { classes } = props;
-  return (
-    <div className={classes.root}>
-      <Chip
-        // avatar={<Avatar src="assets/img/favicon.png" />}
-        label={`Cuenta: ${capitalize(username)}`}
-        onDelete={() => {
-          handleDelete();
-          props.history.push("/parkeo/admin-page/login");
-        }}
-        className={classes.chip}
-        icon={<i className="material-icons">account_circle</i>}
-      />
-    </div>
-  );
+  handleClick() {
+    if (this.state.user.username === "superadmin") {
+      this.props.history.push("/parkeo/admin-page/admin");
+    } else {
+      alert("You touched the admin, watched out!");
+    }
+  }
+  handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    alert("Sesión de administrador cerrada");
+    this.props.history.push("/parkeo/admin-page/login");
+  }
+  componentWillMount() {
+    const token = localStorage.getItem("token");
+    let user = decode(token).user;
+    console.log("decode(token)", decode(token));
+    if (token) {
+      this.setState({ user });
+    }
+  }
+  render() {
+    const { classes } = this.props;
+    const { username } = this.state.user;
+    console.log("this.state.user", this.state.user);
+    return (
+      <div className={classes.root}>
+        <Chip
+          label={`${capitalize(username)}`}
+          onClick={() => this.handleClick()}
+          onDelete={() => this.handleLogout()}
+          className={classes.chip}
+          icon={<i className="material-icons">account_circle</i>}
+        />
+      </div>
+    );
+  }
 }
 
 Chips.propTypes = {
@@ -54,3 +68,28 @@ Chips.propTypes = {
 };
 
 export default withStyles(styles)(Chips);
+
+// function Chips(props) {
+//   const { classes } = props;
+
+//   let username =
+//     localStorage.getItem("token") !== null
+//       ? decode(localStorage.getItem("token")).user.username
+//       : "";
+//   return (
+//     <div className={classes.root}>
+//       <Chip
+//         label={`Cuenta: ${capitalize(username)}`}
+//         onDelete={() => handleDelete()}
+//         className={classes.chip}
+//         icon={<i className="material-icons">account_circle</i>}
+//       />
+//     </div>
+//   );
+// }
+
+// Chips.propTypes = {
+//   classes: PropTypes.object.isRequired
+// };
+
+// export default withStyles(styles)(Chips);

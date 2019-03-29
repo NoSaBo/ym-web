@@ -30,7 +30,7 @@ class Index extends Component {
       passwordError: '',
       success: false
     });
-    const { username, usernameError, email, emailError, password, passwordError } = this.state;
+    const { username, email, password } = this.state;
     const response =  await addRegistry({
       variables: {
         username,

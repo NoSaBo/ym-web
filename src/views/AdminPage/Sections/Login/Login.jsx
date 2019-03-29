@@ -4,7 +4,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Email from "@material-ui/icons/Email";
+import People from "@material-ui/icons/People";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
@@ -28,17 +28,17 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      username: "",
       password: "",
       errors: {}
     };
   }
 
   onSubmit = async (e, login, data) => {
-    const { email, password } = this.state;
+    const { username, password } = this.state;
     const response = await login({
       variables: {
-        email,
+        username,
         password
       }
     });
@@ -47,6 +47,7 @@ class Login extends React.Component {
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
       this.props.history.push("/parkeo/admin-page");
+      window.location.reload();
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {
@@ -68,6 +69,7 @@ class Login extends React.Component {
       token = decode(token);
       const { username } = token.user;
       if (username === "admin" || username === "superadmin") {
+        window.location.reload();
         this.props.history.push("/parkeo/admin-page");
       }
     }
@@ -76,11 +78,11 @@ class Login extends React.Component {
   render() {
     const { classes } = this.props;
     const {
-      errors: { emailError, passwordError }
+      errors: { usernameError, passwordError }
     } = this.state;
     const errorList = [];
-    if (emailError) {
-      errorList.push(emailError);
+    if (usernameError) {
+      errorList.push(usernameError);
     }
     if (passwordError) {
       errorList.push(passwordError);
@@ -97,22 +99,22 @@ class Login extends React.Component {
                   </CardHeader>
                   <CardBody>
                     <CustomInput
-                      error={!!emailError}
-                      labelText="Email..."
-                      id="email"
+                      error={!!usernameError}
+                      labelText="User..."
+                      id="username"
                       formControlProps={{
                         fullWidth: true
                       }}
                       inputProps={{
-                        type: "email",
+                        type: "username",
                         endAdornment: (
                           <InputAdornment position="end">
-                            <Email className={classes.inputIconsColor} />
+                            <People className={classes.inputIconsColor} />
                           </InputAdornment>
                         )
                       }}
                       onChange={this.onChange}
-                      name="email"
+                      name="username"
                     />
                     <CustomInput
                       error={!!passwordError}
@@ -149,7 +151,7 @@ class Login extends React.Component {
                       )}
                     </Mutation>
                   </CardFooter>
-                  {!!emailError || !!passwordError ? (
+                  {!!usernameError || !!passwordError ? (
                     <Notification errorList={errorList} />
                   ) : null}
                 </form>

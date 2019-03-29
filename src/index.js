@@ -38,13 +38,13 @@ function PrivateRoute({ component: Component, ...rest }) {
   return (
     <Route
       {...rest}
-      render={props =>
-        isAuthenticated() ? (
+      render={props => {
+        return isAuthenticated() ? (
           <Component {...props} />
         ) : (
           <Redirect exact to="/parkeo/admin-page/login" />
-        )
-      }
+        );
+      }}
     />
   );
 }
@@ -55,8 +55,19 @@ ReactDOM.render(
       <Switch>
         <Route exact path="/" name="LandingPage" component={LandingPage} />
         <Route exact path="/parkeo" name="ParkeoPage" component={ParkeoPage} />
-        <Route exact path="/parkeo/admin-page/login" name="Login" component={Login} />
+        <Route
+          exact
+          path="/parkeo/admin-page/login"
+          name="Login"
+          component={Login}
+        />
         {indexRoutes.map((prop, key) => {
+          /* const token = localStorage.getItem("token");
+          console.log("prop", prop);
+          if (token) {
+            const username = decode(token).user.username;
+            if (prop.name === "Admin" && username !== "superadmin") return null;
+          } */
           return (
             <PrivateRoute
               exact
