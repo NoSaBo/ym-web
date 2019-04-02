@@ -62,12 +62,6 @@ ReactDOM.render(
           component={Login}
         />
         {indexRoutes.map((prop, key) => {
-          /* const token = localStorage.getItem("token");
-          console.log("prop", prop);
-          if (token) {
-            const username = decode(token).user.username;
-            if (prop.name === "Admin" && username !== "superadmin") return null;
-          } */
           return (
             <PrivateRoute
               exact

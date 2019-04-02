@@ -14,16 +14,15 @@ import Close from "@material-ui/icons/Close";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import CustomInput from "../../CustomInput/CustomInput.admin.jsx";
 // import FormControl from "@material-ui/core/FormControl";
 // import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
 //Customized components
 // import ActiveSelector from "../../Selector/ActiveSelector";
+import InputPassword from "../../CustomInput/InputPassword";
 // GraphQL
 import { Mutation } from "react-apollo";
-import { NEW_ADMIN } from "../../../mutations/admin";
-import { GET_ADMINS } from "../../../queries/admin";
+import { UPDATE_SUPERADMIN } from "../../../mutations/admin";
 // react-router
 import { withRouter } from "react-router-dom";
 // Helper functions
@@ -33,23 +32,11 @@ function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
-const updateCacheAdd = (cache, { data: { addAdmin } }) => {
-  const { admins } = cache.readQuery({ query: GET_ADMINS });
-  cache.writeQuery({
-    query: GET_ADMINS,
-    data: { admins: [...admins, addAdmin] }
-  });
-};
-
 const initErrors = {
-  usernameerror: "",
-  emailerror: "",
   passworderror: ""
 };
 
 const initAdmin = {
-  username: "",
-  email: "",
   password: ""
 };
 
@@ -63,11 +50,9 @@ class AddModal extends React.Component {
     super(props);
     this.state = {
       classicModal: false,
-      togglePassword: "password",
       admin: newAdmin
     };
     this.saveAdmin = this.saveAdmin.bind(this);
-    this.togglePassword = this.togglePassword.bind(this);
     this.resetAdminForm = this.resetAdminForm.bind(this);
     this.handleChangeAdmin = this.handleChangeAdmin.bind(this);
   }
@@ -85,17 +70,9 @@ class AddModal extends React.Component {
     this.resetAdminForm();
   }
 
-  togglePassword() {
-    if (this.state.togglePassword === "password") {
-      this.setState({ togglePassword: "text" });
-    } else {
-      this.setState({ togglePassword: "password" });
-    }
-  }
-
   handleChangeAdmin(event) {
     if (event) {
-      const field = event.target.name;
+      const field = "password";
       let value = event.target.value;
       let admin = this.state.admin;
       admin[field] = value;
@@ -103,27 +80,31 @@ class AddModal extends React.Component {
     }
   }
 
-  saveAdmin(event, addAdmin, adm) {
+  saveAdmin(event, updateSuperadmin, adm) {
     event.preventDefault();
     let { isError, admin } = adminValidation(adm, this.props.admins, "add");
     this.setState({ admin });
     admin = this.state.admin;
     if (!isError) {
-      addAdmin({
+      updateSuperadmin({
         variables: {
-          username: admin.username.toLowerCase(),
-          email: admin.email.toLowerCase(),
           password: admin.password
         }
       });
-      alert(`${admin.username} ha sido agregado`);
+      alert(`Contraseña de superadmin ha sido cambiada`);
       this.handleClose("classicModal");
       this.resetAdminForm();
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      alert("Sesión de administrador cerrada por cambio de contraseña");
+      this.props.history.push("/parkeo/admin-page/login");
     }
   }
 
   resetAdminForm() {
-    let admin = Object.assign({}, newAdmin);
+    let admin = {password: "", passworderror: ""};
+    // let admin = JSON.parse(JSON.stringify(newAdmin));
+    // let admin = Object.assign({}, newAdmin);
     this.setState({ admin });
   }
 
@@ -134,15 +115,17 @@ class AddModal extends React.Component {
   render() {
     const { classes } = this.props;
     const { admin } = this.state;
+    const filler = "lorem".repeat(8);
     return (
       <div>
-        <Tooltip title="Agregar administrador">
-          <IconButton
-            aria-label="Agregar administrador"
+        <Tooltip title="Cambiar contraseña de superadmin">
+          <a
+            style={{ cursor: "pointer" }}
+            aria-label="Cambiar contraseña de superadmin"
             onClick={() => this.handleClickOpen("classicModal")}
           >
-            <i className={"material-icons"}>add</i>
-          </IconButton>
+            <u>Cambiar contraseña</u>
+          </a>
         </Tooltip>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
@@ -167,6 +150,7 @@ class AddModal extends React.Component {
                     disableTypography
                     className={classes.modalHeader}
                   >
+                    <span style={{ opacity: "0" }}>{filler}</span>
                     <IconButton
                       className={classes.modalCloseButton}
                       key="close"
@@ -176,51 +160,29 @@ class AddModal extends React.Component {
                     >
                       <Close className={classes.modalClose} />
                     </IconButton>
-                    <h4 className={classes.modalTitle}>Crear Empleado</h4>
+                    <h4 className={classes.modalTitle}>
+                      Cambiar contraseña de superadmin
+                    </h4>
                   </DialogTitle>
                   <DialogContent
                     id="classic-modal-slide-description"
                     className={classes.modalBody}
                   >
-                    <form>
-                      <CustomInput
-                        labelText="Administrador"
-                        name="username"
-                        value={admin.firstname}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleChangeAdmin}
-                        inputProps={{ errorcomments: [...admin.usernameerror] }}
-                      />
-                      <CustomInput
-                        labelText="Correo"
-                        name="email"
-                        value={admin.lastname}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleChangeAdmin}
-                        inputProps={{ errorcomments: [...admin.emailerror] }}
-                      />
-                      <CustomInput
-                        labelText="Password"
-                        name="password"
-                        type={this.state.togglePassword}
-                        value={admin.password}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleChangeAdmin}
-                        inputProps={{ errorcomments: [...admin.passworderror] }}
-                      />
-                      <input type="checkbox" onClick={this.togglePassword} />
-                      Mostrar password
-                    </form>
+                    <InputPassword
+                      onChange={this.handleChangeAdmin}
+                      inputProps={{ errorcomments: [...admin.passworderror] }}
+                      password={this.state.admin.password}
+                    />
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
-                    <Mutation mutation={NEW_ADMIN} update={updateCacheAdd}>
-                      {addAdmin => (
+                    <Mutation mutation={UPDATE_SUPERADMIN}>
+                      {updateSuperadmin => (
                         <div>
                           <Button
                             color="transparent"
                             simple
                             onClick={e => {
-                              this.saveAdmin(e, addAdmin, admin);
+                              this.saveAdmin(e, updateSuperadmin, admin);
                             }}
                           >
                             Guardar

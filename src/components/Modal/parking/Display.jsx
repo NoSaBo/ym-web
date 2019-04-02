@@ -171,6 +171,12 @@ class ParkingModal extends React.Component {
                         formControlProps={{ fullWidth: true }}
                       />
                       <CustomInput
+                        labelText="Empleado"
+                        name="employee"
+                        value={this.props.parking.employee.user}
+                        formControlProps={{ fullWidth: true }}
+                      />
+                      <CustomInput
                         labelText="Hora de Retorno"
                         name="updatedAt"
                         value={this.props.parking.updatedAt !== this.props.parking.createdAt ? dbDateTimeToView(this.props.parking.updatedAt).time : "-"}

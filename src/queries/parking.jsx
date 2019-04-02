@@ -12,6 +12,9 @@ export const GET_PARKINGS = gql`
       sign
       token
       returned
+      employee {
+        user
+      }
       serviceshift{
         id
         begindate

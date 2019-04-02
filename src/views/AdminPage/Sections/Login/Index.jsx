@@ -13,7 +13,7 @@ class Index extends Component {
       emailError: "",
       password: "",
       passwordError: "",
-      success: false
+      // success: false
     };
   }
 
@@ -28,7 +28,7 @@ class Index extends Component {
       usernameError: '',
       emailError: '',
       passwordError: '',
-      success: false
+      // success: false
     });
     const { username, email, password } = this.state;
     const response =  await addRegistry({
@@ -40,15 +40,13 @@ class Index extends Component {
     });
     const { ok, errors } = response.data.addRegistry;
     if (ok) {
-      this.setState({ ["success"]: true});
+      // this.setState({ ["success"]: true});
       // this.props.history.push('/admin-page/employees');
     } else {
       const err = {};
-      console.log("errors", errors);
       errors.forEach(({path, message}) => {
         err[`${path}Error`] = message;
       });
-      console.log("err", err);
       this.setState(err);
     }
   };

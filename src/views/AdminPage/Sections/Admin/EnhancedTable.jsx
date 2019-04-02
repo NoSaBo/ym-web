@@ -159,7 +159,6 @@ const toolbarStyles = theme => ({
 
 const updateCacheDelete = (cache, { data: { deleteAdmin } }) => {
   const { admins } = cache.readQuery({ query: GET_ADMINS });
-  console.log("updateCache", deleteAdmin);
   cache.writeQuery({
     query: GET_ADMINS,
     data: {

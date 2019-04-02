@@ -40,6 +40,19 @@ export const UPDATE_ADMIN = gql`
   }
 `;
 
+export const UPDATE_SUPERADMIN = gql`
+  mutation updateSuperadmin(
+    $password: String
+  ) {
+    updateSuperadmin(
+      password: $password
+    ) {
+      username
+      password
+    }
+  }
+`;
+
 export const DELETE_ADMIN = gql`
 mutation deleteAdmin($id: ID!) {
   deleteAdmin(id: $id) {

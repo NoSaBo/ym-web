@@ -74,6 +74,7 @@ const rows = [
     disablePadding: true,
     label: "HORA DE RETORNO"
   },
+  { id: "user", numeric: false, disablePadding: true, label: "EMPLEADO" },
   { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
 ];
 
@@ -388,11 +389,11 @@ class EnhancedTable extends React.Component {
       rowsPerPage,
       page,
       branches,
-      serviceShifts
+      serviceShifts,
     } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-      console.log("privileges", privileges);
+      console.log("this.props.data", this.props.data);
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar
@@ -457,6 +458,9 @@ class EnhancedTable extends React.Component {
                         {n.updatedAt === n.createdAt
                           ? " - "
                           : dbDateTimeToView(n.updatedAt).time}
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                      {n.employee.user}
                       </TableCell>
                       <TableCell
                         className={classNames(

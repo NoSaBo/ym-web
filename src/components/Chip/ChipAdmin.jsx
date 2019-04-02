@@ -4,12 +4,20 @@ import { withStyles } from "@material-ui/core/styles";
 import Chip from "@material-ui/core/Chip";
 import decode from "jwt-decode";
 import { capitalize } from "assets/helperFunctions/index.js";
+import AdminModal from "../Modal/admin/AdminModal.jsx";
 
 const styles = theme => ({
   root: {
     display: "flex",
     justifyContent: "center",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+  },
+  superadmin: {
+    height:"50px",
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+    flexWrap: "wrap",
   },
   chip: {
     margin: theme.spacing.unit
@@ -22,14 +30,11 @@ class Chips extends React.Component {
     this.state = {
       user: null
     };
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   handleClick() {
-    if (this.state.user.username === "superadmin") {
-      this.props.history.push("/parkeo/admin-page/admin");
-    } else {
-      alert("You touched the admin, watched out!");
-    }
+    this.props.history.push("/parkeo/admin-page/admin");
   }
   handleLogout() {
     localStorage.removeItem("token");
@@ -40,7 +45,6 @@ class Chips extends React.Component {
   componentWillMount() {
     const token = localStorage.getItem("token");
     let user = decode(token).user;
-    console.log("decode(token)", decode(token));
     if (token) {
       this.setState({ user });
     }
@@ -48,12 +52,17 @@ class Chips extends React.Component {
   render() {
     const { classes } = this.props;
     const { username } = this.state.user;
-    console.log("this.state.user", this.state.user);
-    return (
+    return username === "superadmin" ? (
+      <div className={classes.superadmin}>
+        <AdminModal
+          username={capitalize(username)}
+          handleLogout={this.handleLogout}
+        />
+      </div>
+    ) : (
       <div className={classes.root}>
         <Chip
           label={`${capitalize(username)}`}
-          onClick={() => this.handleClick()}
           onDelete={() => this.handleLogout()}
           className={classes.chip}
           icon={<i className="material-icons">account_circle</i>}
@@ -68,28 +77,3 @@ Chips.propTypes = {
 };
 
 export default withStyles(styles)(Chips);
-
-// function Chips(props) {
-//   const { classes } = props;
-
-//   let username =
-//     localStorage.getItem("token") !== null
-//       ? decode(localStorage.getItem("token")).user.username
-//       : "";
-//   return (
-//     <div className={classes.root}>
-//       <Chip
-//         label={`Cuenta: ${capitalize(username)}`}
-//         onDelete={() => handleDelete()}
-//         className={classes.chip}
-//         icon={<i className="material-icons">account_circle</i>}
-//       />
-//     </div>
-//   );
-// }
-
-// Chips.propTypes = {
-//   classes: PropTypes.object.isRequired
-// };
-
-// export default withStyles(styles)(Chips);

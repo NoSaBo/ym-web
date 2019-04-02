@@ -14,7 +14,7 @@ import Close from "@material-ui/icons/Close";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import CustomInput from "../../CustomInput/CustomInput.jsx";
+import CustomInput from "../../CustomInput/CustomInput.admin.jsx";
 // import FormControl from "@material-ui/core/FormControl";
 // import FormHelperText from "@material-ui/core/FormHelperText";
 import javascriptStyles from "assets/jss/material-kit-react/views/componentsSections/javascriptStyles.jsx";
@@ -31,6 +31,12 @@ import { adminValidation } from "assets/helperFunctions/validationAdmin.js";
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
+
+const initErrors = {
+  usernameerror: [],
+  emailerror: [],
+  passworderror: []
+};
 
 class UpdateModal extends React.Component {
   constructor(props) {
@@ -66,18 +72,20 @@ class UpdateModal extends React.Component {
   }
 
   resetAdmin() {
-    let admin = Object.assign({}, this.props.admin);
+    let admin = JSON.parse(JSON.stringify(this.props.admin));
+    admin = { ...admin, ...initErrors };
     this.setState({
       admin
     });
   }
 
   saveAdmin(event, updateAdmin, adm) {
+    console.log("this.state.admin", this.state.admin);
     event.preventDefault();
-    const admins = this.props.admins;
-    let { isError, admin } = adminValidation(adm, admins, "update");
+    let { isError, admin } = adminValidation(adm, this.props.admins, "update");
     this.setState({ admin });
     admin = this.state.admin;
+    console.log("admin", admin);
     if (!isError) {
       updateAdmin({ variables: admin });
       alert(admin.username + " ha sido actualizado!");
@@ -92,7 +100,6 @@ class UpdateModal extends React.Component {
   render() {
     const { classes } = this.props;
     const { admin } = this.state;
-    console.log("admin", admin);
     return (
       <div align="left">
         <Tooltip title="Editar">
@@ -152,7 +159,15 @@ class UpdateModal extends React.Component {
                         value={admin.username}
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeAdmin}
-                        // inputProps={{ errorcomment: employee.lastnameerror }}
+                        inputProps={{ errorcomments: [...admin.usernameerror] }}
+                      />
+                      <CustomInput
+                        labelText="Correo"
+                        name="email"
+                        value={admin.email}
+                        formControlProps={{ fullWidth: true }}
+                        onChange={this.handleChangeAdmin}
+                        inputProps={{ errorcomments: [...admin.emailerror] }}
                       />
                       <CustomInput
                         labelText="Password"
@@ -161,15 +176,7 @@ class UpdateModal extends React.Component {
                         type="password"
                         formControlProps={{ fullWidth: true }}
                         onChange={this.handleChangeAdmin}
-                        // inputProps={{ errorcomment: employee.passworderror }}
-                      />
-                      <CustomInput
-                        labelText="Correo"
-                        name="email"
-                        value={admin.email}
-                        formControlProps={{ fullWidth: true }}
-                        onChange={this.handleChangeAdmin}
-                        // inputProps={{ errorcomment: employee.phoneerror }}
+                        inputProps={{ errorcomments: [...admin.passworderror] }}
                       />
                     </form>
                   </DialogContent>

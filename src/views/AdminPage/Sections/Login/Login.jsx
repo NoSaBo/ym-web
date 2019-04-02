@@ -23,26 +23,27 @@ import { LOGIN } from "../../../../mutations/login";
 
 import decode from "jwt-decode";
 
-
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
       password: "",
-      errors: {}
+      errors: {},
+      errorList: []
     };
+    this.clearErrorList = this.clearErrorList.bind(this);
   }
 
-  onSubmit = async (e, login, data) => {
+  onSubmit = async (e, weblogin, data) => {
     const { username, password } = this.state;
-    const response = await login({
+    const response = await weblogin({
       variables: {
         username,
         password
       }
     });
-    const { ok, token, refreshToken, errors } = response.data.login;
+    const { ok, token, refreshToken, errors } = response.data.weblogin;
     if (ok) {
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
@@ -53,7 +54,7 @@ class Login extends React.Component {
       errors.forEach(({ path, message }) => {
         err[`${path}Error`] = message;
       });
-      this.setState({ ["errors"] : err });
+      // this.setState({ ["errors"]: err });
       this.state["errors"] = err;
     }
   };
@@ -75,17 +76,21 @@ class Login extends React.Component {
     }
   }
 
+  clearErrorList() {
+    this.setState({ username: "", password: "", errors: {}, errorList: [] });
+  }
+
   render() {
     const { classes } = this.props;
     const {
       errors: { usernameError, passwordError }
     } = this.state;
-    const errorList = [];
+    const { errorList } = this.state;
     if (usernameError) {
-      errorList.push(usernameError);
+      errorList[0] = usernameError;
     }
     if (passwordError) {
-      errorList.push(passwordError);
+      errorList[0] = passwordError;
     }
     return (
       <div className={classes.section}>
@@ -139,21 +144,24 @@ class Login extends React.Component {
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
                     <Mutation mutation={LOGIN}>
-                      {(login, { data }) => (
+                      {(weblogin, { data }) => (
                         <Button
                           simple
                           color="primary"
                           size="lg"
-                          onClick={e => this.onSubmit(e, login, data)}
+                          onClick={e => this.onSubmit(e, weblogin, data)}
                         >
                           > Iniciar Sesión
                         </Button>
                       )}
                     </Mutation>
                   </CardFooter>
-                  {!!usernameError || !!passwordError ? (
-                    <Notification errorList={errorList} />
-                  ) : null}
+                  {errorList.length !== 0 && (
+                    <Notification
+                      errorList={errorList}
+                      clearErrorList={this.clearErrorList}
+                    />
+                  )}
                 </form>
               </Card>
             </GridItem>

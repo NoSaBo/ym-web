@@ -17,8 +17,8 @@ export const REGISTER = gql`
 `;
 
 export const LOGIN = gql`
-  mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
+  mutation weblogin($username: String!, $password: String!) {
+    weblogin(username: $username, password: $password) {
       ok
       token
       refreshToken
