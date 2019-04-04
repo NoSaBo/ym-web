@@ -31,6 +31,8 @@ import {
   notDeletable,
   notDisable
 } from "assets/helperFunctions/validationBranch.js";
+import { adminFullPrivileges } from "assets/helperFunctions/index.js";
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -67,6 +69,8 @@ const rows = [
   { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
 ];
 
+const privileges = adminFullPrivileges();
+
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
@@ -80,7 +84,6 @@ class EnhancedTableHead extends React.Component {
       // numSelected,
       // rowCount
     } = this.props;
-
     return (
       <TableHead>
         <TableRow>
@@ -253,7 +256,8 @@ class EnhancedTableToolbar extends React.Component {
                   </Mutation>
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
+
+              {privileges && (<Tooltip title="Delete">
                 <IconButton aria-label="Delete">
                   <Mutation mutation={DELETE_BRANCH} update={updateCacheDelete}>
                     {deleteBranch => (
@@ -266,7 +270,7 @@ class EnhancedTableToolbar extends React.Component {
                     )}
                   </Mutation>
                 </IconButton>
-              </Tooltip>
+              </Tooltip>)}
             </div>
           ) : null
           /* (

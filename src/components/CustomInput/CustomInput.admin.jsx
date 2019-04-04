@@ -30,7 +30,6 @@ function CustomInput({ ...props }) {
     type
   } = props;
 
-  // console.log("props", props);
   const labelClasses = classNames({
     [" " + classes.labelRootError]: error,
     [" " + classes.labelRootSuccess]: success && !error
@@ -82,9 +81,19 @@ function CustomInput({ ...props }) {
         type={type}
         {...inputProps}
       />
-      <FormHelperText id="name-error-text" className={classes.errorInput}>
-        {inputProps ? inputProps.errorcomment : null}
-      </FormHelperText>
+      {inputProps !== undefined
+        ? inputProps.errorcomments.map((err, index) => {
+            return (
+              <FormHelperText
+                id="name-error-text"
+                className={classes.errorInput}
+                key={index}
+              >
+                {err}
+              </FormHelperText>
+            );
+          })
+        : null}
     </FormControl>
   );
 }

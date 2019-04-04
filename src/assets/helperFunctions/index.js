@@ -1,4 +1,5 @@
 import moment from "moment";
+import decode from "jwt-decode";
 import "moment/locale/es";
 
 export const capitalize = word => {
@@ -95,3 +96,14 @@ export const branchesInServiceshifts = serviceshifts => {
   branches = removeDuplicates(branches, "id");
   return branches;
 };
+
+export const adminFullPrivileges = () => {
+  let answer = true;
+  if (localStorage.getItem("token")) {
+    const admin = decode(localStorage.getItem("token")).user.username; 
+    if (admin === "admin") {
+      answer = false;
+    }
+  } 
+  return answer
+}

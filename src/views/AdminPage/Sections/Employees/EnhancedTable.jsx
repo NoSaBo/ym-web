@@ -32,6 +32,8 @@ import {
   notDeletable,
   notDisable
 } from "assets/helperFunctions/validationEmployee.js";
+import { adminFullPrivileges } from "assets/helperFunctions/index.js";
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -66,6 +68,8 @@ const rows = [
   { id: "active", numeric: false, disablePadding: true, label: "ESTADO" },
   { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
 ];
+
+const privileges = adminFullPrivileges();
 
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -253,7 +257,7 @@ class EnhancedTableToolbar extends React.Component {
                   </Mutation>
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
+              {privileges && (<Tooltip title="Delete">
                 <IconButton aria-label="Delete">
                   <Mutation
                     mutation={DELETE_EMPLOYEE}
@@ -268,7 +272,7 @@ class EnhancedTableToolbar extends React.Component {
                     )}
                   </Mutation>
                 </IconButton>
-              </Tooltip>
+              </Tooltip>)}
             </div>
           ) : null
           /* (

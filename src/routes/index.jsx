@@ -1,5 +1,3 @@
-import LandingPage from "views/LandingPage/LandingPage.jsx";
-import ParkeoPage from "views/ParkeoPage/ParkeoPage.jsx";
 import AdminPage from "views/AdminPage/AdminPage.jsx";
 import Employees from "views/AdminPage/Sections/Employees/Index.jsx";
 import Branches from "views/AdminPage/Sections/Branches/Index.jsx";
@@ -9,9 +7,6 @@ import EmployeexServiceShifts from "views/AdminPage/Sections/EmployeexServiceShi
 
 
 var indexRoutes = [
-  { path: "/", name: "LandingPage", component: LandingPage },
-  { path: "/parkeo", name: "ParkeoPage", component: ParkeoPage },
-
   { path: "/parkeo/admin-page", name: "AdminPage", component: AdminPage },
   {
     path: "/parkeo/admin-page/employees",

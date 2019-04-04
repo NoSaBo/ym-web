@@ -32,6 +32,8 @@ import {
   getSshIdAndEmpId,
   getFilterData
 } from "assets/helperFunctions/index.js";
+import { adminFullPrivileges } from "assets/helperFunctions/index.js";
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -77,6 +79,8 @@ const rows = [
   { id: "comment", numeric: false, disablePadding: true, label: "COMENTARIO" },
   { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
 ];
+
+const privileges = adminFullPrivileges();
 
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -218,7 +222,7 @@ class EnhancedTableToolbar extends React.Component {
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
-          {numSelected > 0 ? (
+          {privileges && (numSelected > 0 ? (
             <Tooltip title="Delete">
               <IconButton aria-label="Delete">
                 <Mutation
@@ -245,7 +249,7 @@ class EnhancedTableToolbar extends React.Component {
               </IconButton>
             </Tooltip>
           ) :
-          null
+          null)
           /* (
             <Tooltip title="Filtrar lista">
               <IconButton aria-label="Filtrar lista">
@@ -526,12 +530,12 @@ class EnhancedTable extends React.Component {
                       key={n.id}
                       selected={isSelected}
                     >
-                      <TableCell
+                      {<TableCell
                         padding="checkbox"
-                        onClick={event => this.handleClick(event, n.id)}
+                        onClick={!privileges ? null : (event => this.handleClick(event, n.id))}
                       >
-                        <Checkbox checked={isSelected} />
-                      </TableCell>
+                        <Checkbox checked={isSelected} disabled={!privileges}/>
+                      </TableCell>}
                       <TableCell component="th" scope="row" padding="none">
                         {n.employeeName}
                       </TableCell>

@@ -20,17 +20,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 //GraphQL
 import { Mutation } from "react-apollo";
-import { DELETE_PARKING } from "../../../../mutations/parking";
-import { GET_PARKINGS } from "../../../../queries/parking";
+import { DELETE_ADMIN } from "../../../../mutations/admin";
+import { GET_ADMINS } from "../../../../queries/admin";
 //Customized components
-import Display from "../../../../components/Modal/parking/Display";
-import BrchSshFilter from "../../../../components/Selector/Selector";
+import Add from "../../../../components/Modal/admin/Add";
+import Update from "../../../../components/Modal/admin/Update";
 // Helper functions
-import {
-  dbDateTimeToView,
-  getShiftandBranch
-} from "assets/helperFunctions/index.js";
-import { adminFullPrivileges } from "assets/helperFunctions/index.js";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -59,26 +54,10 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: "begindate", numeric: false, disablePadding: true, label: "HORARIO" },
-  { id: "branch", numeric: false, disablePadding: true, label: "SEDE" },
-  { id: "owner", numeric: false, disablePadding: true, label: "PROPIETARIO" },
-  {
-    id: "createdAt",
-    numeric: false,
-    disablePadding: true,
-    label: "HORA DE RECEPCIÓN"
-  },
-  {
-    id: "updatedAt",
-    numeric: false,
-    disablePadding: true,
-    label: "HORA DE RETORNO"
-  },
-  { id: "user", numeric: false, disablePadding: true, label: "EMPLEADO" },
-  { id: "actions", numeric: false, disablePadding: true, label: "DETALLES" }
+  { id: "username", numeric: false, disablePadding: true, label: "USUARIO" },
+  { id: "email", numeric: false, disablePadding: true, label: "CORREO" },
+  { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
 ];
-
-const privileges = adminFullPrivileges();
 
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -170,27 +149,29 @@ const toolbarStyles = theme => ({
   },
   i: {
     marginLeft: "-12px"
+  },
+  disableDeleteRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
   }
 });
 
-const updateCacheDelete = (cache, { data: { deleteParking } }) => {
-  const { parkings } = cache.readQuery({ query: GET_PARKINGS });
+const updateCacheDelete = (cache, { data: { deleteAdmin } }) => {
+  const { admins } = cache.readQuery({ query: GET_ADMINS });
   cache.writeQuery({
-    query: GET_PARKINGS,
+    query: GET_ADMINS,
     data: {
-      parkings: parkings.filter(n => n.id !== deleteParking.id)
+      admins: admins.filter(n => n.id !== deleteAdmin.id)
     }
   });
 };
 
 class EnhancedTableToolbar extends React.Component {
-  deleteOnClick(deleteParking, selected, history) {
-    selected.map(id =>
-      deleteParking({
-        variables: { id }
-      })
-    );
+  deleteOnClick(deleteAdmin, selected, history) {
+    selected.map(id => deleteAdmin({ variables: { id } }));
     this.props.resetValues();
+    alert("Administrador(es) eliminado(s)");
   }
   render() {
     const { numSelected, classes, selected, history } = this.props;
@@ -205,26 +186,39 @@ class EnhancedTableToolbar extends React.Component {
             <Typography color="inherit" variant="subheading">
               {numSelected} selected
             </Typography>
-          ) : null}
+          ) : (
+            <Typography
+              variant="subheading"
+              id="tableTitle"
+              className={classes.i}
+            >
+              <Add admins={this.props.admins} />
+            </Typography>
+          )}
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
           {numSelected > 0 ? (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
-                <Mutation mutation={DELETE_PARKING} update={updateCacheDelete}>
-                  {deleteParking => (
-                    <DeleteIcon
-                      onClick={() => {
-                        this.deleteOnClick(deleteParking, selected, history);
-                        alert(`Auto(s) registrado(s) eliminado(s)`);
-                        return null;
-                      }}
-                    />
-                  )}
-                </Mutation>
-              </IconButton>
-            </Tooltip>
+            <div className={classes.disableDeleteRow}>
+              {
+                <Tooltip title="Delete">
+                  <IconButton aria-label="Delete">
+                    <Mutation
+                      mutation={DELETE_ADMIN}
+                      update={updateCacheDelete}
+                    >
+                      {deleteAdmin => (
+                        <DeleteIcon
+                          onClick={() =>
+                            this.deleteOnClick(deleteAdmin, selected, history)
+                          }
+                        />
+                      )}
+                    </Mutation>
+                  </IconButton>
+                </Tooltip>
+              }
+            </div>
           ) : null
           /* (
             <Tooltip title="Filtrar lista">
@@ -267,9 +261,6 @@ const styles = theme => ({
     flexFlow: "row wrap",
     justifyContent: "flex-start",
     alignItems: "center"
-  },
-  marginComponent: {
-    marginLeft: "20px"
   }
 });
 
@@ -277,17 +268,14 @@ class EnhancedTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      order: "asc",
-      orderBy: "user",
+      order: "desc",
+      orderBy: "active",
       selected: [],
       data: [],
-      branches: [],
-      serviceShifts: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 10
     };
     this.resetValues = this.resetValues.bind(this);
-    this.onFilterChanged = this.onFilterChanged.bind(this);
   }
 
   handleRequestSort = (event, property) => {
@@ -342,10 +330,6 @@ class EnhancedTable extends React.Component {
   componentWillMount() {
     let { data } = this.props;
     this.setState({ data });
-    this.setState({
-      branches: getShiftandBranch(data).branches,
-      serviceShifts: getShiftandBranch(data).serviceShifts
-    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -358,42 +342,11 @@ class EnhancedTable extends React.Component {
     this.setState({ selected: [] });
   }
 
-  onFilterChanged = (branchId, serviceshiftId) => {
-    const allParkings = this.props.data;
-    let newAllParkings = "";
-    if (serviceshiftId === "x" && branchId === "x") {
-      newAllParkings = allParkings;
-    } else if (branchId === "x" && serviceshiftId !== "x") {
-      newAllParkings = allParkings.filter(
-        parking => parking.serviceshift.id === serviceshiftId
-      );
-    } else if (serviceshiftId === "x" && branchId !== "x") {
-      newAllParkings = allParkings.filter(
-        parking => parking.serviceshift.branch.id === branchId
-      );
-    } else if (serviceshiftId !== "x" && branchId !== "x") {
-      newAllParkings = allParkings
-        .filter(parking => parking.serviceshift.id === serviceshiftId)
-        .filter(parking => parking.serviceshift.branch.id === branchId);
-    }
-    this.setState({ data: newAllParkings });
-  };
-
   render() {
     const { classes } = this.props;
-    const {
-      data,
-      order,
-      orderBy,
-      selected,
-      rowsPerPage,
-      page,
-      branches,
-      serviceShifts,
-    } = this.state;
+    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-      console.log("this.props.data", this.props.data);
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar
@@ -401,14 +354,9 @@ class EnhancedTable extends React.Component {
           selected={selected}
           history={this.props.history}
           resetValues={this.resetValues}
+          serviceshifts={this.props.serviceshifts}
+          admins={this.props.data}
         />
-        <div className={classes.marginComponent}>
-          <BrchSshFilter
-            branches={branches}
-            serviceShifts={serviceShifts}
-            onFilterChanged={this.onFilterChanged}
-          />
-        </div>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -435,32 +383,15 @@ class EnhancedTable extends React.Component {
                     >
                       <TableCell
                         padding="checkbox"
-                        onClick={!privileges ? null : (event => this.handleClick(event, n.id))}
+                        onClick={event => this.handleClick(event, n.id)}
                       >
-                        <Checkbox
-                          checked={!privileges ? null : isSelected}
-                          disabled={!privileges}
-                        />
+                        <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {dbDateTimeToView(n.serviceshift.begindate).dateTime}
+                        {n.username}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.serviceshift.branch.branch}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.owner}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {dbDateTimeToView(n.createdAt).time}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.updatedAt === n.createdAt
-                          ? " - "
-                          : dbDateTimeToView(n.updatedAt).time}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                      {n.employee.user}
+                        {n.email}
                       </TableCell>
                       <TableCell
                         className={classNames(
@@ -468,7 +399,7 @@ class EnhancedTable extends React.Component {
                           classes.td
                         )}
                       >
-                        <Display parking={n} />
+                        <Update admin={n} admins={this.props.data} />
                       </TableCell>
                     </TableRow>
                   );

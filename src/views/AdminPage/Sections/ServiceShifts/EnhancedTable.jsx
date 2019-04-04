@@ -32,6 +32,8 @@ import ModalAddEmployee from "../../../../components/Modal/serviceShift/AddEmplo
 // Helper functions
 import { dbDateTimeToView } from "assets/helperFunctions/index.js";
 import { notDeletable } from "assets/helperFunctions/validationServiceshift.js";
+import { adminFullPrivileges } from "assets/helperFunctions/index.js";
+
 
 function desc(a, b, orderBy) {
   if (orderBy === "branch") {
@@ -76,6 +78,8 @@ const rows = [
   { id: "active", numeric: false, disablePadding: true, label: "ACTIVO" },
   { id: "actions", numeric: false, disablePadding: true, label: "ACCIONES" }
 ];
+
+const privileges = adminFullPrivileges();
 
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -268,7 +272,7 @@ class EnhancedTableToolbar extends React.Component {
                   </Mutation>
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Eliminar">
+              {privileges && (<Tooltip title="Eliminar">
                 <IconButton aria-label="Eliminar">
                   <Mutation
                     mutation={DELETE_SERVICESHIFT}
@@ -288,7 +292,7 @@ class EnhancedTableToolbar extends React.Component {
                     )}
                   </Mutation>
                 </IconButton>
-              </Tooltip>
+              </Tooltip>)}
             </div>
           ) : null
           /* (
