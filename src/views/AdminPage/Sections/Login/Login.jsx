@@ -54,8 +54,7 @@ class Login extends React.Component {
       errors.forEach(({ path, message }) => {
         err[`${path}Error`] = message;
       });
-      // this.setState({ ["errors"]: err });
-      this.state["errors"] = err;
+      this.setState({ errors: err });
     }
   };
 
